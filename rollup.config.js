@@ -13,7 +13,7 @@ const libraryName = "catalog-converter";
 
 export default [
   {
-    input: `dist/lib/${libraryName}.js`,
+    input: `dist/lib/convert.js`,
     output: [
       {
         file: pkg.main,
@@ -55,7 +55,7 @@ export default [
       },
     ],
     // Indicate here external modules you don't wanna include in your bundle (i.e.: 'lodash')
-    external: [],
+    external: ["fs", "path", "util"],
     watch: {
       include: "src/**",
     },
