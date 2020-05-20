@@ -60,7 +60,7 @@ export function featureInfoTemplate(
   label: string,
   template: string | PlainObject
 ): {
-  result: Readonly<PlainObject>; // This one isn't | null because there are not yet any conditions where this has a fatal error
+  result: Readonly<PlainObject>; // This one isn't `| null` because there are not yet any conditions where this has a fatal error
   messages: Message[];
 } {
   if (is.string(template)) {

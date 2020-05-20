@@ -114,11 +114,12 @@ console.warn(
 const partitionedErrors = partitionMessages(errors);
 const partitionedWarnings = partitionMessages(warnings);
 console.error(
-  'Unknown types: "' +
+  "Unknown types: " +
     _.uniq(
       partitionedErrors.unknownTypes.map((m) => getUnknownTypeDetails(m).type)
-    ).join('", "') +
-    '"'
+    )
+      .map((t) => `"${t}"`)
+      .join(", ")
 );
 
 const unknownPropsByType = new Map<ModelType, Set<string>>();
