@@ -8,7 +8,6 @@ const pkg = JSON.parse(
 );
 
 pkg.scripts.prepush = "npm run test:prod && npm run build";
-pkg.scripts.commitmsg = "commitlint -E HUSKY_GIT_PARAMS";
 
 writeFileSync(
   path.resolve(__dirname, "..", "package.json"),
