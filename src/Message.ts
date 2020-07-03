@@ -12,6 +12,9 @@ export enum ModelType {
   WmsItem = "WebMapServiceCatalogItem",
   CsvItem = "CsvCatalogItem",
   SosItem = "SensorObservationServiceCatalogItem",
+  EsriFeatureServerItem = "EsriFeatureServerCatalogItem",
+  CkanGroup = "CkanCatalogGroup",
+  GeoJsonItem = "GeoJsonCatalogItem",
 }
 
 interface MessageBase {
@@ -36,26 +39,6 @@ export interface UnknownTypeDetails {
 }
 
 export interface InputNotPlainObjectDetails {}
-
-// interface $MissingRequiredMemberProp {}
-// interface $GroupMissingItems {}
-
-// interface $MissingRequiredWmsProp {
-//   readonly property: string;
-// }
-
-// export enum MessageType {
-//   UnknownProp,
-//   MissingRequiredMemberProp,
-// }
-
-// export interface UnknownProp {
-//   __typename: UnknownProp;
-//   readonly property: string;
-// }
-// export interface MissingRequiredMemberProp {
-//   __typename: MissingRequiredMemberProp;
-// }
 
 const unknownPropOpaque = createOpaqueAPI<"UnknownProp", UnknownPropDetails>(
   "UnknownProp"
@@ -96,76 +79,14 @@ export interface InputNotPlainObject extends MessageBase {
   details: ReturnType<typeof inputNotPlainObjectOpaque.toOpaque>;
 }
 export function isInputNotPlainObject(m: Message): m is InputNotPlainObject {
-  return inputNotPlainObjectOpaque.isOpaque(m);
-
-  // const missingRequiredMemberPropOpaque = createOpaqueAPI<
-  //   "MissingRequiredMemberProp",
-  //   $MissingRequiredMemberProp
-  // >("MissingRequiredMemberProp");
-  // export interface MissingRequiredMemberProp extends MessageBase {
-  //   details: ReturnType<typeof missingRequiredMemberPropOpaque.toOpaque>;
-  // }
-  // export function isMissingRequiredMemberProp(m: Message): m is MissingRequiredMemberProp {
-  //   return missingRequiredMemberPropOpaque.isOpaque(m.details);
-  // }
-
-  // const groupMissingItemsOpaque = createOpaqueAPI<
-  //   "GroupMissingItems",
-  //   $GroupMissingItems
-  // >("GroupMissingItems");
-  // export interface GroupMissingItems extends MessageBase {
-  //   details: ReturnType<typeof groupMissingItemsOpaque.toOpaque>;
-  // }
-  // export function isGroupMissingItems(m: Message): m is GroupMissingItems {
-  //   return groupMissingItemsOpaque.isOpaque(m.details);
-  // }
-
-  // const missingRequiredWmsPropOpaque = createOpaqueAPI<
-  //   "MissingRequiredWmsProp",
-  //   $MissingRequiredWmsProp
-  // >("MissingRequiredWmsProp");
-  // export interface MissingRequiredWmsProp extends MessageBase {
-  //   details: ReturnType<typeof missingRequiredWmsPropOpaque.toOpaque>;
-  // }
-  // export const isMissingRequiredWmsProp = missingRequiredWmsPropOpaque.isOpaque;
+  return inputNotPlainObjectOpaque.isOpaque(m.details);
 }
 
 export type Message =
   | UnknownProp
-  // | MissingRequiredMemberProp
-  // | GroupMissingItems
-  // | MissingRequiredWmsProp;
   | MissingRequiredProp
   | UnknownType
   | InputNotPlainObject;
-
-// export function getMessageParts(message: Message): MessageBase {
-//   if (isUnknownProp(message)) {
-//     return unknownPropOpaque.fromOpaque(message);
-//   } else if (isMissingRequiredMemberProp(message)) {
-//     return missingRequiredMemberPropOpaque.fromOpaque(message);
-//   } else if (isGroupMissingItems(message)) {
-//     return groupMissingItemsOpaque.fromOpaque(message);
-//   } else {
-//     return missingRequiredWmsPropOpaque.fromOpaque(message);
-//   }
-// }
-
-// export function transformGeneralMessage(message: Message, f: (m: MessageBase) => MessageBase): Message {
-//   if (isUnknownProp(message)) {
-//     const mb = unknownPropOpaque.fromOpaque(message)
-//     return unknownPropOpaque.toOpaque({
-//       ...mb,
-//       ...f(mb)
-//     })
-//   } else if (isMissingRequiredMemberProp(message)) {
-//     return missingRequiredMemberPropOpaque.fromOpaque(message);
-//   } else if (isGroupMissingItems(message)) {
-//     return groupMissingItemsOpaque.fromOpaque(message);
-//   } else {
-//     return missingRequiredWmsPropOpaque.fromOpaque(message);
-//   }
-// }
 
 export function unknownProp(
   modelType: ModelType,
@@ -223,43 +144,6 @@ export function inputNotPlainObject(): InputNotPlainObject {
     details: inputNotPlainObjectOpaque.toOpaque({}),
   };
 }
-
-// export function missingRequiredMemberProp(
-//   label: string,
-//   severity = Severity.Error
-// ): MissingRequiredMemberProp {
-//   return {
-//     message: "Member doesn't have type and name",
-//     path: [label],
-//     severity,
-//     details: missingRequiredMemberPropOpaque.toOpaque({}),
-//   };
-// }
-
-// export function groupMissingItems(
-//   label: string,
-//   severity = Severity.Error
-// ): GroupMissingItems {
-//   return {
-//     message: "Group has no array of items",
-//     path: [label],
-//     severity,
-//     details: groupMissingItemsOpaque.toOpaque({}),
-//   };
-// }
-
-// export function missingRequiredWmsProp(
-//   property: string,
-//   label: string,
-//   severity = Severity.Error
-// ): MissingRequiredWmsProp {
-//   return {
-//     message: "WmsCatalogItem missing " + property,
-//     path: [label],
-//     severity,
-//     details: missingRequiredWmsPropOpaque.toOpaque({ property }),
-//   };
-// }
 
 export function getUnknownPropDetails(m: UnknownProp): UnknownPropDetails {
   return unknownPropOpaque.fromOpaque(m.details);

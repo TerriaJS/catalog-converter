@@ -20,10 +20,24 @@ import {
 const argv = yargs
   .usage("Usage: $0 source [destination] [options]")
   .demandCommand(1)
-  .alias("u", "copyUnknownProperties")
-  .boolean("u")
-  .default("u", false)
-  .describe("u", "Copy unknown properties")
+  .option("u", {
+    alias: "copyUnknownProperties",
+    type: "boolean",
+    default: false,
+    description: "Copy unknown properties",
+  })
+  .option("a", {
+    alias: "aggregate-stats",
+    type: "boolean",
+    default: false,
+    description: "Aggregate error and warning statistics",
+  })
+  .option("p", {
+    alias: "noprint-all", // yargs doesn't parse properly when this has 2 dashes in the alias name
+    type: "boolean",
+    default: false,
+    description: "Disable printing every error and warning",
+  })
   .help().argv;
 
 const json = json5.parse(fs.readFileSync(argv._[0], { encoding: "utf-8" }));
@@ -48,12 +62,19 @@ if (success) {
     console.log(output);
   }
 }
-errors.forEach(({ message, path }) => {
-  console.error(`Error: ${message}\n  in ${path.reverse().join("\n     ")}\n`);
-});
-warnings.forEach(({ message, path }) => {
-  console.warn(`Warning: ${message}\n  in ${path.reverse().join("\n     ")}\n`);
-});
+
+if (!argv.p) {
+  errors.forEach(({ message, path }) => {
+    console.error(
+      `Error: ${message}\n  in ${path.reverse().join("\n     ")}\n`
+    );
+  });
+  warnings.forEach(({ message, path }) => {
+    console.warn(
+      `Warning: ${message}\n  in ${path.reverse().join("\n     ")}\n`
+    );
+  });
+}
 
 function partitionMessages(
   messsages: Message[]
@@ -105,48 +126,40 @@ function countMessages(
   return result;
 }
 
-console.error(
-  "Error stats:\n" + JSON.stringify(countMessages(errors), null, 2)
-);
-console.warn(
-  "Warning stats:\n" + JSON.stringify(countMessages(warnings), null, 2)
-);
-const partitionedErrors = partitionMessages(errors);
-const partitionedWarnings = partitionMessages(warnings);
-console.error(
-  "Unknown types: " +
-    _.uniq(
-      partitionedErrors.unknownTypes.map((m) => getUnknownTypeDetails(m).type)
-    )
-      .map((t) => `"${t}"`)
-      .join(", ")
-);
+if (argv.a) {
+  console.error(
+    "Error stats:\n" + JSON.stringify(countMessages(errors), null, 2)
+  );
+  console.warn(
+    "Warning stats:\n" + JSON.stringify(countMessages(warnings), null, 2)
+  );
+  const partitionedErrors = partitionMessages(errors);
+  const partitionedWarnings = partitionMessages(warnings);
 
-const unknownPropsByType = new Map<ModelType, Set<string>>();
+  console.error(
+    "Unknown types: " +
+      JSON.stringify(
+        _.countBy(
+          partitionedErrors.unknownTypes,
+          (m) => getUnknownTypeDetails(m).type
+        ),
+        null,
+        2
+      )
+  );
+  let unknownPropsByTypeObject: { [k: string]: { [k2: string]: number } } = {};
+  partitionedWarnings.unknownProps
+    .map((m) => getUnknownPropDetails(m))
+    .reduce((o, { modelType, property }) => {
+      const byModel = o[modelType] || {};
+      return Object.assign(o, {
+        [modelType]: Object.assign(byModel, {
+          [property]: (byModel[property] || 0) + 1,
+        }),
+      });
+    }, unknownPropsByTypeObject);
 
-partitionedWarnings.unknownProps
-  .map((m) => getUnknownPropDetails(m))
-  .forEach(({ modelType, property }) => {
-    const setForType = unknownPropsByType.get(modelType);
-    if (setForType) {
-      setForType.add(property);
-    } else {
-      unknownPropsByType.set(modelType, new Set([property]));
-    }
-  });
-
-let unknownPropsByTypeObject: { [k: string]: { [k2: string]: number } } = {};
-partitionedWarnings.unknownProps
-  .map((m) => getUnknownPropDetails(m))
-  .reduce((o, { modelType, property }) => {
-    const byModel = o[modelType] || {};
-    return Object.assign(o, {
-      [modelType]: Object.assign(byModel, {
-        [property]: (byModel[property] || 0) + 1,
-      }),
-    });
-  }, unknownPropsByTypeObject);
-
-console.error(
-  "Unknown properties: " + JSON.stringify(unknownPropsByTypeObject, null, 2)
-);
+  console.error(
+    "Unknown properties: " + JSON.stringify(unknownPropsByTypeObject, null, 2)
+  );
+}

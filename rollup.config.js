@@ -48,7 +48,7 @@ export default [
     input: "dist/lib/cli.js",
     output: [
       {
-        file: "cli.cjs.js",
+        file: "bin/cli.js",
         format: "cjs",
         sourcemap: true,
         banner: "#!/usr/bin/env node\n",

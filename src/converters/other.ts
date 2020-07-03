@@ -84,7 +84,13 @@ export function wmsCatalogItem(
     };
   }
 
-  const propsToCopy = ["url", "layers", "opacity", "dateFormat"];
+  const propsToCopy = [
+    "url",
+    "layers",
+    "opacity",
+    "linkedWcsUrl",
+    "linkedWcsCoverage",
+  ];
 
   const unknownProps = getUnknownProps(item, [
     "name",
@@ -130,6 +136,7 @@ export function wmsCatalogItem(
   }
   return { member, messages };
 }
+
 export function sosCatalogItem(
   item: CatalogMember,
   options: ConversionOptions
@@ -182,4 +189,188 @@ export function sosCatalogItem(
     member,
     messages,
   };
+}
+
+export function esriFeatureServerCatalogItem(
+  item: CatalogMember,
+  options: ConversionOptions
+): MemberResult {
+  if (!is.string(item.url)) {
+    return nullResult(
+      missingRequiredProp(
+        ModelType.EsriFeatureServerItem,
+        "url",
+        "string",
+        item.name
+      )
+    );
+  }
+
+  const propsToCopy = ["url", "useStyleInformationFromService"];
+  const unknownProps = getUnknownProps(item, [
+    "name",
+    "type",
+    ...catalogMemberProps,
+    ...propsToCopy,
+    "featureInfoTemplate",
+  ]);
+  const member: MemberResult["member"] = {
+    type: "esri-featureServer",
+    name: item.name,
+  };
+  const messages = propsToWarnings(
+    ModelType.EsriFeatureServerItem,
+    unknownProps,
+    item.name
+  );
+  if (
+    is.string(item.featureInfoTemplate) ||
+    is.plainObject(item.featureInfoTemplate)
+  ) {
+    const result = featureInfoTemplate(
+      ModelType.EsriFeatureServerItem,
+      item.name,
+      item.featureInfoTemplate
+    );
+    member.featureInfoTemplate = result.result;
+    messages.push(...result.messages);
+  }
+  copyProps(item, member, [...catalogMemberProps, ...propsToCopy]);
+  if (options.copyUnknownProperties) {
+    copyProps(item, member, unknownProps);
+  }
+  return {
+    member,
+    messages,
+  };
+}
+
+export function ckanCatalogGroup(
+  item: CatalogMember,
+  options: ConversionOptions
+): MemberResult {
+  // See details of what's been ported https://github.com/TerriaJS/terriajs/pull/4160
+  if (!is.string(item.url)) {
+    return nullResult(
+      missingRequiredProp(ModelType.CkanGroup, "url", "string", item.name)
+    );
+  }
+  const propsToCopy = [
+    "url",
+    "filterQuery",
+    "groupBy",
+    "useCombinationNameWhereMultipleResources",
+  ];
+  const unknownProps = getUnknownProps(item, [
+    "name",
+    "type",
+    ...catalogMemberProps,
+    ...propsToCopy,
+    "esriMapServerResourceFormat",
+    "wmsParameters",
+  ]);
+  const member: MemberResult["member"] = {
+    type: "ckan-group",
+    name: item.name,
+  };
+  const messages = propsToWarnings(
+    ModelType.CkanGroup,
+    unknownProps,
+    item.name
+  );
+  copyProps(item, member, [...catalogMemberProps, ...propsToCopy]);
+  if (options.copyUnknownProperties) {
+    copyProps(item, member, unknownProps);
+  }
+
+  // Convert various configurations now condensed into supported resource formats
+  const supportedResourceFormats = [];
+  if (is.string(item.esriMapServerResourceFormat)) {
+    supportedResourceFormats.push({
+      id: "ArcGIS FeatureServer",
+      formatRegex: item.esriMapServerResourceFormat,
+      // definition: {
+      //   type: "esri-featureServer",
+      // },
+    });
+  }
+  if (is.plainObject(item.wmsParameters)) {
+    supportedResourceFormats.push({
+      id: "WMS",
+      definition: {
+        type: "wms",
+        parameters: item.wmsParameters,
+      },
+    });
+  }
+  member.supportedResourceFormats = supportedResourceFormats;
+  return {
+    member,
+    messages,
+  };
+}
+
+// Write properly
+export function geoJsonCatalogItem(
+  item: CatalogMember,
+  options: ConversionOptions
+): MemberResult {
+  if (
+    !is.plainObject(item.data) &&
+    !is.string(item.data) &&
+    !is.string(item.url)
+  ) {
+    return {
+      member: null,
+      messages: [
+        missingRequiredProp(
+          ModelType.GeoJsonItem,
+          ["url", "data"],
+          undefined,
+          item.name
+        ),
+      ],
+    };
+  }
+
+  const propsToCopy = ["url", "opacity"];
+  const unknownProps = getUnknownProps(item, [
+    "name",
+    "type",
+    ...catalogMemberProps,
+    ...propsToCopy,
+    "data",
+    "featureInfoTemplate",
+  ]);
+  const member: MemberResult["member"] = {
+    type: "geojson",
+    name: item.name,
+  };
+  const messages = propsToWarnings(
+    ModelType.GeoJsonItem,
+    unknownProps,
+    item.name
+  );
+  if (options.copyUnknownProperties) {
+    copyProps(item, member, unknownProps);
+  }
+  copyProps(item, member, [...catalogMemberProps, ...propsToCopy]);
+  if (
+    is.string(item.featureInfoTemplate) ||
+    is.plainObject(item.featureInfoTemplate)
+  ) {
+    const result = featureInfoTemplate(
+      ModelType.GeoJsonItem,
+      item.name,
+      item.featureInfoTemplate
+    );
+    member.featureInfoTemplate = result.result;
+    messages.push(...result.messages);
+  }
+  if (is.plainObject(item.data)) {
+    member.geoJsonData = item.data;
+  } else if (is.string(item.data)) {
+    member.geoJsonString = item.data;
+  }
+  return { member, messages };
 }

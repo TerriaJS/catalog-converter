@@ -26,7 +26,7 @@ export function isCatalogMember(m: any): m is CatalogMember {
   return is.string(m?.type) && is.string(m?.name);
 }
 
-export const catalogMemberProps = ["description"];
+export const catalogMemberProps = ["description", "info"];
 
 export function getUnknownProps(o: PlainObject, knownProperties: string[]) {
   return Object.keys(o).filter((prop) => knownProperties.indexOf(prop) === -1);

@@ -9,13 +9,16 @@
 import is from "@sindresorhus/is";
 import { csvCatalogItem } from "./converters/CsvItem";
 import {
+  convertMembersArrayWithConvertMember,
   copyProps,
   getUnknownProps,
   isCatalogMember,
   nullResult,
-  convertMembersArrayWithConvertMember,
 } from "./converters/helpers";
 import {
+  ckanCatalogGroup,
+  esriFeatureServerCatalogItem,
+  geoJsonCatalogItem,
   groupFromConvertMembersArray,
   sosCatalogItem,
   wmsCatalogItem,
@@ -27,7 +30,7 @@ import {
   ModelType,
   unknownType,
 } from "./Message";
-import { ConversionOptions, MemberResult, CatalogMember } from "./types";
+import { CatalogMember, ConversionOptions, MemberResult } from "./types";
 
 // Use dependency injection to break circular dependencies created by
 //  group -> convertMembersArray -> convertMember -> group  recursion
@@ -41,6 +44,9 @@ const converters = new Map([
   ["wms", wmsCatalogItem],
   ["csv", csvCatalogItem],
   ["sos", sosCatalogItem],
+  ["esri-featureServer", esriFeatureServerCatalogItem],
+  ["ckan", ckanCatalogGroup],
+  ["geojson", geoJsonCatalogItem],
 ]);
 
 function defaultOptions(options: ConversionOptions | undefined) {
