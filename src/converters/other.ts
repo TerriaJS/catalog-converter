@@ -90,6 +90,7 @@ export function wmsCatalogItem(
     "opacity",
     "linkedWcsUrl",
     "linkedWcsCoverage",
+    "chartColor",
   ];
 
   const unknownProps = getUnknownProps(item, [
