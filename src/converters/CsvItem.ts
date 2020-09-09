@@ -39,7 +39,7 @@ export function csvCatalogItem(
   item: CatalogMember,
   options: ConversionOptions
 ): MemberResult {
-  if (!is.string(item.url) && !is.string(item.data)) {
+  if (!options.partial && !is.string(item.url) && !is.string(item.data)) {
     return nullResult(
       missingRequiredProp(
         ModelType.CsvItem,

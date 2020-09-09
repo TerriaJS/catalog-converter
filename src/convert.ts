@@ -53,6 +53,7 @@ function defaultOptions(options: ConversionOptions | undefined) {
   return Object.assign(
     {
       copyUnknownProperties: false,
+      partial: false,
     },
     options || {}
   );
@@ -63,7 +64,7 @@ export function convertMember(
   options?: ConversionOptions
 ): MemberResult {
   options = defaultOptions(options);
-  if (isCatalogMember(member)) {
+  if (isCatalogMember(member, options.partial)) {
     const converterForType = converters.get(member.type);
     if (!converterForType) {
       return {

@@ -1,6 +1,11 @@
 import is from "@sindresorhus/is";
-import { missingRequiredProp, ModelType, Message } from "../Message";
-import { CatalogMember, ConversionOptions, MemberResult } from "../types";
+import { missingRequiredProp, ModelType } from "../Message";
+import {
+  CatalogMember,
+  ConversionOptions,
+  MemberResult,
+  MembersResult,
+} from "../types";
 import {
   catalogMemberProps,
   copyProps,
@@ -16,25 +21,21 @@ export function groupFromConvertMembersArray(
     members: unknown[],
     label: string,
     options: ConversionOptions
-  ) => {
-    members: CatalogMember[];
-    messages: Message[];
-  }
+  ) => MembersResult
 ) {
   return function group(
     group: CatalogMember,
     options: ConversionOptions
   ): MemberResult {
-    if (!is.array(group.items)) {
+    if (!options.partial && !is.array(group.items)) {
       return nullResult(
         missingRequiredProp(ModelType.Group, "items", "array", group.name)
       );
     }
-    const convertedMembers = convertMembersArray(
-      group.items,
-      group.name,
-      options
-    );
+    const convertedMembers: MembersResult | undefined = is.array(group.items)
+      ? convertMembersArray(group.items, group.name, options)
+      : undefined;
+
     const unknownProps = getUnknownProps(group, [
       "name",
       "type",
@@ -50,9 +51,9 @@ export function groupFromConvertMembersArray(
       member: {
         type: "group",
         name: group.name,
-        members: convertedMembers.members,
+        members: convertedMembers?.members,
       },
-      messages: [...convertedMembers.messages, ...extraPropsMessages],
+      messages: [...(convertedMembers?.messages || []), ...extraPropsMessages],
     };
     copyProps(group, result.member, catalogMemberProps);
     if (options.copyUnknownProperties) {
@@ -77,7 +78,7 @@ export function wmsCatalogItem(
       item.name
     );
   }
-  if (error) {
+  if (!options.partial && error) {
     return {
       member: null,
       messages: [error],
@@ -142,7 +143,7 @@ export function sosCatalogItem(
   item: CatalogMember,
   options: ConversionOptions
 ): MemberResult {
-  if (!is.string(item.url)) {
+  if (!options.partial && !is.string(item.url)) {
     return nullResult(
       missingRequiredProp(ModelType.SosItem, "url", "string", item.name)
     );
@@ -196,7 +197,7 @@ export function esriFeatureServerCatalogItem(
   item: CatalogMember,
   options: ConversionOptions
 ): MemberResult {
-  if (!is.string(item.url)) {
+  if (!options.partial && !is.string(item.url)) {
     return nullResult(
       missingRequiredProp(
         ModelType.EsriFeatureServerItem,
@@ -251,7 +252,7 @@ export function ckanCatalogGroup(
   options: ConversionOptions
 ): MemberResult {
   // See details of what's been ported https://github.com/TerriaJS/terriajs/pull/4160
-  if (!is.string(item.url)) {
+  if (!options.partial && !is.string(item.url)) {
     return nullResult(
       missingRequiredProp(ModelType.CkanGroup, "url", "string", item.name)
     );
@@ -317,6 +318,7 @@ export function geoJsonCatalogItem(
   options: ConversionOptions
 ): MemberResult {
   if (
+    !options.partial &&
     !is.plainObject(item.data) &&
     !is.string(item.data) &&
     !is.string(item.url)

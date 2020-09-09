@@ -5,6 +5,7 @@ import {
   ConversionOptions,
   MemberResult,
   PlainObject,
+  MembersResult,
 } from "../types";
 
 export function isNotNull<T>(arg: T | null): arg is T {
@@ -22,8 +23,8 @@ export function nullResult(...messages: Message[]): MemberResult {
   };
 }
 
-export function isCatalogMember(m: any): m is CatalogMember {
-  return is.string(m?.type) && is.string(m?.name);
+export function isCatalogMember(m: any, partial = false): m is CatalogMember {
+  return is.string(m?.type) && (is.string(m?.name) || partial);
 }
 
 export const catalogMemberProps = ["description", "info"];
@@ -96,10 +97,7 @@ export function convertMembersArrayWithConvertMember(
     members: unknown[],
     label: string,
     options: ConversionOptions
-  ): {
-    members: CatalogMember[];
-    messages: Message[];
-  } {
+  ): MembersResult {
     const results = members.map((m) => convertMember(m, options));
     const convertedMembers = results
       .map(({ member }) => member)
