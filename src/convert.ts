@@ -135,3 +135,106 @@ export function convertCatalog(
   }
   return result;
 }
+
+export type Share = { version: string; initSources: any[] };
+export type ShareResult = { result: Share | null; messages: Message[] };
+export function convertShare(json: unknown): ShareResult {
+  if (!is.plainObject(json)) {
+    return {
+      result: null,
+      messages: [inputNotPlainObject()],
+    };
+  }
+
+  // If version 8 return
+  if (
+    "version" in json &&
+    typeof json.version === "string" &&
+    json.version.startsWith("8")
+  ) {
+    return { result: json as Share, messages: [] };
+  }
+
+  console.log("OMG CONVERT");
+
+  if (!Array.isArray(json.initSources)) {
+    return {
+      result: null,
+      messages: [
+        missingRequiredProp(
+          ModelType.Share,
+          "initSources",
+          undefined,
+          "Init sources"
+        ),
+      ],
+    };
+  }
+
+  const messages: Message[] = [];
+
+  const initializationUrls: string[] = [];
+
+  // Crunch v7 initSources together + extract initializationUrls
+  const v7InitSource = json.initSources.reduce<any>((sources, current) => {
+    if (typeof current === "string") {
+      initializationUrls.push(current);
+      return sources;
+    }
+    return Object.assign(sources, current);
+  }, {});
+
+  const v8InitSource: any = { stratum: "user" };
+
+  const workbenchIds: string[] = [];
+
+  // convert members
+  if ("sharedCatalogMembers" in v7InitSource) {
+    v8InitSource.models = Object.entries(
+      v7InitSource.sharedCatalogMembers
+    ).reduce<any>((convertedMembers, [id, v7Member]) => {
+      console.log(`Converting member ${id}`);
+      if ((v7Member as any).isEnabled) {
+        workbenchIds.push(id);
+      }
+      const result = convertMember(v7Member, { partial: true });
+      messages.push(...result.messages);
+      convertedMembers[id] = result.member;
+      return convertedMembers;
+    }, {});
+  } else {
+    v8InitSource.models = {};
+  }
+
+  // User added data
+  if ("catalog" in v7InitSource) {
+    v8InitSource.models["__User-Added_Data__"] = {};
+  }
+
+  v8InitSource.workbench = workbenchIds;
+
+  // Copy over common properties
+  [
+    "initialCamera",
+    "homeCamera",
+    "baseMapName",
+    "viewerMode",
+    "currentTime",
+    "showSplitter",
+    "splitPosition",
+    "previewedItemId",
+    "stories",
+    // Not currently used:
+    //"timeline"
+    //"locationMarker"
+    //"sharedFromExplorerPanel"
+    //"pickedFeatures"
+  ].forEach((prop) => (v8InitSource[prop] = v7InitSource[prop]));
+
+  const v8json: { version: string; initSources: any[] } = {
+    version: "8.0.0",
+    initSources: [...initializationUrls, v8InitSource],
+  };
+
+  return { result: v8json, messages };
+}
