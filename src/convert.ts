@@ -138,6 +138,12 @@ export function convertCatalog(
 
 export type Share = { version: string; initSources: any[] };
 export type ShareResult = { result: Share | null; messages: Message[] };
+export type Story = {
+  title: string;
+  text: string;
+  id: string;
+  shareData: Share;
+};
 export function convertShare(json: unknown): ShareResult {
   if (!is.plainObject(json)) {
     return {
@@ -211,6 +217,19 @@ export function convertShare(json: unknown): ShareResult {
     v8InitSource.models["__User-Added_Data__"] = {};
   }
 
+  if ("stories" in v7InitSource && Array.isArray(v7InitSource.stories)) {
+    v8InitSource.stories = v7InitSource.stories.map((story: Story) => {
+      const result = convertShare(story.shareData);
+      // Add story details to message paths
+      messages.push(
+        ...result.messages.map((message) => {
+          return { ...message, path: ["Story", story.title, ...message.path] };
+        })
+      );
+      return { ...story, shareData: result.result };
+    });
+  }
+
   v8InitSource.workbench = workbenchIds;
 
   // Copy over common properties
@@ -223,7 +242,6 @@ export function convertShare(json: unknown): ShareResult {
     "showSplitter",
     "splitPosition",
     "previewedItemId",
-    "stories",
     // Not currently used:
     //"timeline"
     //"locationMarker"
