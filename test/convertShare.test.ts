@@ -11,7 +11,7 @@ describe("Test convertShare", () => {
     expect(res.converted).toBeTruthy();
     expect(res.result).toMatchObject(v8);
     expect(
-      res.messages.filter(({ severity }) => severity === Severity.Error)
+      (res.messages || []).filter(({ severity }) => severity === Severity.Error)
     ).toHaveLength(0);
   });
 });
