@@ -14,4 +14,17 @@ describe("Test convertShare", () => {
       (res.messages || []).filter(({ severity }) => severity === Severity.Error)
     ).toHaveLength(0);
   });
+
+  it("Basic share link with story", () => {
+    const file = "share-story";
+    const [v7, v8] = ["v7", "v8"].map((folder) =>
+      require(`./samples/${folder}/${file}.json`)
+    );
+    const res = convertShare(v7);
+    expect(res.converted).toBeTruthy();
+    expect(res.result).toMatchObject(v8);
+    expect(
+      (res.messages || []).filter(({ severity }) => severity === Severity.Error)
+    ).toHaveLength(0);
+  });
 });
