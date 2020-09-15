@@ -7,6 +7,7 @@ import {
   PlainObject,
   MembersResult,
 } from "../types";
+import { type } from "os";
 
 export function isNotNull<T>(arg: T | null): arg is T {
   return arg !== null;
@@ -27,10 +28,24 @@ export function isCatalogMember(m: any, partial = false): m is CatalogMember {
   return is.string(m?.type) && (is.string(m?.name) || partial);
 }
 
-export const catalogMemberProps = ["description", "info"];
+export const catalogMemberProps: CopyProps[] = [
+  "description",
+  "info",
+  { v7: "isShown", v8: "show" },
+  "splitDirection",
+];
 
-export function getUnknownProps(o: PlainObject, knownProperties: string[]) {
-  return Object.keys(o).filter((prop) => knownProperties.indexOf(prop) === -1);
+export const catalogMemberPropsRemove = ["isEnabled", "parents"];
+
+export function getUnknownProps(o: PlainObject, knownProperties: CopyProps[]) {
+  return Object.keys(o).filter(
+    (prop) =>
+      knownProperties.findIndex((knownProp) =>
+        typeof knownProp === "string"
+          ? knownProp === prop
+          : knownProp.v7 === prop
+      ) === -1
+  );
 }
 
 export function propsToWarnings(
@@ -41,10 +56,12 @@ export function propsToWarnings(
   return properties.map((prop) => unknownProp(modelType, prop, label));
 }
 
+export type CopyProps = string | { v7: string; v8: string };
+
 export function copyProps(
   source: PlainObject,
   destination: PlainObject,
-  properties: (string | { v7: string; v8: string })[]
+  properties: CopyProps[]
 ) {
   properties.forEach((prop) => {
     const propV7 = is.string(prop) ? prop : prop.v7;

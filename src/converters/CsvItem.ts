@@ -12,6 +12,7 @@ import {
   getUnknownProps,
   nullResult,
   propsToWarnings,
+  catalogMemberPropsRemove,
 } from "./helpers";
 
 function tableStyle(tableStyle: PlainObject) {
@@ -53,6 +54,7 @@ export function csvCatalogItem(
     "name",
     "type",
     ...catalogMemberProps,
+    ...catalogMemberPropsRemove,
     "url",
     "data",
     "opacity",

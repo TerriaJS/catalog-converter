@@ -137,7 +137,11 @@ export function convertCatalog(
 }
 
 export type Share = { version: string; initSources: any[] };
-export type ShareResult = { result: Share | null; messages: Message[] };
+export type ShareResult = {
+  result: Share | null;
+  messages?: Message[];
+  converted?: boolean;
+};
 export type Story = {
   title: string;
   text: string;
@@ -158,10 +162,8 @@ export function convertShare(json: unknown): ShareResult {
     typeof json.version === "string" &&
     json.version.startsWith("8")
   ) {
-    return { result: json as Share, messages: [] };
+    return { result: json as Share, converted: false };
   }
-
-  console.log("OMG CONVERT");
 
   if (!Array.isArray(json.initSources)) {
     return {
@@ -192,29 +194,31 @@ export function convertShare(json: unknown): ShareResult {
 
   const v8InitSource: any = { stratum: "user" };
 
-  const workbenchIds: string[] = [];
+  const workbenchIds: Set<string> = new Set();
 
-  // convert members
-  if ("sharedCatalogMembers" in v7InitSource) {
-    v8InitSource.models = Object.entries(
-      v7InitSource.sharedCatalogMembers
-    ).reduce<any>((convertedMembers, [id, v7Member]) => {
-      console.log(`Converting member ${id}`);
+  const converMembers = (members: any) =>
+    Object.entries(members).reduce<any>((convertedMembers, [id, v7Member]) => {
       if ((v7Member as any).isEnabled) {
-        workbenchIds.push(id);
+        workbenchIds.add(id);
       }
       const result = convertMember(v7Member, { partial: true });
       messages.push(...result.messages);
       convertedMembers[id] = result.member;
       return convertedMembers;
     }, {});
+
+  // Shared catalog members
+  if ("sharedCatalogMembers" in v7InitSource) {
+    v8InitSource.models = converMembers(v7InitSource.sharedCatalogMembers);
   } else {
     v8InitSource.models = {};
   }
 
   // User added data
   if ("catalog" in v7InitSource) {
-    v8InitSource.models["__User-Added_Data__"] = {};
+    // v8InitSource.models["__User-Added_Data__"] = converMembers(
+    //   v7InitSource.catalog
+    // );
   }
 
   if ("stories" in v7InitSource && Array.isArray(v7InitSource.stories)) {
@@ -222,15 +226,15 @@ export function convertShare(json: unknown): ShareResult {
       const result = convertShare(story.shareData);
       // Add story details to message paths
       messages.push(
-        ...result.messages.map((message) => {
+        ...(result.messages?.map((message) => {
           return { ...message, path: ["Story", story.title, ...message.path] };
-        })
+        }) || [])
       );
       return { ...story, shareData: result.result };
     });
   }
 
-  v8InitSource.workbench = workbenchIds;
+  v8InitSource.workbench = Array.from(workbenchIds);
 
   // Copy over common properties
   [
@@ -254,5 +258,5 @@ export function convertShare(json: unknown): ShareResult {
     initSources: [...initializationUrls, v8InitSource],
   };
 
-  return { result: v8json, messages };
+  return { result: v8json, messages, converted: true };
 }

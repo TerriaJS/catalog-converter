@@ -13,6 +13,7 @@ import {
   getUnknownProps,
   nullResult,
   propsToWarnings,
+  catalogMemberPropsRemove,
 } from "./helpers";
 
 // Dependency injection to break circular dependency
@@ -36,10 +37,14 @@ export function groupFromConvertMembersArray(
       ? convertMembersArray(group.items, group.name, options)
       : undefined;
 
+    const propsToCopy = ["isOpen"];
+
     const unknownProps = getUnknownProps(group, [
       "name",
       "type",
+      ...propsToCopy,
       ...catalogMemberProps,
+      ...catalogMemberPropsRemove,
       "items",
     ]);
     const extraPropsMessages = propsToWarnings(
@@ -55,7 +60,7 @@ export function groupFromConvertMembersArray(
       },
       messages: [...(convertedMembers?.messages || []), ...extraPropsMessages],
     };
-    copyProps(group, result.member, catalogMemberProps);
+    copyProps(group, result.member, [...catalogMemberProps, ...propsToCopy]);
     if (options.copyUnknownProperties) {
       copyProps(group, result.member, unknownProps);
     }
@@ -98,6 +103,7 @@ export function wmsCatalogItem(
     "name",
     "type",
     ...catalogMemberProps,
+    ...catalogMemberPropsRemove,
     ...propsToCopy,
     "featureTimesProperty",
     "chartType",
@@ -117,6 +123,7 @@ export function wmsCatalogItem(
     ...propsToCopy,
     { v7: "featureTimesProperty", v8: "timeFilterPropertyName" },
   ]);
+
   if (item.chartType === "momentPoints") {
     member.chartType = "momentPoints";
   } else if (item.chartType === "moment") {
@@ -163,6 +170,7 @@ export function sosCatalogItem(
     "name",
     "type",
     ...catalogMemberProps,
+    ...catalogMemberPropsRemove,
     ...propsToCopy,
     "featureInfoTemplate",
   ]);
@@ -187,6 +195,7 @@ export function sosCatalogItem(
   if (options.copyUnknownProperties) {
     copyProps(item, member, unknownProps);
   }
+
   return {
     member,
     messages,
@@ -213,6 +222,7 @@ export function esriFeatureServerCatalogItem(
     "name",
     "type",
     ...catalogMemberProps,
+    ...catalogMemberPropsRemove,
     ...propsToCopy,
     "featureInfoTemplate",
   ]);
@@ -241,6 +251,7 @@ export function esriFeatureServerCatalogItem(
   if (options.copyUnknownProperties) {
     copyProps(item, member, unknownProps);
   }
+
   return {
     member,
     messages,
@@ -267,6 +278,7 @@ export function ckanCatalogGroup(
     "name",
     "type",
     ...catalogMemberProps,
+    ...catalogMemberPropsRemove,
     ...propsToCopy,
     "esriMapServerResourceFormat",
     "wmsParameters",
@@ -341,6 +353,7 @@ export function geoJsonCatalogItem(
     "name",
     "type",
     ...catalogMemberProps,
+    ...catalogMemberPropsRemove,
     ...propsToCopy,
     "data",
     "featureInfoTemplate",
@@ -358,6 +371,7 @@ export function geoJsonCatalogItem(
     copyProps(item, member, unknownProps);
   }
   copyProps(item, member, [...catalogMemberProps, ...propsToCopy]);
+
   if (
     is.string(item.featureInfoTemplate) ||
     is.plainObject(item.featureInfoTemplate)
