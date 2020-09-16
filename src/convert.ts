@@ -31,6 +31,7 @@ import {
   unknownType,
 } from "./Message";
 import { CatalogMember, ConversionOptions, MemberResult } from "./types";
+import { isDeepStrictEqual } from "util";
 
 // Use dependency injection to break circular dependencies created by
 //  group -> convertMembersArray -> convertMember -> group  recursion
@@ -196,30 +197,78 @@ export function convertShare(json: unknown): ShareResult {
 
   const workbenchIds: Set<string> = new Set();
 
-  const converMembers = (members: any) =>
+  const convertMembers = (members: any) =>
     Object.entries(members).reduce<any>((convertedMembers, [id, v7Member]) => {
-      if ((v7Member as any).isEnabled) {
-        workbenchIds.add(id);
+      if (is.plainObject(v7Member)) {
+        let knownContainerUniqueIds = ["/"];
+        if (Array.isArray(v7Member.parents) && v7Member.parents.length > 0) {
+          knownContainerUniqueIds = v7Member.parents
+            .map((parent: string) => {
+              if (parent === "Root Group/User-Added Data") {
+                return "__User-Added_Data__";
+              }
+              if (parent === "Root Group") {
+                return "/";
+              }
+              return parent.replace("Root Group", "/");
+            })
+            .filter((parent) => typeof parent !== "undefined") as string[];
+        }
+
+        // v7 Id has format /Root Group/$someContainerId/$someLowerContainerId/$catalogName
+        // v8 Id has format //$someContainerId/$someLowerContainerId/$catalogName
+        // So replace "Root Group" with "/"
+        let newId =
+          typeof v7Member.id === "string" && v7Member.id !== ""
+            ? v7Member.id
+            : id.replace("Root Group", "/");
+
+        if (id === "Root Group/User-Added Data") {
+          newId = "__User-Added_Data__";
+        }
+
+        newId = newId.replace("//User-Added Data", "");
+
+        if (v7Member.isEnabled) {
+          workbenchIds.add(newId);
+        }
+
+        const result = convertMember(v7Member, { partial: true });
+        messages.push(...result.messages);
+        convertedMembers[newId] = {
+          ...result.member,
+          knownContainerUniqueIds,
+        };
+        return convertedMembers;
       }
-      const result = convertMember(v7Member, { partial: true });
-      messages.push(...result.messages);
-      convertedMembers[id] = result.member;
-      return convertedMembers;
     }, {});
 
   // Shared catalog members
   if ("sharedCatalogMembers" in v7InitSource) {
-    v8InitSource.models = converMembers(v7InitSource.sharedCatalogMembers);
+    v8InitSource.models = convertMembers(v7InitSource.sharedCatalogMembers);
   } else {
     v8InitSource.models = {};
   }
 
   // User added data
-  if ("catalog" in v7InitSource) {
-    // v8InitSource.models["__User-Added_Data__"] = converMembers(
-    //   v7InitSource.catalog
-    // );
+  if ("catalog" in v7InitSource && Array.isArray(v7InitSource.catalog)) {
+    const userAddedData = v7InitSource.catalog.find(
+      (item: any) => item.id === "Root Group/User-Added Data"
+    );
+    if (
+      typeof userAddedData !== "undefined" &&
+      Array.isArray(userAddedData.items) &&
+      userAddedData.items.length > 0
+    ) {
+      v8InitSource.models = {
+        ...v8InitSource.models,
+        ...convertMembers({ "Root Group/User-Added Data": userAddedData }),
+      };
+    }
   }
+
+  // Add catalog
+  // Maybe later...
 
   if ("stories" in v7InitSource && Array.isArray(v7InitSource.stories)) {
     v8InitSource.stories = v7InitSource.stories.map((story: Story) => {
