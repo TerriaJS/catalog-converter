@@ -198,7 +198,7 @@ export function convertShare(json: unknown): ShareResult {
 
   const workbenchIds: Set<string> = new Set();
 
-  const convertMembers = (members: any) =>
+  const convertMembers = (members: any, userAdded = false) =>
     Object.entries(members).reduce<any>((convertedMembers, [id, v7Member]) => {
       if (is.plainObject(v7Member)) {
         // Get `knownContainerUniqueIds` from v7 `parents` property
@@ -227,16 +227,25 @@ export function convertShare(json: unknown): ShareResult {
             ? v7Member.id
             : id.replace("Root Group", "/");
 
+        // For some reason user added data doesn't have the __User-Added_Data__ group in ids (in v8)
+        newId = newId.replace("//User-Added Data", "");
+
+        // Replace User Added Data group id
         if (id === "Root Group/User-Added Data") {
           newId = "__User-Added_Data__";
         }
 
-        // For some reason user added data doesn't have the __User-Added_Data__ group in ids (in v8)
-        newId = newId.replace("//User-Added Data", "");
-
         if (v7Member.isEnabled) {
           workbenchIds.add(newId);
         }
+
+        // Don't need to convert user added data - this is done through "__User-Added_Data__" group
+        if (
+          !userAdded &&
+          (id === "Root Group/User-Added Data" ||
+            knownContainerUniqueIds.includes("__User-Added_Data__"))
+        )
+          return;
 
         const result = convertMember(v7Member, { partial: true });
         messages.push(...result.messages);
@@ -251,23 +260,38 @@ export function convertShare(json: unknown): ShareResult {
   // Shared catalog members
   if ("sharedCatalogMembers" in v7InitSource) {
     v8InitSource.models = convertMembers(v7InitSource.sharedCatalogMembers);
-
-    // Add user added members to "__User-Added_Data__" group (if they have "__User-Added_Data__" in knownContainerUniqueIds)
-    if (typeof v8InitSource.models["__User-Added_Data__"] !== "undefined") {
-      v8InitSource.models["__User-Added_Data__"].members = Object.entries(
-        v8InitSource.models
-      )
-        .map(([id, model]) =>
-          isPlainObject(model) &&
-          Array.isArray((model as any).knownContainerUniqueIds) &&
-          (model as any).knownContainerUniqueIds.includes("__User-Added_Data__")
-            ? id
-            : undefined
-        )
-        .filter((id) => typeof id === "string");
-    }
   } else {
     v8InitSource.models = {};
+  }
+
+  // User added data
+  if ("catalog" in v7InitSource && Array.isArray(v7InitSource.catalog)) {
+    // Only add "Root Group/User-Added Data" Catalog Group
+    const userAddedData = v7InitSource.catalog.find(
+      (item: any) => item.id === "Root Group/User-Added Data"
+    );
+
+    if (
+      typeof userAddedData !== "undefined" &&
+      Array.isArray(userAddedData.items) &&
+      userAddedData.items.length > 0
+    ) {
+      const userAddedDataV8 = convertMembers(
+        {
+          "Root Group/User-Added Data": userAddedData,
+        },
+        true
+      );
+
+      console.log(userAddedDataV8);
+
+      // Add IDs to user added models - so they show up in the workbenck (from sharedCatalogMembers)
+      userAddedDataV8?.["__User-Added_Data__"].members.forEach(
+        (member: any) =>
+          member !== null && (member.id = member.id ?? `/${member.name}`)
+      );
+      v8InitSource.models = { ...userAddedDataV8, ...v8InitSource.models };
+    }
   }
 
   if ("stories" in v7InitSource && Array.isArray(v7InitSource.stories)) {
