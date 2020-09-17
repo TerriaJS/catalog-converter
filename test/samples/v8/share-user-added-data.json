@@ -1,0 +1,77 @@
+{
+  "version": "8.0.0",
+  "initSources": [
+    {
+      "stratum": "user",
+      "models": {
+        "//Example Datasets": {
+          "type": "group",
+          "isOpen": true,
+          "knownContainerUniqueIds": [
+            "/"
+          ]
+        },
+        "__User-Added_Data__": {
+          "type": "group",
+          "members": [
+            "/http://localhost:3001/data/2011Census_TOT_LGA.csv"
+          ],
+          "isOpen": true,
+          "knownContainerUniqueIds": [
+            "/"
+          ]
+        },
+        "/http://localhost:3001/data/2011Census_TOT_LGA.csv": {
+          "type": "csv",
+          "name": "http://localhost:3001/data/2011Census_TOT_LGA.csv",
+          "show": true,
+          "splitDirection": 0,
+          "url": "http://localhost:3001/data/2011Census_TOT_LGA.csv",
+          "opacity": 0.8,
+          "knownContainerUniqueIds": [
+            "__User-Added_Data__"
+          ]
+        }
+      },
+      "stories": [],
+      "workbench": [
+        "/http://localhost:3001/data/2011Census_TOT_LGA.csv"
+      ],
+      "initialCamera": {
+        "west": 99.80193424683281,
+        "south": -38.33870816951407,
+        "east": 167.19806560380428,
+        "north": -8.372574066265075,
+        "position": {
+          "x": -7372114.527426336,
+          "y": 7768587.770296943,
+          "z": -5326020.687059763
+        },
+        "direction": {
+          "x": 0.6155212576571711,
+          "y": -0.6486240680070703,
+          "z": 0.44768336999948305
+        },
+        "up": {
+          "x": -0.30816489620114385,
+          "y": 0.3247380429260368,
+          "z": 0.8941921494991476
+        }
+      },
+      "homeCamera": {
+        "west": 109,
+        "south": -45,
+        "east": 158,
+        "north": -8
+      },
+      "baseMapName": "Bing Maps Aerial with Labels",
+      "viewerMode": "3d",
+      "currentTime": {
+        "dayNumber": 2459109,
+        "secondsOfDay": 85063
+      },
+      "showSplitter": false,
+      "splitPosition": 0.5
+    }
+  ]
+}

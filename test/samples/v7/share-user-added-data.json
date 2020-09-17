@@ -1,0 +1,173 @@
+{
+  "version": "0.0.05",
+  "initSources": [
+    {
+      "initFragment": "terria"
+    },
+    {
+      "catalog": [
+        {
+          "name": "User-Added Data",
+          "description": "The group for data that was added by the user via the Add Data panel.",
+          "info": [],
+          "isUserSupplied": true,
+          "isPromoted": false,
+          "isHidden": false,
+          "forceProxy": false,
+          "customProperties": {},
+          "id": "Root Group/User-Added Data",
+          "shortReportSections": [],
+          "isWaitingForDisclaimer": false,
+          "hideSource": false,
+          "nameInCatalog": "User-Added Data",
+          "isOpen": true,
+          "items": [
+            {
+              "name": "http://localhost:3001/data/2011Census_TOT_LGA.csv",
+              "description": "",
+              "info": [],
+              "isUserSupplied": true,
+              "isPromoted": false,
+              "isHidden": false,
+              "forceProxy": false,
+              "customProperties": {},
+              "id": "Root Group/User-Added Data/http://localhost:3001/data/2011Census_TOT_LGA.csv",
+              "shortReportSections": [],
+              "isLoading": false,
+              "isWaitingForDisclaimer": false,
+              "hideSource": false,
+              "nameInCatalog": "http://localhost:3001/data/2011Census_TOT_LGA.csv",
+              "nowViewingIndex": 0,
+              "url": "http://localhost:3001/data/2011Census_TOT_LGA.csv",
+              "isEnabled": true,
+              "isShown": true,
+              "isLegendVisible": true,
+              "displayChoicesBeforeLegend": false,
+              "isEnableable": true,
+              "isMappable": true,
+              "showsInfo": true,
+              "maximumShownFeatureInfos": 100,
+              "zoomOnEnable": false,
+              "dateFormat": {},
+              "useOwnClock": false,
+              "disablePreview": false,
+              "opacity": 0.8,
+              "keepOnTop": false,
+              "polling": {
+                "isPolling": false
+              },
+              "showWarnings": true,
+              "colors": [
+                "#66c2a5",
+                "#fc8d62",
+                "#8da0cb",
+                "#e78ac3",
+                "#a6d854",
+                "#ffd92f",
+                "#f44a4c",
+                "#b3b3b3"
+              ],
+              "isSampled": true,
+              "splitDirection": 0,
+              "tableStyle": {
+                "scale": 1,
+                "colorBinMethod": "auto",
+                "legendTicks": 3,
+                "dataVariable": "Tot_P_M"
+              },
+              "regenerationOptions": {},
+              "isCsvForCharting": false,
+              "chartDisclaimer": null,
+              "treat404AsError": false,
+              "type": "csv",
+              "parents": [
+                "Root Group/User-Added Data"
+              ]
+            }
+          ],
+          "preserveOrder": false,
+          "type": "group",
+          "parents": []
+        }
+      ]
+    },
+    {
+      "sharedCatalogMembers": {
+        "Root Group/Example Datasets": {
+          "isOpen": true,
+          "type": "group",
+          "parents": []
+        },
+        "Root Group/User-Added Data": {
+          "isOpen": true,
+          "type": "group",
+          "parents": []
+        },
+        "Root Group/User-Added Data/http://localhost:3001/data/2011Census_TOT_LGA.csv": {
+          "name": "http://localhost:3001/data/2011Census_TOT_LGA.csv",
+          "nowViewingIndex": 0,
+          "url": "http://localhost:3001/data/2011Census_TOT_LGA.csv",
+          "isEnabled": true,
+          "isShown": true,
+          "isLegendVisible": true,
+          "useOwnClock": false,
+          "opacity": 0.8,
+          "keepOnTop": false,
+          "splitDirection": 0,
+          "tableStyle": {
+            "scale": 1,
+            "colorBinMethod": "auto",
+            "legendTicks": 3,
+            "dataVariable": "Tot_P_M"
+          },
+          "regenerationOptions": {},
+          "isCsvForCharting": false,
+          "type": "csv",
+          "parents": [
+            "Root Group/User-Added Data"
+          ]
+        }
+      }
+    },
+    {
+      "initialCamera": {
+        "west": 99.80193416769521,
+        "south": -38.33870899502764,
+        "east": 167.19806640201514,
+        "north": -8.372574956619845,
+        "position": {
+          "x": -7372114.527426343,
+          "y": 7768587.770296935,
+          "z": -5326020.687059763
+        },
+        "direction": {
+          "x": 0.615521264151261,
+          "y": -0.6486240748504121,
+          "z": 0.4476833511557926
+        },
+        "up": {
+          "x": -0.3081648832300038,
+          "y": 0.3247380292573062,
+          "z": 0.8941921589333688
+        }
+      },
+      "homeCamera": {
+        "west": 109,
+        "south": -45,
+        "east": 158,
+        "north": -8
+      },
+      "baseMapName": "Bing Maps Aerial with Labels",
+      "viewerMode": "3d",
+      "currentTime": {
+        "dayNumber": 2459109,
+        "secondsOfDay": 82372.642
+      },
+      "showSplitter": false,
+      "splitPosition": 0.5
+    },
+    {
+      "stories": []
+    }
+  ]
+}

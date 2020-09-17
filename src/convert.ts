@@ -32,6 +32,7 @@ import {
 } from "./Message";
 import { CatalogMember, ConversionOptions, MemberResult } from "./types";
 import { isDeepStrictEqual } from "util";
+import { isPlainObject } from "lodash";
 
 // Use dependency injection to break circular dependencies created by
 //  group -> convertMembersArray -> convertMember -> group  recursion
@@ -200,6 +201,7 @@ export function convertShare(json: unknown): ShareResult {
   const convertMembers = (members: any) =>
     Object.entries(members).reduce<any>((convertedMembers, [id, v7Member]) => {
       if (is.plainObject(v7Member)) {
+        // Get `knownContainerUniqueIds` from v7 `parents` property
         let knownContainerUniqueIds = ["/"];
         if (Array.isArray(v7Member.parents) && v7Member.parents.length > 0) {
           knownContainerUniqueIds = v7Member.parents
@@ -215,6 +217,8 @@ export function convertShare(json: unknown): ShareResult {
             .filter((parent) => typeof parent !== "undefined") as string[];
         }
 
+        // Firstly, if model has explicit `id`, use it.
+        // Otherwise, try to guess id based on this:
         // v7 Id has format /Root Group/$someContainerId/$someLowerContainerId/$catalogName
         // v8 Id has format //$someContainerId/$someLowerContainerId/$catalogName
         // So replace "Root Group" with "/"
@@ -227,6 +231,7 @@ export function convertShare(json: unknown): ShareResult {
           newId = "__User-Added_Data__";
         }
 
+        // For some reason user added data doesn't have the __User-Added_Data__ group in ids (in v8)
         newId = newId.replace("//User-Added Data", "");
 
         if (v7Member.isEnabled) {
@@ -246,29 +251,24 @@ export function convertShare(json: unknown): ShareResult {
   // Shared catalog members
   if ("sharedCatalogMembers" in v7InitSource) {
     v8InitSource.models = convertMembers(v7InitSource.sharedCatalogMembers);
+
+    // Add user added members to "__User-Added_Data__" group (if they have "__User-Added_Data__" in knownContainerUniqueIds)
+    if (typeof v8InitSource.models["__User-Added_Data__"] !== "undefined") {
+      v8InitSource.models["__User-Added_Data__"].members = Object.entries(
+        v8InitSource.models
+      )
+        .map(([id, model]) =>
+          isPlainObject(model) &&
+          Array.isArray((model as any).knownContainerUniqueIds) &&
+          (model as any).knownContainerUniqueIds.includes("__User-Added_Data__")
+            ? id
+            : undefined
+        )
+        .filter((id) => typeof id === "string");
+    }
   } else {
     v8InitSource.models = {};
   }
-
-  // User added data
-  if ("catalog" in v7InitSource && Array.isArray(v7InitSource.catalog)) {
-    const userAddedData = v7InitSource.catalog.find(
-      (item: any) => item.id === "Root Group/User-Added Data"
-    );
-    if (
-      typeof userAddedData !== "undefined" &&
-      Array.isArray(userAddedData.items) &&
-      userAddedData.items.length > 0
-    ) {
-      v8InitSource.models = {
-        ...v8InitSource.models,
-        ...convertMembers({ "Root Group/User-Added Data": userAddedData }),
-      };
-    }
-  }
-
-  // Add catalog
-  // Maybe later...
 
   if ("stories" in v7InitSource && Array.isArray(v7InitSource.stories)) {
     v8InitSource.stories = v7InitSource.stories.map((story: Story) => {
@@ -296,10 +296,10 @@ export function convertShare(json: unknown): ShareResult {
     "splitPosition",
     "previewedItemId",
     // Not currently used:
-    //"timeline"
-    //"locationMarker"
-    //"sharedFromExplorerPanel"
-    //"pickedFeatures"
+    //"timeline" - v7 timeline is different from v8
+    //"locationMarker" - not in v8
+    //"sharedFromExplorerPanel" - not in v8
+    //"pickedFeatures" - not in v8 share links
   ].forEach((prop) => (v8InitSource[prop] = v7InitSource[prop]));
 
   const v8json: { version: string; initSources: any[] } = {
