@@ -91,6 +91,7 @@ export function wmsCatalogItem(
     "linkedWcsUrl",
     "linkedWcsCoverage",
     "chartColor",
+    "leafletUpdateInterval",
   ];
 
   const unknownProps = getUnknownProps(item, [
