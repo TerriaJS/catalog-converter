@@ -7,7 +7,6 @@ import {
   PlainObject,
   MembersResult,
 } from "../types";
-import { type } from "os";
 
 export function isNotNull<T>(arg: T | null): arg is T {
   return arg !== null;
@@ -33,9 +32,16 @@ export const catalogMemberProps: CopyProps[] = [
   "info",
   { v7: "isShown", v8: "show" },
   "splitDirection",
+  "url",
+  "opacity",
 ];
 
-export const catalogMemberPropsRemove = ["isEnabled", "parents"];
+export const catalogMemberPropsIgnore = [
+  "name",
+  "type",
+  "isEnabled",
+  "parents",
+];
 
 export function getUnknownProps(o: PlainObject, knownProperties: CopyProps[]) {
   return Object.keys(o).filter(

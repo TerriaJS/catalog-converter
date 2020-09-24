@@ -12,7 +12,7 @@ import {
   getUnknownProps,
   nullResult,
   propsToWarnings,
-  catalogMemberPropsRemove,
+  catalogMemberPropsIgnore,
 } from "./helpers";
 
 function tableStyle(tableStyle: PlainObject) {
@@ -51,10 +51,8 @@ export function csvCatalogItem(
     );
   }
   const unknownProps = getUnknownProps(item, [
-    "name",
-    "type",
     ...catalogMemberProps,
-    ...catalogMemberPropsRemove,
+    ...catalogMemberPropsIgnore,
     "url",
     "data",
     "opacity",

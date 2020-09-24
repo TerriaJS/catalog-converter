@@ -31,8 +31,6 @@ import {
   unknownType,
 } from "./Message";
 import { CatalogMember, ConversionOptions, MemberResult } from "./types";
-import { isDeepStrictEqual } from "util";
-import { isPlainObject } from "lodash";
 
 // Use dependency injection to break circular dependencies created by
 //  group -> convertMembersArray -> convertMember -> group  recursion

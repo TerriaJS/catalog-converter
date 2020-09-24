@@ -13,7 +13,7 @@ import {
   getUnknownProps,
   nullResult,
   propsToWarnings,
-  catalogMemberPropsRemove,
+  catalogMemberPropsIgnore,
 } from "./helpers";
 
 // Dependency injection to break circular dependency
@@ -40,11 +40,9 @@ export function groupFromConvertMembersArray(
     const propsToCopy = ["isOpen"];
 
     const unknownProps = getUnknownProps(group, [
-      "name",
-      "type",
       ...propsToCopy,
       ...catalogMemberProps,
-      ...catalogMemberPropsRemove,
+      ...catalogMemberPropsIgnore,
       "items",
     ]);
     const extraPropsMessages = propsToWarnings(
@@ -91,21 +89,17 @@ export function wmsCatalogItem(
   }
 
   const propsToCopy = [
-    "url",
     "layers",
-    "opacity",
     "linkedWcsUrl",
     "linkedWcsCoverage",
     "chartColor",
+    { v7: "featureTimesProperty", v8: "timeFilterPropertyName" },
   ];
 
   const unknownProps = getUnknownProps(item, [
-    "name",
-    "type",
     ...catalogMemberProps,
-    ...catalogMemberPropsRemove,
+    ...catalogMemberPropsIgnore,
     ...propsToCopy,
-    "featureTimesProperty",
     "chartType",
     "featureInfoTemplate",
   ]);
@@ -118,11 +112,7 @@ export function wmsCatalogItem(
   if (options.copyUnknownProperties) {
     copyProps(item, member, unknownProps);
   }
-  copyProps(item, member, [
-    ...catalogMemberProps,
-    ...propsToCopy,
-    { v7: "featureTimesProperty", v8: "timeFilterPropertyName" },
-  ]);
+  copyProps(item, member, [...catalogMemberProps, ...propsToCopy]);
 
   if (item.chartType === "momentPoints") {
     member.chartType = "momentPoints";
@@ -167,10 +157,8 @@ export function sosCatalogItem(
     "observableProperties",
   ];
   const unknownProps = getUnknownProps(item, [
-    "name",
-    "type",
     ...catalogMemberProps,
-    ...catalogMemberPropsRemove,
+    ...catalogMemberPropsIgnore,
     ...propsToCopy,
     "featureInfoTemplate",
   ]);
@@ -219,10 +207,8 @@ export function esriFeatureServerCatalogItem(
 
   const propsToCopy = ["url", "useStyleInformationFromService"];
   const unknownProps = getUnknownProps(item, [
-    "name",
-    "type",
     ...catalogMemberProps,
-    ...catalogMemberPropsRemove,
+    ...catalogMemberPropsIgnore,
     ...propsToCopy,
     "featureInfoTemplate",
   ]);
@@ -275,10 +261,8 @@ export function ckanCatalogGroup(
     "useCombinationNameWhereMultipleResources",
   ];
   const unknownProps = getUnknownProps(item, [
-    "name",
-    "type",
     ...catalogMemberProps,
-    ...catalogMemberPropsRemove,
+    ...catalogMemberPropsIgnore,
     ...propsToCopy,
     "esriMapServerResourceFormat",
     "wmsParameters",
@@ -350,10 +334,8 @@ export function geoJsonCatalogItem(
 
   const propsToCopy = ["url", "opacity"];
   const unknownProps = getUnknownProps(item, [
-    "name",
-    "type",
     ...catalogMemberProps,
-    ...catalogMemberPropsRemove,
+    ...catalogMemberPropsIgnore,
     ...propsToCopy,
     "data",
     "featureInfoTemplate",
