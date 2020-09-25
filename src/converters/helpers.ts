@@ -30,17 +30,73 @@ export function isCatalogMember(m: any, partial = false): m is CatalogMember {
 export const catalogMemberProps: CopyProps[] = [
   "description",
   "info",
+  "infoSectionOrder",
+  "shortReport",
+  {
+    v7: "shortReportSection",
+    v8: "shortReportSection",
+    translationFn: (srs: any[]) =>
+      srs.map((shortReport) => {
+        return {
+          name: shortReport.name,
+          content: shortReport.content,
+          show: shortReport.isOpen,
+        };
+      }),
+  },
   { v7: "isShown", v8: "show" },
   "splitDirection",
   "url",
   "opacity",
+  "chartDisclaimer",
+  {
+    v7: "rectangle",
+    v8: "rectangle",
+    translationFn: (rectangle: any[]) => {
+      return {
+        west: rectangle[0],
+        south: rectangle[1],
+        east: rectangle[2],
+        north: rectangle[3],
+      };
+    },
+  },
+  "currentTime",
+  {
+    v7: "dateFormat",
+    v8: "dateFormat",
+    translationFn: (dateFormat: any) =>
+      dateFormat.timelineTic ?? dateFormat.currentTime,
+  },
+  "disablePreview",
+  "hideSource",
+  {
+    v7: "initialTimeSource",
+    v8: "initialTimeSource",
+    translationFn: (initialTimeSource: any) =>
+      (({
+        present: "now",
+        start: "start",
+        stop: "end",
+      } as any)[initialTimeSource]),
+  },
+  "dataCustodian",
+  {
+    v7: "isLegendVisible ",
+    v8: "hideLegendInWorkbench",
+    translationFn: (isLegendVisible: boolean) => !isLegendVisible,
+  },
 ];
+
+export const imageryLayerProps: CopyProps[] = ["keepOnTop"];
 
 export const catalogMemberPropsIgnore = [
   "name",
   "type",
   "isEnabled",
   "parents",
+  "legendUrl", // Handled by legend function
+  "legendUrls", // ^^
 ];
 
 export function getUnknownProps(o: PlainObject, knownProperties: CopyProps[]) {
@@ -62,7 +118,9 @@ export function propsToWarnings(
   return properties.map((prop) => unknownProp(modelType, prop, label));
 }
 
-export type CopyProps = string | { v7: string; v8: string };
+export type CopyProps =
+  | string
+  | { v7: string; v8: string; translationFn?: (x: any) => any };
 
 export function copyProps(
   source: PlainObject,
@@ -72,11 +130,39 @@ export function copyProps(
   properties.forEach((prop) => {
     const propV7 = is.string(prop) ? prop : prop.v7;
     const propV8 = is.string(prop) ? prop : prop.v8;
+
     if (Object.prototype.hasOwnProperty.call(source, propV7)) {
+      const value =
+        !is.string(prop) && typeof prop.translationFn === "function"
+          ? prop.translationFn(propV8)
+          : propV8;
       destination[propV8] = source[propV7];
     }
   });
   return destination;
+}
+
+export function legends(
+  modelType: ModelType,
+  label: string,
+  source: PlainObject
+): {
+  result: any;
+  messages: Message[];
+} {
+  const legendUrls = new Set<string>();
+  if (typeof source.legendUrl === "string") legendUrls.add(source.legendUrl);
+  if (Array.isArray(source.legendUrls))
+    source.legendUrls
+      .filter((legendUrl) => typeof legendUrl === "string")
+      .forEach(legendUrls.add);
+
+  return {
+    result: Array.from(legendUrls).map((url) => {
+      return { url };
+    }),
+    messages: [],
+  };
 }
 
 export function featureInfoTemplate(
