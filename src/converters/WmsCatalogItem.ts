@@ -89,6 +89,7 @@ export function wmsCatalogItem(
     "minScaleDenominator",
     "hideLayerAfterMinScaleDenominator",
     "maxRefreshIntervals",
+    "leafletUpdateInterval",
   ];
 
   const unknownProps = getUnknownProps(item, [
