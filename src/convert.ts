@@ -21,8 +21,8 @@ import {
   geoJsonCatalogItem,
   groupFromConvertMembersArray,
   sosCatalogItem,
-  wmsCatalogItem,
 } from "./converters/other";
+import { wmsCatalogItem } from "./converters/WmsCatalogItem";
 import {
   inputNotPlainObject,
   Message,
