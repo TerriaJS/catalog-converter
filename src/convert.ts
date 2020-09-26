@@ -290,7 +290,7 @@ export function convertShare(json: unknown): ShareResult {
       );
 
       // Add IDs to user added models - so they show up in the workbenck (from sharedCatalogMembers)
-      userAddedDataV8?.["__User-Added_Data__"].members.forEach(
+      userAddedDataV8?.["__User-Added_Data__"]?.members.forEach(
         (member: any) =>
           member !== null && (member.id = member.id ?? `/${member.name}`)
       );
