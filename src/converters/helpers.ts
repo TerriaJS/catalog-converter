@@ -33,8 +33,8 @@ export const catalogMemberProps: CopyProps[] = [
   "infoSectionOrder",
   "shortReport",
   {
-    v7: "shortReportSection",
-    v8: "shortReportSection",
+    v7: "shortReportSections",
+    v8: "shortReportSections",
     translationFn: (srs: any[]) =>
       srs.map((shortReport) => {
         return {
@@ -82,7 +82,7 @@ export const catalogMemberProps: CopyProps[] = [
   },
   "dataCustodian",
   {
-    v7: "isLegendVisible ",
+    v7: "isLegendVisible",
     v8: "hideLegendInWorkbench",
     translationFn: (isLegendVisible: boolean) => !isLegendVisible,
   },
@@ -132,11 +132,10 @@ export function copyProps(
     const propV8 = is.string(prop) ? prop : prop.v8;
 
     if (Object.prototype.hasOwnProperty.call(source, propV7)) {
-      const value =
+      destination[propV8] =
         !is.string(prop) && typeof prop.translationFn === "function"
-          ? prop.translationFn(propV8)
-          : propV8;
-      destination[propV8] = source[propV7];
+          ? prop.translationFn(source[propV7])
+          : source[propV7];
     }
   });
   return destination;
@@ -157,10 +156,11 @@ export function legends(
       .filter((legendUrl) => typeof legendUrl === "string")
       .forEach(legendUrls.add);
 
+  let result = Array.from(legendUrls).map((url) => {
+    return { url };
+  });
   return {
-    result: Array.from(legendUrls).map((url) => {
-      return { url };
-    }),
+    result: result.length > 0 ? result : undefined,
     messages: [],
   };
 }
