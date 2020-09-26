@@ -196,7 +196,7 @@ export function convertShare(json: unknown): ShareResult {
 
   const workbenchIds: Set<string> = new Set();
 
-  const convertMembers = (members: any, userAdded = false) =>
+  const convertMembers = (members: any, convertUserAdded = false) =>
     Object.entries(members).reduce<any>((convertedMembers, [id, v7Member]) => {
       if (is.plainObject(v7Member)) {
         // Get `knownContainerUniqueIds` from v7 `parents` property
@@ -204,18 +204,22 @@ export function convertShare(json: unknown): ShareResult {
         if (Array.isArray(v7Member.parents) && v7Member.parents.length > 0) {
           knownContainerUniqueIds = v7Member.parents
             .map((parent: string) => {
+              // Convert v7 user added data group id
               if (parent === "Root Group/User-Added Data") {
                 return "__User-Added_Data__";
               }
+              // Convert v7 root group id
               if (parent === "Root Group") {
                 return "/";
               }
+
+              // Replace v7 Root Group with slash (v8 auto-ids start with //$catalogName)
               return parent.replace("Root Group", "/");
             })
             .filter((parent) => typeof parent !== "undefined") as string[];
         }
 
-        // Firstly, if model has explicit `id`, use it.
+        // Firstly, if model has explicit `id`
         // Otherwise, try to guess id based on this:
         // v7 Id has format /Root Group/$someContainerId/$someLowerContainerId/$catalogName
         // v8 Id has format //$someContainerId/$someLowerContainerId/$catalogName
@@ -228,18 +232,13 @@ export function convertShare(json: unknown): ShareResult {
         // For some reason user added data doesn't have the __User-Added_Data__ group in ids (in v8)
         newId = newId.replace("//User-Added Data", "");
 
-        // Replace User Added Data group id
-        if (id === "Root Group/User-Added Data") {
-          newId = "__User-Added_Data__";
-        }
-
         if (v7Member.isEnabled) {
           workbenchIds.add(newId);
         }
 
-        // Don't need to convert user added data - this is done through "__User-Added_Data__" group
+        // Only convert user added data if convertUserAdded
         if (
-          !userAdded &&
+          !convertUserAdded &&
           (id === "Root Group/User-Added Data" ||
             knownContainerUniqueIds.includes("__User-Added_Data__"))
         )
@@ -274,14 +273,21 @@ export function convertShare(json: unknown): ShareResult {
       Array.isArray(userAddedData.items) &&
       userAddedData.items.length > 0
     ) {
+      // Delete all ids
+      const deleteIds = (items: any[]) =>
+        items.forEach((item) => {
+          if (typeof item.id === "string") delete item.id;
+          if (Array.isArray(item.items)) deleteIds(item.items);
+        });
+
+      deleteIds(userAddedData.items);
+
       const userAddedDataV8 = convertMembers(
         {
           "Root Group/User-Added Data": userAddedData,
         },
         true
       );
-
-      console.log(userAddedDataV8);
 
       // Add IDs to user added models - so they show up in the workbenck (from sharedCatalogMembers)
       userAddedDataV8?.["__User-Added_Data__"].members.forEach(
