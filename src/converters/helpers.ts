@@ -37,13 +37,15 @@ export const catalogMemberProps: CopyProps[] = [
     v7: "shortReportSections",
     v8: "shortReportSections",
     translationFn: (srs: any[]) =>
-      srs.map((shortReport) => {
-        return {
-          name: shortReport.name,
-          content: shortReport.content,
-          show: shortReport.isOpen,
-        };
-      }),
+      srs.length > 0
+        ? srs.map((shortReport) => {
+            return {
+              name: shortReport.name,
+              content: shortReport.content,
+              show: shortReport.isOpen,
+            };
+          })
+        : undefined,
   },
   { v7: "isShown", v8: "show" },
   "splitDirection",
@@ -142,10 +144,11 @@ export function copyProps(
     const propV8 = is.string(prop) ? prop : prop.v8;
 
     if (Object.prototype.hasOwnProperty.call(source, propV7)) {
-      destination[propV8] =
+      const value =
         !is.string(prop) && typeof prop.translationFn === "function"
           ? prop.translationFn(source[propV7])
           : source[propV7];
+      if (typeof value !== "undefined") destination[propV8] = value;
     }
   });
   return destination;

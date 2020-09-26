@@ -93,11 +93,6 @@
     },
     {
       "sharedCatalogMembers": {
-        "Root Group/Example Datasets": {
-          "isOpen": true,
-          "type": "group",
-          "parents": []
-        },
         "Root Group/User-Added Data": {
           "isOpen": true,
           "type": "group",

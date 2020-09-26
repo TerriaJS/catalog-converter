@@ -229,6 +229,11 @@ export function convertShare(json: unknown): ShareResult {
             ? v7Member.id
             : id.replace("Root Group", "/");
 
+        // Replace User Added Data group id
+        if (id === "Root Group/User-Added Data") {
+          newId = "__User-Added_Data__";
+        }
+
         // For some reason user added data doesn't have the __User-Added_Data__ group in ids (in v8)
         newId = newId.replace("//User-Added Data", "");
 
@@ -274,6 +279,7 @@ export function convertShare(json: unknown): ShareResult {
       userAddedData.items.length > 0
     ) {
       // Delete all ids
+      delete userAddedData.id;
       const deleteIds = (items: any[]) =>
         items.forEach((item) => {
           if (typeof item.id === "string") delete item.id;
