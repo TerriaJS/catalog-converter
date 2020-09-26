@@ -318,7 +318,7 @@ export function convertShare(json: unknown): ShareResult {
     });
   }
 
-  v8InitSource.workbench = workbenchIds;
+  v8InitSource.workbench = workbenchIds.reverse();
 
   // Copy over common properties
   [
