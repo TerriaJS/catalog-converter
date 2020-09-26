@@ -28,6 +28,7 @@ export function isCatalogMember(m: any, partial = false): m is CatalogMember {
 }
 
 export const catalogMemberProps: CopyProps[] = [
+  "id",
   "description",
   "info",
   "infoSectionOrder",
@@ -70,6 +71,7 @@ export const catalogMemberProps: CopyProps[] = [
   },
   "disablePreview",
   "hideSource",
+  // Note: if v7 initialTimeSource is not "present", "start", or "end" -> set to v8 currentTime property
   {
     v7: "initialTimeSource",
     v8: "initialTimeSource",
@@ -77,8 +79,16 @@ export const catalogMemberProps: CopyProps[] = [
       (({
         present: "now",
         start: "start",
-        stop: "end",
+        end: "stop",
       } as any)[initialTimeSource]),
+  },
+  {
+    v7: "initialTimeSource",
+    v8: "currentTime",
+    translationFn: (initialTimeSource: any) =>
+      !["now", "start", "end"].includes(initialTimeSource)
+        ? initialTimeSource
+        : undefined,
   },
   "dataCustodian",
   {
