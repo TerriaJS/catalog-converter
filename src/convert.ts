@@ -194,7 +194,7 @@ export function convertShare(json: unknown): ShareResult {
 
   const v8InitSource: any = { stratum: "user" };
 
-  const workbenchIds: Set<string> = new Set();
+  const workbenchIds: string[] = [];
 
   const convertMembers = (members: any, convertUserAdded = false) =>
     Object.entries(members).reduce<any>((convertedMembers, [id, v7Member]) => {
@@ -237,8 +237,9 @@ export function convertShare(json: unknown): ShareResult {
         // For some reason user added data doesn't have the __User-Added_Data__ group in ids (in v8)
         newId = newId.replace("//User-Added Data", "");
 
-        if (v7Member.isEnabled) {
-          workbenchIds.add(newId);
+        // Only add to workbenchIds if NOT converting User Added Data
+        if (v7Member.isEnabled && !convertUserAdded) {
+          workbenchIds.push(newId);
         }
 
         // Only convert user added data if convertUserAdded
@@ -317,7 +318,7 @@ export function convertShare(json: unknown): ShareResult {
     });
   }
 
-  v8InitSource.workbench = Array.from(workbenchIds);
+  v8InitSource.workbench = workbenchIds;
 
   // Copy over common properties
   [
