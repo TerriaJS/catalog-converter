@@ -32,7 +32,8 @@
     "commit": "git-cz",
     "semantic-release": "semantic-release",
     "semantic-release-prepare": "ts-node tools/semantic-release-prepare",
-    "travis-deploy-once": "travis-deploy-once"
+    "travis-deploy-once": "travis-deploy-once",
+    "postinstall": "npm run prebuild && npm run build"
   },
   "config": {
     "commitizen": {
