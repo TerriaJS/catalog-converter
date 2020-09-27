@@ -50,7 +50,16 @@ export const catalogMemberProps: CopyProps[] = [
   { v7: "isShown", v8: "show" },
   "splitDirection",
   "url",
-  "opacity",
+  {
+    v7: "opacity",
+    v8: "opacity",
+    translationFn: (opacity: any) =>
+      is.string(opacity)
+        ? parseFloat(opacity)
+        : is.number(opacity)
+        ? opacity
+        : undefined,
+  },
   "chartDisclaimer",
   {
     v7: "rectangle",
