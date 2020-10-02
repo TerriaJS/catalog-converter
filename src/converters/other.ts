@@ -305,7 +305,6 @@ export function ckanCatalogItem(
   item: CatalogMember,
   options: ConversionOptions
 ): MemberResult {
-  // See details of what's been ported https://github.com/TerriaJS/terriajs/pull/4160
   if (!options.partial && !is.string(item.url)) {
     return nullResult(
       missingRequiredProp(ModelType.CkanCatalogItem, "url", "string", item.name)
@@ -335,10 +334,10 @@ export function ckanCatalogItem(
 
   // Convert various configurations now condensed into supported resource formats
   const supportedResourceFormats = [];
-  if (is.string(item.esriMapServerResourceFormat)) {
+  if (is.string(item.esriFeatureServerResourceFormat)) {
     supportedResourceFormats.push({
       id: "ArcGIS FeatureServer",
-      formatRegex: item.esriMapServerResourceFormat,
+      formatRegex: item.esriFeatureServerResourceFormat,
       definition: {
         type: "esri-featureServer",
       },

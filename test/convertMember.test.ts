@@ -324,6 +324,7 @@ describe("Test that convertMember", () => {
       url: "proxy/_60s/https://data.gov.au",
       datasetId: "2016-soe-lan-soil-classification",
       resourceId: "ee9d9cae-188e-4160-9d36-3d1b19b3ea58",
+      cacheDuration: "1h",
       itemProperties: {
         info: [
           {
@@ -341,6 +342,7 @@ describe("Test that convertMember", () => {
       url: "proxy/_60s/https://data.gov.au",
       datasetId: "2016-soe-lan-soil-classification",
       resourceId: "ee9d9cae-188e-4160-9d36-3d1b19b3ea58",
+      cacheDuration: "1h",
       itemProperties: {
         info: [
           {
