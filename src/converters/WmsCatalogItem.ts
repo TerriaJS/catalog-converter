@@ -5,11 +5,12 @@ import {
   catalogMemberProps,
   catalogMemberPropsIgnore,
   copyProps,
+  CopyProps,
   featureInfoTemplate,
   getUnknownProps,
-  propsToWarnings,
+  legendProps,
   legends,
-  CopyProps,
+  propsToWarnings,
 } from "./helpers";
 
 export function wmsCatalogItem(
@@ -95,6 +96,7 @@ export function wmsCatalogItem(
   const unknownProps = getUnknownProps(item, [
     ...catalogMemberProps,
     ...catalogMemberPropsIgnore,
+    ...legendProps,
     ...propsToCopy,
     "chartType",
     "featureInfoTemplate",

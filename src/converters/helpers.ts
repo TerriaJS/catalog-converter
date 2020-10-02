@@ -54,11 +54,7 @@ export const catalogMemberProps: CopyProps[] = [
     v7: "opacity",
     v8: "opacity",
     translationFn: (opacity: any) =>
-      is.string(opacity)
-        ? parseFloat(opacity)
-        : is.number(opacity)
-        ? opacity
-        : undefined,
+      is.nan(parseFloat(opacity)) ? undefined : parseFloat(opacity),
   },
   "chartDisclaimer",
   {
@@ -116,8 +112,6 @@ export const catalogMemberPropsIgnore = [
   "type",
   "isEnabled",
   "parents",
-  "legendUrl", // Handled by legend function
-  "legendUrls", // ^^
 ];
 
 export function getUnknownProps(o: PlainObject, knownProperties: CopyProps[]) {
@@ -162,6 +156,8 @@ export function copyProps(
   });
   return destination;
 }
+
+export const legendProps = ["legendUrl", "legendUrls"];
 
 export function legends(
   modelType: ModelType,
