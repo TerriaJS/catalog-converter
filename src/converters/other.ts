@@ -120,6 +120,69 @@ export function sosCatalogItem(
   };
 }
 
+export function esriMapServerCatalogItem(
+  item: CatalogMember,
+  options: ConversionOptions
+): MemberResult {
+  if (!options.partial && !is.string(item.url)) {
+    return nullResult(
+      missingRequiredProp(
+        ModelType.EsriMapServerItem,
+        "url",
+        "string",
+        item.name
+      )
+    );
+  }
+
+  const propsToCopy = [
+    "url",
+    "layers",
+    "maximumScale",
+    "allowFeaturePicking",
+    "parameters",
+    "tokenUrl",
+    "showTilesAfterMessage",
+    "maximumScaleBeforeMessage",
+  ];
+  const unknownProps = getUnknownProps(item, [
+    ...catalogMemberProps,
+    ...catalogMemberPropsIgnore,
+    ...propsToCopy,
+    "featureInfoTemplate",
+  ]);
+  const member: MemberResult["member"] = {
+    type: "esri-mapServer",
+    name: item.name,
+  };
+  const messages = propsToWarnings(
+    ModelType.EsriMapServerItem,
+    unknownProps,
+    item.name
+  );
+  if (
+    is.string(item.featureInfoTemplate) ||
+    is.plainObject(item.featureInfoTemplate)
+  ) {
+    const result = featureInfoTemplate(
+      ModelType.EsriFeatureServerItem,
+      item.name,
+      item.featureInfoTemplate
+    );
+    member.featureInfoTemplate = result.result;
+    messages.push(...result.messages);
+  }
+  copyProps(item, member, [...catalogMemberProps, ...propsToCopy]);
+  if (options.copyUnknownProperties) {
+    copyProps(item, member, unknownProps);
+  }
+
+  return {
+    member,
+    messages,
+  };
+}
+
 export function esriFeatureServerCatalogItem(
   item: CatalogMember,
   options: ConversionOptions

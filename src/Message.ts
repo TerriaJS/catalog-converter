@@ -13,6 +13,7 @@ export enum ModelType {
   WmsItem = "WebMapServiceCatalogItem",
   CsvItem = "CsvCatalogItem",
   SosItem = "SensorObservationServiceCatalogItem",
+  EsriMapServerItem = "EsriMapServerCatalogItem",
   EsriFeatureServerItem = "EsriFeatureServerCatalogItem",
   CkanGroup = "CkanCatalogGroup",
   GeoJsonItem = "GeoJsonCatalogItem",

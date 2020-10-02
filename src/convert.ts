@@ -17,6 +17,7 @@ import {
 } from "./converters/helpers";
 import {
   ckanCatalogGroup,
+  esriMapServerCatalogItem,
   esriFeatureServerCatalogItem,
   geoJsonCatalogItem,
   groupFromConvertMembersArray,
@@ -44,6 +45,7 @@ const converters = new Map([
   ["wms", wmsCatalogItem],
   ["csv", csvCatalogItem],
   ["sos", sosCatalogItem],
+  ["esri-mapServer", esriMapServerCatalogItem],
   ["esri-featureServer", esriFeatureServerCatalogItem],
   ["ckan", ckanCatalogGroup],
   ["geojson", geoJsonCatalogItem],

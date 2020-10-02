@@ -293,4 +293,26 @@ describe("Test that convertMember", () => {
     });
     expect(res.messages).toHaveLength(0);
   });
+
+  it("converts a ArcGisMapServerCatalogItem", () => {
+    const res = convertMember({
+      name: "Catchment Scale Land Use 2018 [18 class]",
+      url:
+        "http://www.asris.csiro.au/arcgis/rest/services/abares/clum_50m_2018/MapServer/0",
+      layers: "0",
+      type: "esri-mapServer",
+      ignoreUnknownTileErrors: true,
+      opacity: 1,
+    });
+    expect(res.member).toMatchObject({
+      name: "Catchment Scale Land Use 2018 [18 class]",
+      url:
+        "http://www.asris.csiro.au/arcgis/rest/services/abares/clum_50m_2018/MapServer/0",
+      layers: "0",
+      type: "esri-mapServer",
+      opacity: 1,
+    });
+    expect(res.messages).toHaveLength(1);
+    expect(res.messages[0]);
+  });
 });
