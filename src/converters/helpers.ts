@@ -50,6 +50,7 @@ export const catalogMemberProps: CopyProps[] = [
   { v7: "isShown", v8: "show" },
   "splitDirection",
   "url",
+  "cacheDuration",
   {
     v7: "opacity",
     v8: "opacity",

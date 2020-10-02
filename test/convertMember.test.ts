@@ -315,4 +315,43 @@ describe("Test that convertMember", () => {
     expect(res.messages).toHaveLength(1);
     expect(res.messages[0]);
   });
+
+  it("converts a Ckan Item", () => {
+    const res = convertMember({
+      id: "ee9d9cae-188e-4160-9d36-3d1b19b3ea58",
+      name: "Generalised map of soil orders for Australia",
+      type: "ckan-resource",
+      url: "proxy/_60s/https://data.gov.au",
+      datasetId: "2016-soe-lan-soil-classification",
+      resourceId: "ee9d9cae-188e-4160-9d36-3d1b19b3ea58",
+      itemProperties: {
+        info: [
+          {
+            name: "Metadata and Data Source",
+            content:
+              "https://data.gov.au/dataset/2016-soe-lan-soil-classification",
+          },
+        ],
+      },
+    });
+    expect(res.member).toMatchObject({
+      id: "ee9d9cae-188e-4160-9d36-3d1b19b3ea58",
+      name: "Generalised map of soil orders for Australia",
+      type: "ckan-item",
+      url: "proxy/_60s/https://data.gov.au",
+      datasetId: "2016-soe-lan-soil-classification",
+      resourceId: "ee9d9cae-188e-4160-9d36-3d1b19b3ea58",
+      itemProperties: {
+        info: [
+          {
+            name: "Metadata and Data Source",
+            content:
+              "https://data.gov.au/dataset/2016-soe-lan-soil-classification",
+          },
+        ],
+      },
+    });
+    expect(res.messages).toHaveLength(0);
+    expect(res.messages[0]);
+  });
 });

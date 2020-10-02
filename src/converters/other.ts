@@ -301,6 +301,121 @@ export function ckanCatalogGroup(
   };
 }
 
+export function ckanCatalogItem(
+  item: CatalogMember,
+  options: ConversionOptions
+): MemberResult {
+  // See details of what's been ported https://github.com/TerriaJS/terriajs/pull/4160
+  if (!options.partial && !is.string(item.url)) {
+    return nullResult(
+      missingRequiredProp(ModelType.CkanCatalogItem, "url", "string", item.name)
+    );
+  }
+  const propsToCopy = ["url", "datasetId", "resourceId", "itemProperties"];
+
+  const unknownProps = getUnknownProps(item, [
+    ...catalogMemberProps,
+    ...catalogMemberPropsIgnore,
+    ...propsToCopy,
+    "allowAnyResourceIfResourceIdNotFound",
+  ]);
+  const member: MemberResult["member"] = {
+    type: "ckan-item",
+    name: item.name,
+  };
+  const messages = propsToWarnings(
+    ModelType.CkanGroup,
+    unknownProps,
+    item.name
+  );
+  copyProps(item, member, [...catalogMemberProps, ...propsToCopy]);
+  if (options.copyUnknownProperties) {
+    copyProps(item, member, unknownProps);
+  }
+
+  // Convert various configurations now condensed into supported resource formats
+  const supportedResourceFormats = [];
+  if (is.string(item.esriMapServerResourceFormat)) {
+    supportedResourceFormats.push({
+      id: "ArcGIS FeatureServer",
+      formatRegex: item.esriMapServerResourceFormat,
+      definition: {
+        type: "esri-featureServer",
+      },
+    });
+  } else if (is.string(item.wmsResourceFormat)) {
+    supportedResourceFormats.push({
+      id: "WMS",
+      formatRegex: item.wmsResourceFormat,
+      definition: {
+        type: "wms",
+      },
+    });
+  } else if (is.string(item.wfsResourceFormat)) {
+    supportedResourceFormats.push({
+      id: "WFS",
+      formatRegex: item.wfsResourceFormat,
+      definition: {
+        type: "wfs",
+      },
+    });
+  } else if (is.string(item.kmlResourceFormat)) {
+    supportedResourceFormats.push({
+      id: "Kml",
+      formatRegex: item.kmlResourceFormat,
+      definition: {
+        type: "kml",
+      },
+    });
+  } else if (is.string(item.csvResourceFormat)) {
+    supportedResourceFormats.push({
+      id: "CSV",
+      formatRegex: item.csvResourceFormat,
+      definition: {
+        type: "csv",
+      },
+    });
+  } else if (is.string(item.esriMapServerResourceFormat)) {
+    supportedResourceFormats.push({
+      id: "ArcGIS MapServer",
+      formatRegex: item.esriMapServerResourceFormat,
+      definition: {
+        type: "esri-mapServer",
+      },
+    });
+  } else if (is.string(item.esriFeatureServerResourceFormat)) {
+    supportedResourceFormats.push({
+      id: "ArcGIS FeatureServer",
+      formatRegex: item.esriFeatureServerResourceFormat,
+      definition: {
+        type: "esri-featureServer",
+      },
+    });
+  } else if (is.string(item.geoJsonResourceFormat)) {
+    supportedResourceFormats.push({
+      id: "GeoJson",
+      formatRegex: item.geoJsonResourceFormat,
+      definition: {
+        type: "geojson",
+      },
+    });
+  } else if (is.string(item.czmlResourceFormat)) {
+    supportedResourceFormats.push({
+      id: "Czml",
+      formatRegex: item.czmlResourceFormat,
+      definition: {
+        type: "czml",
+      },
+    });
+  }
+
+  member.supportedResourceFormats = supportedResourceFormats;
+  return {
+    member,
+    messages,
+  };
+}
+
 // Write properly
 export function geoJsonCatalogItem(
   item: CatalogMember,

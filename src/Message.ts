@@ -16,6 +16,7 @@ export enum ModelType {
   EsriMapServerItem = "EsriMapServerCatalogItem",
   EsriFeatureServerItem = "EsriFeatureServerCatalogItem",
   CkanGroup = "CkanCatalogGroup",
+  CkanCatalogItem = "CkanCatalogItem",
   GeoJsonItem = "GeoJsonCatalogItem",
 }
 
