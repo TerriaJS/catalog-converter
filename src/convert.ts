@@ -23,6 +23,8 @@ import {
   groupFromConvertMembersArray,
   sosCatalogItem,
   ckanCatalogItem,
+  wpsCatalogItem,
+  wpsResultItem,
 } from "./converters/other";
 import { wmsCatalogItem } from "./converters/WmsCatalogItem";
 import {
@@ -51,6 +53,8 @@ const converters = new Map([
   ["ckan", ckanCatalogGroup],
   ["ckan-resource", ckanCatalogItem],
   ["geojson", geoJsonCatalogItem],
+  ["wps", wpsCatalogItem],
+  ["wps-result", wpsResultItem],
 ]);
 
 function defaultOptions(options: ConversionOptions | undefined) {

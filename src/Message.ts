@@ -15,6 +15,8 @@ export enum ModelType {
   SosItem = "SensorObservationServiceCatalogItem",
   EsriMapServerItem = "EsriMapServerCatalogItem",
   EsriFeatureServerItem = "EsriFeatureServerCatalogItem",
+  WpsItem = "WpsItem",
+  WpsResultItem = "WpsResultItem",
   CkanGroup = "CkanCatalogGroup",
   CkanCatalogItem = "CkanCatalogItem",
   GeoJsonItem = "GeoJsonCatalogItem",
