@@ -66,7 +66,63 @@ These are just copied across, so conversion must be handled client-side
 
 In v7 user added data is added to the `catalog` property. I am assuming that everything is contained (and correct) in the `Root Group/User-Added Data` catalog group (i.e. all user added data is in the `items` of the catalog group) - I ignore user added data models which are in `sharedCatalogMembers`.
 
-Because otherwise - if a user-added item is shared in the workbench, it results in duplicate model across v7 `catalog` and `sharedCatalogMembers` - eg https://github.com/TerriaJS/catalog-converter/pull/11#issuecomment-693348213
+Because otherwise - if a user-added item is shared in the workbench, it results in duplicate model across v7 `catalog` and `sharedCatalogMembers`.
+
+For example
+
+```json
+{
+  "version": "8.0.0",
+  "initSources": [
+    {
+      "stratum": "user",
+      "models": {
+        "//Example Datasets": {
+          "type": "group",
+          "isOpen": true,
+          "knownContainerUniqueIds": [
+            "/"
+          ]
+        },
+        "__User-Added_Data__": {
+          "type": "group",
+          "name": "User-Added Data",
+          "members": [
+            {
+              "type": "csv",
+              "name": "http://localhost:3001/data/2011Census_TOT_LGA.csv",
+              "description": "",
+              "info": [],
+              "show": true,
+              "splitDirection": 0,
+              "url": "http://localhost:3001/data/2011Census_TOT_LGA.csv",
+              "opacity": 0.8
+            }
+          ],
+          "description": "The group for data that was added by the user via the Add Data panel.",
+          "info": [],
+          "isOpen": true,
+          "knownContainerUniqueIds": [
+            "/"
+          ]
+        },
+        "/http://localhost:3001/data/2011Census_TOT_LGA.csv": {
+          "type": "csv",
+          "name": "http://localhost:3001/data/2011Census_TOT_LGA.csv",
+          "show": true,
+          "splitDirection": 0,
+          "url": "http://localhost:3001/data/2011Census_TOT_LGA.csv",
+          "opacity": 0.8,
+          "knownContainerUniqueIds": [
+            "__User-Added_Data__"
+          ]
+        }
+      },
+      "stories": [],
+      "workbench": [
+        "/http://localhost:3001/data/2011Census_TOT_LGA.csv"
+      ],
+```
 
 ## Consequences
 
