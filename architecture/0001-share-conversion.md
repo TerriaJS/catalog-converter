@@ -4,6 +4,8 @@ Date: 2020-10-12
 
 ## Status
 
+Mother issue - [Model architecture: Share & story migration ](https://github.com/terriajs/terriajs/issues/3654)
+
 PR - https://github.com/TerriaJS/catalog-converter/pull/11
 
 ## Context
