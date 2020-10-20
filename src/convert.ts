@@ -25,6 +25,7 @@ import {
   ckanCatalogItem,
   wpsCatalogItem,
   wpsResultItem,
+  esriMapServerCatalogGroup,
 } from "./converters/other";
 import { wmsCatalogItem } from "./converters/WmsCatalogItem";
 import {
@@ -49,6 +50,7 @@ const converters = new Map([
   ["csv", csvCatalogItem],
   ["sos", sosCatalogItem],
   ["esri-mapServer", esriMapServerCatalogItem],
+  ["esri-mapServer-group", esriMapServerCatalogGroup],
   ["esri-featureServer", esriFeatureServerCatalogItem],
   ["ckan", ckanCatalogGroup],
   ["ckan-resource", ckanCatalogItem],

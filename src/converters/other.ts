@@ -237,6 +237,46 @@ export function esriFeatureServerCatalogItem(
   };
 }
 
+export function esriMapServerCatalogGroup(
+  item: CatalogMember,
+  options: ConversionOptions
+) {
+  if (!options.partial && !is.string(item.url)) {
+    return nullResult(
+      missingRequiredProp(
+        ModelType.EsriMapServerItem,
+        "url",
+        "string",
+        item.name
+      )
+    );
+  }
+
+  const propsToCopy = ["url"];
+  const unknownProps = getUnknownProps(item, [
+    ...catalogMemberProps,
+    ...catalogMemberPropsIgnore,
+    ...propsToCopy,
+  ]);
+
+  const member: MemberResult["member"] = {
+    type: "esri-mapServer-group",
+    name: item.name,
+  };
+  const messages = propsToWarnings(
+    ModelType.EsriFeatureServerItem,
+    unknownProps,
+    item.name
+  );
+
+  copyProps(item, member, [...catalogMemberProps, ...propsToCopy]);
+  if (options.copyUnknownProperties) {
+    copyProps(item, member, unknownProps);
+  }
+
+  return { member, messages };
+}
+
 export function ckanCatalogGroup(
   item: CatalogMember,
   options: ConversionOptions
