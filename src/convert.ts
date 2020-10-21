@@ -27,6 +27,7 @@ import {
   wpsResultItem,
   esriMapServerCatalogGroup,
   cartoMapCatalogItem,
+  mapboxVectorTileCatalogItem,
 } from "./converters/other";
 import { wmsCatalogItem } from "./converters/WmsCatalogItem";
 import {
@@ -59,6 +60,7 @@ const converters = new Map([
   ["wps", wpsCatalogItem],
   ["wps-result", wpsResultItem],
   ["carto", cartoMapCatalogItem],
+  ["mvt", mapboxVectorTileCatalogItem],
 ]);
 
 function defaultOptions(options: ConversionOptions | undefined) {

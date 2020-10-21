@@ -631,7 +631,58 @@ export function cartoMapCatalogItem(
   if (options.copyUnknownProperties) {
     copyProps(item, member, unknownProps);
   }
-  copyProps(item, member, [...catalogMemberProps, ...propsToCopy]);
+  copyProps(item, member, [
+    ...catalogMemberProps,
+    ...imageryLayerProps,
+    ...propsToCopy,
+  ]);
+  const legendResult = legends(ModelType.CartoMapCatalogItem, item.name, item);
+  member.legends = legendResult.result;
+  messages.push(...legendResult.messages);
+
+  return { member, messages };
+}
+
+export function mapboxVectorTileCatalogItem(
+  item: CatalogMember,
+  options: ConversionOptions
+): MemberResult {
+  const member: MemberResult["member"] = {
+    type: "mvt",
+    name: item.name,
+  };
+
+  const propsToCopy = [
+    "lineColor",
+    "fillColor",
+    "layer",
+    "idProperty",
+    "nameProperty",
+    "maximumNativeZoom",
+    "maximumZoom",
+    "minimumZoom",
+  ];
+  const unknownProps = getUnknownProps(item, [
+    ...catalogMemberProps,
+    ...catalogMemberPropsIgnore,
+    ...imageryLayerProps,
+    ...propsToCopy,
+  ]);
+
+  const messages = propsToWarnings(
+    ModelType.MapboxVectorTileCatalogItem,
+    unknownProps,
+    item.name
+  );
+
+  if (options.copyUnknownProperties) {
+    copyProps(item, member, unknownProps);
+  }
+  copyProps(item, member, [
+    ...catalogMemberProps,
+    ...imageryLayerProps,
+    ...propsToCopy,
+  ]);
   const legendResult = legends(ModelType.CartoMapCatalogItem, item.name, item);
   member.legends = legendResult.result;
   messages.push(...legendResult.messages);
