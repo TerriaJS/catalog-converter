@@ -26,6 +26,7 @@ import {
   wpsCatalogItem,
   wpsResultItem,
   esriMapServerCatalogGroup,
+  cartoMapCatalogItem,
 } from "./converters/other";
 import { wmsCatalogItem } from "./converters/WmsCatalogItem";
 import {
@@ -57,6 +58,7 @@ const converters = new Map([
   ["geojson", geoJsonCatalogItem],
   ["wps", wpsCatalogItem],
   ["wps-result", wpsResultItem],
+  ["carto", cartoMapCatalogItem],
 ]);
 
 function defaultOptions(options: ConversionOptions | undefined) {

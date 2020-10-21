@@ -14,6 +14,8 @@ import {
   nullResult,
   propsToWarnings,
   catalogMemberPropsIgnore,
+  legends,
+  imageryLayerProps,
 } from "./helpers";
 
 // Dependency injection to break circular dependency
@@ -593,5 +595,46 @@ export function geoJsonCatalogItem(
   } else if (is.string(item.data)) {
     member.geoJsonString = item.data;
   }
+  return { member, messages };
+}
+
+export function cartoMapCatalogItem(
+  item: CatalogMember,
+  options: ConversionOptions
+): MemberResult {
+  const member: MemberResult["member"] = {
+    type: "carto",
+    name: item.name,
+  };
+
+  const propsToCopy = [
+    "config",
+    "auth_token",
+    "minimumLevel",
+    "maximumLevel",
+    "attribution",
+  ];
+
+  const unknownProps = getUnknownProps(item, [
+    ...catalogMemberProps,
+    ...catalogMemberPropsIgnore,
+    ...imageryLayerProps,
+    ...propsToCopy,
+  ]);
+
+  const messages = propsToWarnings(
+    ModelType.CartoMapCatalogItem,
+    unknownProps,
+    item.name
+  );
+
+  if (options.copyUnknownProperties) {
+    copyProps(item, member, unknownProps);
+  }
+  copyProps(item, member, [...catalogMemberProps, ...propsToCopy]);
+  const legendResult = legends(ModelType.CartoMapCatalogItem, item.name, item);
+  member.legends = legendResult.result;
+  messages.push(...legendResult.messages);
+
   return { member, messages };
 }
