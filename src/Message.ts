@@ -7,6 +7,7 @@ export enum Severity {
 }
 
 export enum ModelType {
+  Share = "Share",
   Member = "CatalogMember",
   Group = "CatalogGroup",
   WmsItem = "WebMapServiceCatalogItem",

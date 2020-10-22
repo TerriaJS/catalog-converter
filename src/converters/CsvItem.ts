@@ -12,6 +12,7 @@ import {
   getUnknownProps,
   nullResult,
   propsToWarnings,
+  catalogMemberPropsIgnore,
 } from "./helpers";
 
 function tableStyle(tableStyle: PlainObject) {
@@ -39,7 +40,7 @@ export function csvCatalogItem(
   item: CatalogMember,
   options: ConversionOptions
 ): MemberResult {
-  if (!is.string(item.url) && !is.string(item.data)) {
+  if (!options.partial && !is.string(item.url) && !is.string(item.data)) {
     return nullResult(
       missingRequiredProp(
         ModelType.CsvItem,
@@ -50,9 +51,8 @@ export function csvCatalogItem(
     );
   }
   const unknownProps = getUnknownProps(item, [
-    "name",
-    "type",
     ...catalogMemberProps,
+    ...catalogMemberPropsIgnore,
     "url",
     "data",
     "opacity",

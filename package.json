@@ -1,6 +1,6 @@
 {
   "name": "catalog-converter",
-  "version": "0.0.2",
+  "version": "0.0.2-alpha.2",
   "description": "",
   "keywords": [],
   "main": "dist/catalog-converter.umd.js",
@@ -32,7 +32,8 @@
     "commit": "git-cz",
     "semantic-release": "semantic-release",
     "semantic-release-prepare": "ts-node tools/semantic-release-prepare",
-    "travis-deploy-once": "travis-deploy-once"
+    "travis-deploy-once": "travis-deploy-once",
+    "prepare": "npm run prebuild && npm run build"
   },
   "config": {
     "commitizen": {
@@ -101,9 +102,8 @@
     "replace-in-file": "^3.4.2",
     "rimraf": "^2.6.2",
     "rollup": "^2.7.3",
-    "rollup-plugin-dts": "^1.4.10",
+    "rollup-plugin-dts": "1.4.10",
     "rollup-plugin-sourcemaps": "^0.5.0",
-    "rollup-plugin-typescript-2": "0.8.1",
     "semantic-release": "^15.9.16",
     "shelljs": "^0.8.3",
     "travis-deploy-once": "^5.0.9",

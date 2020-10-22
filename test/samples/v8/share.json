@@ -1,0 +1,66 @@
+{
+  "version": "8.0.0",
+  "initSources": [
+    {
+      "stratum": "user",
+      "models": {
+        "//Example Datasets": {
+          "type": "group",
+          "isOpen": true,
+          "knownContainerUniqueIds": [
+            "/"
+          ]
+        },
+        "//Example Datasets/ABC Photo Stories (2009-2014)": {
+          "type": "csv",
+          "name": "ABC Photo Stories (2009-2014)",
+          "show": true,
+          "url": "test/localphotostories20092014.csv",
+          "opacity": 0.8,
+          "knownContainerUniqueIds": [
+            "//Example Datasets"
+          ]
+        }
+      },
+      "stories": [],
+      "workbench": [
+        "//Example Datasets/ABC Photo Stories (2009-2014)"
+      ],
+      "initialCamera": {
+        "west": 134.6146389782043,
+        "south": -40.30401642748654,
+        "east": 159.34281012980014,
+        "north": -28.96988998823672,
+        "position": {
+          "x": -4950055.995986143,
+          "y": 2883954.9311581044,
+          "z": -5402828.815934556
+        },
+        "direction": {
+          "x": 0.3123723576558928,
+          "y": -0.021933033730896057,
+          "z": 0.9497065084560906
+        },
+        "up": {
+          "x": -0.7008662101834929,
+          "y": 0.6695346057418718,
+          "z": 0.2459877377779311
+        }
+      },
+      "homeCamera": {
+        "west": 109,
+        "south": -45,
+        "east": 158,
+        "north": -8
+      },
+      "baseMapName": "Bing Maps Aerial with Labels",
+      "viewerMode": "3d",
+      "currentTime": {
+        "dayNumber": 2459105,
+        "secondsOfDay": 80465.514
+      },
+      "showSplitter": false,
+      "splitPosition": 0.5
+    }
+  ]
+}

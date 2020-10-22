@@ -1,0 +1,210 @@
+{
+  "version": "8.0.0",
+  "initSources": [
+    {
+      "stratum": "user",
+      "models": {
+        "//Example Datasets": {
+          "type": "group",
+          "isOpen": true,
+          "knownContainerUniqueIds": [
+            "/"
+          ]
+        },
+        "//Example Datasets/ABC Photo Stories (2009-2014)": {
+          "type": "csv",
+          "name": "ABC Photo Stories (2009-2014)",
+          "show": true,
+          "splitDirection": 0,
+          "url": "test/localphotostories20092014.csv",
+          "opacity": 0.8,
+          "knownContainerUniqueIds": [
+            "//Example Datasets"
+          ]
+        }
+      },
+      "stories": [
+        {
+          "title": "TEST 1",
+          "text": "<div>body 1</div>",
+          "id": "023fad22-7649-408a-a6a5-e1e3b4e0f4f0",
+          "shareData": {
+            "version": "8.0.0",
+            "initSources": [
+              {
+                "stratum": "user",
+                "models": {
+                  "//Example Datasets": {
+                    "type": "group",
+                    "isOpen": true,
+                    "knownContainerUniqueIds": [
+                      "/"
+                    ]
+                  },
+                  "//Example Datasets/ABC Photo Stories (2009-2014)": {
+                    "type": "csv",
+                    "name": "ABC Photo Stories (2009-2014)",
+                    "show": true,
+                    "splitDirection": 0,
+                    "url": "test/localphotostories20092014.csv",
+                    "opacity": 0.8,
+                    "knownContainerUniqueIds": [
+                      "//Example Datasets"
+                    ]
+                  }
+                },
+                "workbench": [
+                  "//Example Datasets/ABC Photo Stories (2009-2014)"
+                ],
+                "initialCamera": {
+                  "west": 134.44203773321516,
+                  "south": -41.34472567393432,
+                  "east": 159.51541137478932,
+                  "north": -27.92502044977856,
+                  "position": {
+                    "x": -4950055.995986143,
+                    "y": 2883954.9311581044,
+                    "z": -5402828.815934556
+                  },
+                  "direction": {
+                    "x": 0.3123723576559078,
+                    "y": -0.021933033730920315,
+                    "z": 0.9497065084560852
+                  },
+                  "up": {
+                    "x": -0.7008662101834929,
+                    "y": 0.6695346057418718,
+                    "z": 0.2459877377779311
+                  }
+                },
+                "homeCamera": {
+                  "west": 109,
+                  "south": -45,
+                  "east": 158,
+                  "north": -8
+                },
+                "baseMapName": "Bing Maps Aerial with Labels",
+                "viewerMode": "3d",
+                "currentTime": {
+                  "dayNumber": 2459105,
+                  "secondsOfDay": 80465.514
+                },
+                "showSplitter": false,
+                "splitPosition": 0.4999
+              }
+            ]
+          }
+        },
+        {
+          "title": "test 23",
+          "text": "<div>body2</div><div><br></div>",
+          "id": "92aa55ef-ea88-4deb-8fef-7045ab4fde69",
+          "shareData": {
+            "version": "8.0.0",
+            "initSources": [
+              {
+                "stratum": "user",
+                "models": {
+                  "//Example Datasets": {
+                    "type": "group",
+                    "isOpen": true,
+                    "knownContainerUniqueIds": [
+                      "/"
+                    ]
+                  },
+                  "//Example Datasets/ABC Photo Stories (2009-2014)": {
+                    "type": "csv",
+                    "name": "ABC Photo Stories (2009-2014)",
+                    "show": true,
+                    "splitDirection": 0,
+                    "url": "test/localphotostories20092014.csv",
+                    "opacity": 0.8,
+                    "knownContainerUniqueIds": [
+                      "//Example Datasets"
+                    ]
+                  }
+                },
+                "workbench": [
+                  "//Example Datasets/ABC Photo Stories (2009-2014)"
+                ],
+                "initialCamera": {
+                  "west": 108.75374785879977,
+                  "south": -35.34169203192705,
+                  "east": 131.77962326149105,
+                  "north": -21.89240032239318,
+                  "position": {
+                    "x": -3405731.7017273125,
+                    "y": 5268963.234531203,
+                    "z": -4759183.504725396
+                  },
+                  "direction": {
+                    "x": 0.3229175777648086,
+                    "y": -0.2448163443073882,
+                    "z": 0.9142150707193987
+                  },
+                  "up": {
+                    "x": -0.30494604282132376,
+                    "y": 0.8875346100238326,
+                    "z": 0.34538417302687574
+                  }
+                },
+                "homeCamera": {
+                  "west": 109,
+                  "south": -45,
+                  "east": 158,
+                  "north": -8
+                },
+                "baseMapName": "Bing Maps Aerial with Labels",
+                "viewerMode": "3d",
+                "currentTime": {
+                  "dayNumber": 2459105,
+                  "secondsOfDay": 80465.514
+                },
+                "showSplitter": false,
+                "splitPosition": 0.4999
+              }
+            ]
+          }
+        }
+      ],
+      "workbench": [
+        "//Example Datasets/ABC Photo Stories (2009-2014)"
+      ],
+      "initialCamera": {
+        "west": 108.75374785879977,
+        "south": -35.34169203192705,
+        "east": 131.77962326149105,
+        "north": -21.89240032239318,
+        "position": {
+          "x": -3405731.7017273125,
+          "y": 5268963.234531203,
+          "z": -4759183.504725396
+        },
+        "direction": {
+          "x": 0.32291757776482444,
+          "y": -0.24481634430739474,
+          "z": 0.9142150707193915
+        },
+        "up": {
+          "x": -0.30494604282132376,
+          "y": 0.8875346100238326,
+          "z": 0.34538417302687574
+        }
+      },
+      "homeCamera": {
+        "west": 109,
+        "south": -45,
+        "east": 158,
+        "north": -8
+      },
+      "baseMapName": "Bing Maps Aerial with Labels",
+      "viewerMode": "3d",
+      "currentTime": {
+        "dayNumber": 2459105,
+        "secondsOfDay": 80465.514
+      },
+      "showSplitter": false,
+      "splitPosition": 0.4999
+    }
+  ]
+}
