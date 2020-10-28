@@ -18,10 +18,14 @@ import {
 } from "./converters/helpers";
 import {
   ckanCatalogGroup,
+  esriMapServerCatalogItem,
   esriFeatureServerCatalogItem,
   geoJsonCatalogItem,
   groupFromConvertMembersArray,
   sosCatalogItem,
+  ckanCatalogItem,
+  wpsCatalogItem,
+  wpsResultItem,
 } from "./converters/other";
 import { wmsCatalogItem } from "./converters/WmsCatalogItem";
 import {
@@ -45,9 +49,13 @@ const converters = new Map([
   ["wms", wmsCatalogItem],
   ["csv", csvCatalogItem],
   ["sos", sosCatalogItem],
+  ["esri-mapServer", esriMapServerCatalogItem],
   ["esri-featureServer", esriFeatureServerCatalogItem],
   ["ckan", ckanCatalogGroup],
+  ["ckan-resource", ckanCatalogItem],
   ["geojson", geoJsonCatalogItem],
+  ["wps", wpsCatalogItem],
+  ["wps-result", wpsResultItem],
 ]);
 
 function defaultOptions(options: ConversionOptions | undefined) {

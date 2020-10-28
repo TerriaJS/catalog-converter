@@ -120,6 +120,69 @@ export function sosCatalogItem(
   };
 }
 
+export function esriMapServerCatalogItem(
+  item: CatalogMember,
+  options: ConversionOptions
+): MemberResult {
+  if (!options.partial && !is.string(item.url)) {
+    return nullResult(
+      missingRequiredProp(
+        ModelType.EsriMapServerItem,
+        "url",
+        "string",
+        item.name
+      )
+    );
+  }
+
+  const propsToCopy = [
+    "url",
+    "layers",
+    "maximumScale",
+    "allowFeaturePicking",
+    "parameters",
+    "tokenUrl",
+    "showTilesAfterMessage",
+    "maximumScaleBeforeMessage",
+  ];
+  const unknownProps = getUnknownProps(item, [
+    ...catalogMemberProps,
+    ...catalogMemberPropsIgnore,
+    ...propsToCopy,
+    "featureInfoTemplate",
+  ]);
+  const member: MemberResult["member"] = {
+    type: "esri-mapServer",
+    name: item.name,
+  };
+  const messages = propsToWarnings(
+    ModelType.EsriMapServerItem,
+    unknownProps,
+    item.name
+  );
+  if (
+    is.string(item.featureInfoTemplate) ||
+    is.plainObject(item.featureInfoTemplate)
+  ) {
+    const result = featureInfoTemplate(
+      ModelType.EsriFeatureServerItem,
+      item.name,
+      item.featureInfoTemplate
+    );
+    member.featureInfoTemplate = result.result;
+    messages.push(...result.messages);
+  }
+  copyProps(item, member, [...catalogMemberProps, ...propsToCopy]);
+  if (options.copyUnknownProperties) {
+    copyProps(item, member, unknownProps);
+  }
+
+  return {
+    member,
+    messages,
+  };
+}
+
 export function esriFeatureServerCatalogItem(
   item: CatalogMember,
   options: ConversionOptions
@@ -232,6 +295,195 @@ export function ckanCatalogGroup(
     });
   }
   member.supportedResourceFormats = supportedResourceFormats;
+  return {
+    member,
+    messages,
+  };
+}
+
+export function ckanCatalogItem(
+  item: CatalogMember,
+  options: ConversionOptions
+): MemberResult {
+  if (!options.partial && !is.string(item.url)) {
+    return nullResult(
+      missingRequiredProp(ModelType.CkanCatalogItem, "url", "string", item.name)
+    );
+  }
+  const propsToCopy = ["url", "datasetId", "resourceId", "itemProperties"];
+
+  const unknownProps = getUnknownProps(item, [
+    ...catalogMemberProps,
+    ...catalogMemberPropsIgnore,
+    ...propsToCopy,
+    "allowAnyResourceIfResourceIdNotFound",
+  ]);
+  const member: MemberResult["member"] = {
+    type: "ckan-item",
+    name: item.name,
+  };
+  const messages = propsToWarnings(
+    ModelType.CkanGroup,
+    unknownProps,
+    item.name
+  );
+  copyProps(item, member, [...catalogMemberProps, ...propsToCopy]);
+  if (options.copyUnknownProperties) {
+    copyProps(item, member, unknownProps);
+  }
+
+  // Convert various configurations now condensed into supported resource formats
+  const supportedResourceFormats = [];
+  if (is.string(item.esriFeatureServerResourceFormat)) {
+    supportedResourceFormats.push({
+      id: "ArcGIS FeatureServer",
+      formatRegex: item.esriFeatureServerResourceFormat,
+      definition: {
+        type: "esri-featureServer",
+      },
+    });
+  } else if (is.string(item.wmsResourceFormat)) {
+    supportedResourceFormats.push({
+      id: "WMS",
+      formatRegex: item.wmsResourceFormat,
+      definition: {
+        type: "wms",
+      },
+    });
+  } else if (is.string(item.wfsResourceFormat)) {
+    supportedResourceFormats.push({
+      id: "WFS",
+      formatRegex: item.wfsResourceFormat,
+      definition: {
+        type: "wfs",
+      },
+    });
+  } else if (is.string(item.kmlResourceFormat)) {
+    supportedResourceFormats.push({
+      id: "Kml",
+      formatRegex: item.kmlResourceFormat,
+      definition: {
+        type: "kml",
+      },
+    });
+  } else if (is.string(item.csvResourceFormat)) {
+    supportedResourceFormats.push({
+      id: "CSV",
+      formatRegex: item.csvResourceFormat,
+      definition: {
+        type: "csv",
+      },
+    });
+  } else if (is.string(item.esriMapServerResourceFormat)) {
+    supportedResourceFormats.push({
+      id: "ArcGIS MapServer",
+      formatRegex: item.esriMapServerResourceFormat,
+      definition: {
+        type: "esri-mapServer",
+      },
+    });
+  } else if (is.string(item.esriFeatureServerResourceFormat)) {
+    supportedResourceFormats.push({
+      id: "ArcGIS FeatureServer",
+      formatRegex: item.esriFeatureServerResourceFormat,
+      definition: {
+        type: "esri-featureServer",
+      },
+    });
+  } else if (is.string(item.geoJsonResourceFormat)) {
+    supportedResourceFormats.push({
+      id: "GeoJson",
+      formatRegex: item.geoJsonResourceFormat,
+      definition: {
+        type: "geojson",
+      },
+    });
+  } else if (is.string(item.czmlResourceFormat)) {
+    supportedResourceFormats.push({
+      id: "Czml",
+      formatRegex: item.czmlResourceFormat,
+      definition: {
+        type: "czml",
+      },
+    });
+  }
+
+  member.supportedResourceFormats = supportedResourceFormats;
+  return {
+    member,
+    messages,
+  };
+}
+
+export function wpsCatalogItem(
+  item: CatalogMember,
+  options: ConversionOptions
+): MemberResult {
+  if (!options.partial && !is.string(item.url)) {
+    return nullResult(
+      missingRequiredProp(ModelType.WpsItem, "url", "string", item.name)
+    );
+  }
+
+  const propsToCopy = [
+    "url",
+    "identifier",
+    "description",
+    "executeWithHttpGet",
+  ];
+
+  const unknownProps = getUnknownProps(item, [
+    ...catalogMemberProps,
+    ...catalogMemberPropsIgnore,
+    ...propsToCopy,
+    "featureInfoTemplate",
+  ]);
+  const member: MemberResult["member"] = {
+    type: "wps",
+    name: item.name,
+  };
+  const messages = propsToWarnings(ModelType.WpsItem, unknownProps, item.name);
+
+  copyProps(item, member, [...catalogMemberProps, ...propsToCopy]);
+  if (options.copyUnknownProperties) {
+    copyProps(item, member, unknownProps);
+  }
+
+  return {
+    member,
+    messages,
+  };
+}
+
+export function wpsResultItem(
+  item: CatalogMember,
+  options: ConversionOptions
+): MemberResult {
+  const propsToCopy = ["wpsResponseUrl", "wpsResponse", "parameters"];
+
+  // do something for parameterValues
+
+  const unknownProps = getUnknownProps(item, [
+    ...catalogMemberProps,
+    ...catalogMemberPropsIgnore,
+    ...propsToCopy,
+    "featureInfoTemplate",
+  ]);
+  const member: MemberResult["member"] = {
+    type: "wps-result",
+    name: item.name,
+  };
+  const messages = propsToWarnings(
+    ModelType.WpsResultItem,
+    unknownProps,
+    item.name
+  );
+
+  copyProps(item, member, [...catalogMemberProps, ...propsToCopy]);
+  if (options.copyUnknownProperties) {
+    copyProps(item, member, unknownProps);
+  }
+
   return {
     member,
     messages,

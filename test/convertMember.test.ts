@@ -293,4 +293,67 @@ describe("Test that convertMember", () => {
     });
     expect(res.messages).toHaveLength(0);
   });
+
+  it("converts a ArcGisMapServerCatalogItem", () => {
+    const res = convertMember({
+      name: "Catchment Scale Land Use 2018 [18 class]",
+      url:
+        "http://www.asris.csiro.au/arcgis/rest/services/abares/clum_50m_2018/MapServer/0",
+      layers: "0",
+      type: "esri-mapServer",
+      ignoreUnknownTileErrors: true,
+      opacity: 1,
+    });
+    expect(res.member).toMatchObject({
+      name: "Catchment Scale Land Use 2018 [18 class]",
+      url:
+        "http://www.asris.csiro.au/arcgis/rest/services/abares/clum_50m_2018/MapServer/0",
+      layers: "0",
+      type: "esri-mapServer",
+      opacity: 1,
+    });
+    expect(res.messages).toHaveLength(1);
+    expect(res.messages[0]);
+  });
+
+  it("converts a Ckan Item", () => {
+    const res = convertMember({
+      id: "ee9d9cae-188e-4160-9d36-3d1b19b3ea58",
+      name: "Generalised map of soil orders for Australia",
+      type: "ckan-resource",
+      url: "proxy/_60s/https://data.gov.au",
+      datasetId: "2016-soe-lan-soil-classification",
+      resourceId: "ee9d9cae-188e-4160-9d36-3d1b19b3ea58",
+      cacheDuration: "1h",
+      itemProperties: {
+        info: [
+          {
+            name: "Metadata and Data Source",
+            content:
+              "https://data.gov.au/dataset/2016-soe-lan-soil-classification",
+          },
+        ],
+      },
+    });
+    expect(res.member).toMatchObject({
+      id: "ee9d9cae-188e-4160-9d36-3d1b19b3ea58",
+      name: "Generalised map of soil orders for Australia",
+      type: "ckan-item",
+      url: "proxy/_60s/https://data.gov.au",
+      datasetId: "2016-soe-lan-soil-classification",
+      resourceId: "ee9d9cae-188e-4160-9d36-3d1b19b3ea58",
+      cacheDuration: "1h",
+      itemProperties: {
+        info: [
+          {
+            name: "Metadata and Data Source",
+            content:
+              "https://data.gov.au/dataset/2016-soe-lan-soil-classification",
+          },
+        ],
+      },
+    });
+    expect(res.messages).toHaveLength(0);
+    expect(res.messages[0]);
+  });
 });

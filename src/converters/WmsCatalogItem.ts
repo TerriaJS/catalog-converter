@@ -8,9 +8,10 @@ import {
   CopyProps,
   featureInfoTemplate,
   getUnknownProps,
+  propsToWarnings,
+  imageryLayerProps,
   legendProps,
   legends,
-  propsToWarnings,
 } from "./helpers";
 
 export function wmsCatalogItem(
@@ -96,6 +97,7 @@ export function wmsCatalogItem(
   const unknownProps = getUnknownProps(item, [
     ...catalogMemberProps,
     ...catalogMemberPropsIgnore,
+    ...imageryLayerProps,
     ...legendProps,
     ...propsToCopy,
     "chartType",
