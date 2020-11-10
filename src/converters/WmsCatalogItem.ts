@@ -91,6 +91,10 @@ export function wmsCatalogItem(
     "hideLayerAfterMinScaleDenominator",
     "maxRefreshIntervals",
     "leafletUpdateInterval",
+    "supportsColorScaleRange",
+    "colorScaleMinimum",
+    "colorScaleMaximum",
+    { v7: "disableUserChanges", v8: "disableDimensionSelectors" },
   ];
 
   const unknownProps = getUnknownProps(item, [
