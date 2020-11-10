@@ -7,6 +7,7 @@
 // Unfortunately types in `is` require @types/node to be pinned to v12
 // See https://github.com/sindresorhus/is/issues/108
 import is from "@sindresorhus/is";
+import { merge } from "lodash";
 import { csvCatalogItem } from "./converters/CsvItem";
 import {
   convertMembersArrayWithConvertMember,
@@ -203,7 +204,8 @@ export function convertShare(json: unknown): ShareResult {
       initializationUrls.push(current);
       return sources;
     }
-    return Object.assign(sources, current);
+
+    return merge(sources, current);
   }, {});
 
   const v8InitSource: any = { stratum: "user" };
@@ -258,18 +260,17 @@ export function convertShare(json: unknown): ShareResult {
 
         // Only convert user added data if convertUserAdded
         if (
-          !convertUserAdded &&
-          (id === "Root Group/User-Added Data" ||
-            knownContainerUniqueIds.includes("__User-Added_Data__"))
-        )
-          return;
-
-        const result = convertMember(v7Member, { partial: true });
-        messages.push(...result.messages);
-        convertedMembers[newId] = {
-          ...result.member,
-          knownContainerUniqueIds,
-        };
+          convertUserAdded ||
+          (id !== "Root Group/User-Added Data" &&
+            !knownContainerUniqueIds.includes("__User-Added_Data__"))
+        ) {
+          const result = convertMember(v7Member, { partial: true });
+          messages.push(...result.messages);
+          convertedMembers[newId] = {
+            ...result.member,
+            knownContainerUniqueIds,
+          };
+        }
         return convertedMembers;
       }
     }, {});

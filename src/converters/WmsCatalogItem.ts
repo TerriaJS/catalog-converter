@@ -5,12 +5,13 @@ import {
   catalogMemberProps,
   catalogMemberPropsIgnore,
   copyProps,
+  CopyProps,
   featureInfoTemplate,
   getUnknownProps,
   propsToWarnings,
   imageryLayerProps,
+  legendProps,
   legends,
-  CopyProps,
 } from "./helpers";
 
 export function wmsCatalogItem(
@@ -101,6 +102,7 @@ export function wmsCatalogItem(
     ...catalogMemberProps,
     ...catalogMemberPropsIgnore,
     ...imageryLayerProps,
+    ...legendProps,
     ...propsToCopy,
     "chartType",
     "featureInfoTemplate",
