@@ -206,7 +206,7 @@ export function featureInfoTemplate(
     };
   } else {
     const result: PlainObject = {};
-    const propsToCopy = ["name", "template", "partials"];
+    const propsToCopy = ["name", "template", "partials", "formats"];
     const unknownProps = getUnknownProps(template, propsToCopy);
     const extraPropsMessages = propsToWarnings(
       modelType,
