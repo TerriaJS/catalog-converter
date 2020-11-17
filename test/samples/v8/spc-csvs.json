@@ -1,199 +1,103 @@
 {
-  "homeCamera": {
-    "west": 130,
-    "south": -27,
-    "east": 220,
-    "north": 10
-  },
-  "services": [],
-  "corsDomains": ["pacificdata.org", "arcgis.com"],
   "catalog": [
     {
-      "name": "Sustainable Development Goals",
       "type": "group",
-      "isOpen": false,
+      "name": "Sustainable Development Goals",
       "members": [
         {
+          "type": "csv",
           "name": "3.1.1. Maternal Mortality Ratio",
-          "type": "csv",
+          "isCsvForCharting": false,
           "url": "/data/MaternalMortalityRatio.csv",
-          "isCsvForCharting": false,
-          "tableStyle": {
-            "dataVariable": "OBS_VALUE",
-            "timeColumn": null,
-            "minDisplayValue": 0,
-            "columns": {
-              "NATURE": {
-                "type": "HIDDEN"
-              },
-              "SOURCE_DETAIL": {
-                "type": "HIDDEN"
-              },
-              "REPORTING_TYPE": {
-                "type": "HIDDEN"
-              },
-              "SDG_UNIT_MEASURE": {
-                "type": "HIDDEN"
-              }
-            }
-          }
+          "columns": [
+            { "name": "NATURE", "type": "hidden" },
+            { "name": "SOURCE_DETAIL", "type": "hidden" },
+            { "name": "REPORTING_TYPE", "type": "hidden" },
+            { "name": "SDG_UNIT_MEASURE", "type": "hidden" }
+          ]
         },
         {
+          "type": "csv",
           "name": "3.1.2 Births attended by skilled health personnel Ratio",
-          "type": "csv",
+          "isCsvForCharting": false,
           "url": "/data/BirthsAttendedSkilled.csv",
-          "isCsvForCharting": false,
-          "tableStyle": {
-            "dataVariable": "OBS_VALUE",
-            "timeColumn": null,
-            "minDisplayValue": 0,
-            "columns": {
-              "NATURE": {
-                "type": "HIDDEN"
-              },
-              "SOURCE_DETAIL": {
-                "type": "HIDDEN"
-              },
-              "REPORTING_TYPE": {
-                "type": "HIDDEN"
-              },
-              "SDG_UNIT_MEASURE": {
-                "type": "HIDDEN"
-              }
-            }
-          }
+          "columns": [
+            { "name": "NATURE", "type": "hidden" },
+            { "name": "SOURCE_DETAIL", "type": "hidden" },
+            { "name": "REPORTING_TYPE", "type": "hidden" },
+            { "name": "SDG_UNIT_MEASURE", "type": "hidden" }
+          ]
         },
         {
+          "type": "csv",
           "name": "3.3.2 Tuberculosis incidence Ratio",
-          "type": "csv",
+          "isCsvForCharting": false,
           "url": "/data/TbIncidence.csv",
-          "isCsvForCharting": false,
-          "tableStyle": {
-            "dataVariable": "OBS_VALUE",
-            "timeColumn": null,
-            "minDisplayValue": 0,
-            "columns": {
-              "NATURE": {
-                "type": "HIDDEN"
-              },
-              "SOURCE_DETAIL": {
-                "type": "HIDDEN"
-              },
-              "REPORTING_TYPE": {
-                "type": "HIDDEN"
-              },
-              "SDG_UNIT_MEASURE": {
-                "type": "HIDDEN"
-              }
-            }
-          }
+          "columns": [
+            { "name": "NATURE", "type": "hidden" },
+            { "name": "SOURCE_DETAIL", "type": "hidden" },
+            { "name": "REPORTING_TYPE", "type": "hidden" },
+            { "name": "SDG_UNIT_MEASURE", "type": "hidden" }
+          ]
         },
         {
+          "type": "csv",
           "name": "3.d.1 International Health Regulations (IHR) core capacity index",
-          "type": "csv",
+          "isCsvForCharting": false,
           "url": "/data/IhrCapacity.csv",
-          "isCsvForCharting": false,
-          "tableStyle": {
-            "dataVariable": "OBS_VALUE",
-            "timeColumn": null,
-            "minDisplayValue": 0,
-            "columns": {
-              "NATURE": {
-                "type": "HIDDEN"
-              },
-              "SOURCE_DETAIL": {
-                "type": "HIDDEN"
-              },
-              "REPORTING_TYPE": {
-                "type": "HIDDEN"
-              },
-              "SDG_UNIT_MEASURE": {
-                "type": "HIDDEN"
-              }
-            }
-          }
+          "columns": [
+            { "name": "NATURE", "type": "hidden" },
+            { "name": "SOURCE_DETAIL", "type": "hidden" },
+            { "name": "REPORTING_TYPE", "type": "hidden" },
+            { "name": "SDG_UNIT_MEASURE", "type": "hidden" }
+          ]
         },
         {
+          "type": "csv",
           "name": "15.1.1 Land area covered by forest",
-          "type": "csv",
+          "isCsvForCharting": false,
           "url": "/data/ForestCover.csv",
-          "isCsvForCharting": false,
-          "tableStyle": {
-            "dataVariable": "OBS_VALUE",
-            "timeColumn": null,
-            "minDisplayValue": 0,
-            "columns": {
-              "NATURE": {
-                "type": "HIDDEN"
-              },
-              "SOURCE_DETAIL": {
-                "type": "HIDDEN"
-              },
-              "REPORTING_TYPE": {
-                "type": "HIDDEN"
-              },
-              "SDG_UNIT_MEASURE": {
-                "type": "HIDDEN"
-              }
-            }
-          }
+          "columns": [
+            { "name": "NATURE", "type": "hidden" },
+            { "name": "SOURCE_DETAIL", "type": "hidden" },
+            { "name": "REPORTING_TYPE", "type": "hidden" },
+            { "name": "SDG_UNIT_MEASURE", "type": "hidden" }
+          ]
         },
         {
+          "type": "csv",
           "name": "15.5.1 Red List Index",
-          "type": "csv",
-          "url": "/data/RedListIndex.csv",
           "isCsvForCharting": false,
-          "tableStyle": {
-            "dataVariable": "OBS_VALUE",
-            "timeColumn": null,
-            "minDisplayValue": 0,
-            "columns": {
-              "NATURE": {
-                "type": "HIDDEN"
-              },
-              "SOURCE_DETAIL": {
-                "type": "HIDDEN"
-              },
-              "REPORTING_TYPE": {
-                "type": "HIDDEN"
-              },
-              "SDG_UNIT_MEASURE": {
-                "type": "HIDDEN"
-              }
-            }
-          }
+          "url": "/data/RedListIndex.csv",
+          "columns": [
+            { "name": "NATURE", "type": "hidden" },
+            { "name": "SOURCE_DETAIL", "type": "hidden" },
+            { "name": "REPORTING_TYPE", "type": "hidden" },
+            { "name": "SDG_UNIT_MEASURE", "type": "hidden" }
+          ]
         },
         {
-          "name": "16.9.1 Proportion of births registered with a civil authority",
           "type": "csv",
-          "url": "/data/BirthsRegistered.csv",
+          "name": "16.9.1 Proportion of births registered with a civil authority",
           "isCsvForCharting": false,
-          "tableStyle": {
-            "dataVariable": "OBS_VALUE",
-            "timeColumn": null,
-            "minDisplayValue": 0,
-            "columns": {
-              "NATURE": {
-                "type": "HIDDEN"
-              },
-              "SOURCE_DETAIL": {
-                "type": "HIDDEN"
-              },
-              "REPORTING_TYPE": {
-                "type": "HIDDEN"
-              },
-              "SDG_UNIT_MEASURE": {
-                "type": "HIDDEN"
-              }
-            }
-          }
+          "url": "/data/BirthsRegistered.csv",
+          "columns": [
+            { "name": "NATURE", "type": "hidden" },
+            { "name": "SOURCE_DETAIL", "type": "hidden" },
+            { "name": "REPORTING_TYPE", "type": "hidden" },
+            { "name": "SDG_UNIT_MEASURE", "type": "hidden" }
+          ]
         }
-      ]
+      ],
+      "isOpen": false
     },
     {
-      "name": "Marine Pollution",
       "type": "csv",
+      "name": "Marine Pollution",
       "url": "https://pacific-data.sprep.org/system/files/ENV_Marine_Pollution_Obs_data_v4.csv"
     }
-  ]
+  ],
+  "corsDomains": ["pacificdata.org", "arcgis.com"],
+  "homeCamera": { "west": 130, "south": -27, "east": 220, "north": 10 },
+  "services": []
 }
