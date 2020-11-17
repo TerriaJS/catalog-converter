@@ -105,6 +105,7 @@ export const catalogMemberProps: CopyProps[] = [
     v8: "hideLegendInWorkbench",
     translationFn: (isLegendVisible: boolean) => !isLegendVisible,
   },
+  "clipToRectangle",
 ];
 
 export const imageryLayerProps: CopyProps[] = ["keepOnTop"];
