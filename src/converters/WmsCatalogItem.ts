@@ -106,6 +106,10 @@ export function wmsCatalogItem(
     ...propsToCopy,
     "chartType",
     "featureInfoTemplate",
+    "ignoreUnknownTileErrors",
+    "treat403AsError",
+    "treat403AsError",
+    "tileErrorThresholdBeforeDisabling",
   ]);
   const member: MemberResult["member"] = {
     type: "wms",
@@ -139,6 +143,38 @@ export function wmsCatalogItem(
   }
   const legendResult = legends(ModelType.WmsItem, item.name, item);
   member.legends = legendResult.result;
+
+  const tileErrorOpts = tileErrorHandlingOptions(item);
+  if (tileErrorOpts !== undefined) {
+    member.tileErrorHandlingOptions = tileErrorOpts;
+  }
+
   messages.push(...legendResult.messages);
   return { member, messages };
+}
+
+interface TileErrorHandlingOptions {
+  treat403AsError?: boolean;
+  treat404AsError?: boolean;
+  ignoreUnknownTileErrors?: boolean;
+  thresholdBeforeDisablingItem?: number;
+}
+
+function tileErrorHandlingOptions(
+  item: CatalogMember
+): TileErrorHandlingOptions | undefined {
+  const opts: TileErrorHandlingOptions = {};
+  if (is.boolean(item.treat403AsError)) {
+    opts.treat403AsError = item.treat403AsError;
+  }
+  if (is.boolean(item.treat404AsError)) {
+    opts.treat404AsError = item.treat404AsError;
+  }
+  if (is.boolean(item.ignoreUnknownTileErrors)) {
+    opts.ignoreUnknownTileErrors = item.ignoreUnknownTileErrors;
+  }
+  if (is.number(item.tileErrorThresholdBeforeDisabling)) {
+    opts.thresholdBeforeDisablingItem = item.tileErrorThresholdBeforeDisabling;
+  }
+  return is.emptyObject(opts) ? undefined : opts;
 }
