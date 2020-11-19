@@ -20,22 +20,18 @@
               "id": "/http://localhost:3001/data/2011Census_TOT_LGA.csv",
               "chartDisclaimer": null,
               "disablePreview": false,
-              "hideLegendInWorkbench": false,
+              "isOpenInWorkbench": true,
               "hideSource": false
             }
           ],
           "description": "The group for data that was added by the user via the Add Data panel.",
           "info": [],
           "isOpen": true,
-          "knownContainerUniqueIds": [
-            "/"
-          ]
+          "knownContainerUniqueIds": ["/"]
         }
       },
       "stories": [],
-      "workbench": [
-        "/http://localhost:3001/data/2011Census_TOT_LGA.csv"
-      ],
+      "workbench": ["/http://localhost:3001/data/2011Census_TOT_LGA.csv"],
       "initialCamera": {
         "west": 99.80193424683281,
         "south": -38.33870816951407,
