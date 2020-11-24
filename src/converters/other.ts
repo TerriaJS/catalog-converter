@@ -16,6 +16,7 @@ import {
   catalogMemberPropsIgnore,
   legends,
   imageryLayerProps,
+  legendProps,
 } from "./helpers";
 
 // Dependency injection to break circular dependency
@@ -619,6 +620,7 @@ export function cartoMapCatalogItem(
     ...catalogMemberProps,
     ...catalogMemberPropsIgnore,
     ...imageryLayerProps,
+    ...legendProps,
     ...propsToCopy,
   ]);
 
@@ -666,6 +668,7 @@ export function mapboxVectorTileCatalogItem(
     ...catalogMemberProps,
     ...catalogMemberPropsIgnore,
     ...imageryLayerProps,
+    ...legendProps,
     ...propsToCopy,
   ]);
 
