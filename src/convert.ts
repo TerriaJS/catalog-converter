@@ -36,6 +36,7 @@ import {
   unknownType,
 } from "./Message";
 import { CatalogMember, ConversionOptions, MemberResult } from "./types";
+import { wmsCatalogGroup } from "./converters/WmsCatalogGroup";
 
 // Use dependency injection to break circular dependencies created by
 //  group -> convertMembersArray -> convertMember -> group  recursion
@@ -47,6 +48,7 @@ const group = groupFromConvertMembersArray(convertMembersArray);
 const converters = new Map([
   ["group", group],
   ["wms", wmsCatalogItem],
+  ["wms-getCapabilities", wmsCatalogGroup],
   ["csv", csvCatalogItem],
   ["sos", sosCatalogItem],
   ["esri-mapServer", esriMapServerCatalogItem],
