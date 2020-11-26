@@ -13,69 +13,169 @@ import {
   nullResult,
   propsToWarnings,
   catalogMemberPropsIgnore,
+  featureInfoTemplate,
 } from "./helpers";
 
-function tableStyle(tableStyle: PlainObject) {
-  const extraProps: {
-    columns?: PlainObject[];
-    defaultStyle?: PlainObject;
-  } = {};
+interface TableTraits {
+  columns?: Column[];
+}
+
+interface TableStyle {
+  columns?: Column[];
+  defaultColumn?: Omit<Column, "name">;
+  defaultStyle?: Style;
+  activeStyle?: string;
+}
+
+interface Style {
+  chart?: ChartStyle;
+  time?: TimeStyle;
+  color?: ColorStyle;
+}
+
+interface Column {
+  name: string;
+  title?: string;
+  units?: string;
+  type?: string;
+  format?: PlainObject;
+  replaceWithZeroValues?: string[];
+  replaceWithNullValues?: string[];
+}
+
+interface ChartStyle {
+  lines: ChartLineStyle[];
+}
+
+interface ChartLineStyle {
+  color?: string;
+  yAxisMinimum?: number;
+  yAxisMaximum?: number;
+  isSelectedInWorkbench?: boolean;
+  yAxisColumn?: string;
+}
+
+interface TimeStyle {
+  timeColumn?: string | null;
+  endTimeColumn?: string;
+}
+
+interface ColorStyle {
+  nullColor?: string;
+  nullLabel?: string;
+  numberOfBins?: number;
+  binColors?: string[];
+}
+
+function tableStyle(tableStyle: PlainObject): TableTraits {
+  const extraProps: TableStyle = {};
   if (is.plainObject(tableStyle.columns)) {
     const columns = tableStyle.columns;
-    const chartLines: PlainObject[] = [];
-    extraProps.columns = Object.keys(columns)
-      .map((col) => ({ col, defn: columns[col] }))
-      .map(({ col, defn }) => {
-        const newDefn: PlainObject = { name: col };
-        if (is.plainObject(defn)) {
-          if (defn.type === "HIDDEN") {
-            newDefn.type = "hidden";
-          }
-          if (is.string(defn.units)) {
-            newDefn.units = defn.units;
-          }
-          if (is.string(defn.title)) {
-            newDefn.title = defn.title;
-          }
-          if (is.plainObject(defn.format)) {
-            newDefn.format = defn.format;
-          }
-          if (is.array(defn.replaceWithZeroValues)) {
-            newDefn.replaceWithZeroValues = defn.replaceWithZeroValues;
-          }
-          if (is.array(defn.replaceWithNullValues)) {
-            newDefn.replaceWithNullValues = defn.replaceWithNullValues;
-          }
-          tryAddChartLineForColumn(col, defn, chartLines);
-        }
-        return newDefn;
-      });
+    extraProps.columns = Object.entries(columns).map(([name, defn]) => ({
+      name,
+      ...getColumnTraits(defn),
+    }));
 
-    if (!is.emptyArray(chartLines)) {
+    const chartLines = getChartLines(tableStyle.columns);
+    if (chartLines) {
       extraProps.defaultStyle = { chart: { lines: chartLines } };
     }
   }
-  // if (is.string(tableStyle.colorMap)) {
-  // }
+
+  if (is.string(tableStyle.dataVariable)) {
+    extraProps.activeStyle = tableStyle.dataVariable;
+  }
+
+  const defaultColumn = getColumnTraits(tableStyle);
+  if (!is.emptyObject(defaultColumn)) {
+    extraProps.defaultColumn = defaultColumn;
+  }
+
+  const timeTraits = getTimeTraits(tableStyle);
+  if (timeTraits) {
+    extraProps.defaultStyle = {
+      ...extraProps.defaultStyle,
+      time: timeTraits,
+    };
+  }
+
+  const colorTraits = getColorTraits(tableStyle);
+  if (colorTraits) {
+    extraProps.defaultStyle = {
+      ...extraProps.defaultStyle,
+      color: colorTraits,
+    };
+  }
+
   return extraProps;
 }
 
-function tryAddChartLineForColumn(
-  columName: string,
-  col: PlainObject,
-  chartLines: PlainObject[]
-) {
-  // Read chart line style from column defnition and append to chartStyle.lines
-  const line: PlainObject = {};
-  const { chartLineColor, yAxisMin, yAxisMax, active } = col;
-  if (is.string(chartLineColor)) line.color = chartLineColor;
-  if (is.number(yAxisMin)) line.yAxisMinimum = yAxisMin;
-  if (is.number(yAxisMax)) line.yAxisMaximum = yAxisMax;
-  if (is.boolean(active)) line.isSelectedInWorkbench = active;
-  if (!is.emptyObject(line)) {
-    line.yAxisColumn = columName;
-    chartLines.push(line);
+function getColumnTraits(defn: any): Omit<Column, "name"> {
+  const newDefn: Omit<Column, "name"> = {};
+  if (is.plainObject(defn)) {
+    if (defn.type === "HIDDEN") {
+      newDefn.type = "hidden";
+    }
+    if (is.string(defn.units)) {
+      newDefn.units = defn.units;
+    }
+    if (is.string(defn.title)) {
+      newDefn.title = defn.title;
+    }
+    if (is.plainObject(defn.format)) {
+      newDefn.format = defn.format;
+    }
+    if (is.array(defn.replaceWithZeroValues)) {
+      newDefn.replaceWithZeroValues = defn.replaceWithZeroValues;
+    }
+    if (is.array(defn.replaceWithNullValues)) {
+      newDefn.replaceWithNullValues = defn.replaceWithNullValues;
+    }
   }
+  return newDefn;
+}
+
+function getTimeTraits(tableStyle: PlainObject): TimeStyle | undefined {
+  const timeTraits: { timeColumn?: string | null; endTimeColumn?: string } = {};
+  if (is.string(tableStyle.timeColumn))
+    timeTraits.timeColumn = tableStyle.timeColumn;
+  else if (is.array(tableStyle.timeColumn)) {
+    const [startTimeColumn, endTimeColumn] = tableStyle.timeColumn;
+    if (is.string(startTimeColumn) && is.string(endTimeColumn)) {
+      timeTraits.timeColumn = startTimeColumn;
+      timeTraits.endTimeColumn = endTimeColumn;
+    }
+  } else if (is.null_(tableStyle.timeColumn)) {
+    timeTraits.timeColumn = null;
+  }
+  return is.emptyObject(timeTraits) ? undefined : timeTraits;
+}
+
+function getChartLines(columns: PlainObject): ChartLineStyle[] | undefined {
+  const lines: ChartLineStyle[] = [];
+  Object.entries(columns).forEach(([columnName, col]: [string, any]) => {
+    const line: ChartLineStyle = {};
+    const { chartLineColor, yAxisMin, yAxisMax, active } = col;
+    if (is.string(chartLineColor)) line.color = chartLineColor;
+    if (is.number(yAxisMin)) line.yAxisMinimum = yAxisMin;
+    if (is.number(yAxisMax)) line.yAxisMaximum = yAxisMax;
+    if (is.boolean(active)) line.isSelectedInWorkbench = active;
+    if (!is.emptyObject(line)) line.yAxisColumn = columnName;
+    if (!is.emptyObject(line)) lines.push(line);
+  });
+  return is.emptyArray(lines) ? undefined : lines;
+}
+
+function getColorTraits(tableStyle: PlainObject): ColorStyle | undefined {
+  const color: ColorStyle = {};
+  if (is.string(tableStyle.nullColor)) color.nullColor = tableStyle.nullColor;
+  if (is.string(tableStyle.nullLabel)) color.nullLabel = tableStyle.nullLabel;
+  if (is.number(tableStyle.colorBins))
+    color.numberOfBins = tableStyle.colorBins;
+  if (is.string(tableStyle.colorMap))
+    color.binColors = tableStyle.colorMap.split("-");
+  if (is.array(tableStyle.colorMap)) color.binColors = tableStyle.colorMap;
+  return is.emptyObject(color) ? undefined : color;
 }
 
 export function csvCatalogItem(
@@ -99,12 +199,10 @@ export function csvCatalogItem(
     "data",
     "opacity",
     "tableStyle",
+    "featureInfoTemplate",
+    "polling",
   ]);
-  const extraPropsMessages = propsToWarnings(
-    ModelType.CsvItem,
-    unknownProps,
-    item.name
-  );
+  const messages = propsToWarnings(ModelType.CsvItem, unknownProps, item.name);
   const member: MemberResult["member"] = {
     type: "csv",
     name: item.name,
@@ -117,9 +215,39 @@ export function csvCatalogItem(
     "url",
     "opacity",
     { v7: "data", v8: "csvString" },
+    {
+      v7: "polling",
+      v8: "polling",
+      translationFn: translatePolling,
+    },
   ]);
   if (is.plainObject(item.tableStyle)) {
     Object.assign(member, tableStyle(item.tableStyle));
   }
-  return { member, messages: extraPropsMessages };
+  if (
+    is.string(item.featureInfoTemplate) ||
+    is.plainObject(item.featureInfoTemplate)
+  ) {
+    const result = featureInfoTemplate(
+      ModelType.WmsItem,
+      item.name,
+      item.featureInfoTemplate
+    );
+    member.featureInfoTemplate = result.result;
+    messages.push(...result.messages);
+  }
+  return { member, messages };
+}
+
+function translatePolling(polling: any) {
+  const result: {
+    url?: string;
+    seconds?: number;
+    shouldReplaceData?: boolean;
+  } = {};
+  const { url, seconds, replace } = polling;
+  if (is.string(url)) result.url = url;
+  if (is.number(seconds)) result.seconds = seconds;
+  if (is.boolean(replace)) result.shouldReplaceData = replace;
+  return result;
 }
