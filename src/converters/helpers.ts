@@ -63,10 +63,10 @@ export const catalogMemberProps: CopyProps[] = [
     v8: "rectangle",
     translationFn: (rectangle: any[]) => {
       return {
-        west: rectangle[0],
-        south: rectangle[1],
-        east: rectangle[2],
-        north: rectangle[3],
+        west: parseFloat(rectangle[0]) || undefined,
+        south: parseFloat(rectangle[1]) || undefined,
+        east: parseFloat(rectangle[2]) || undefined,
+        north: parseFloat(rectangle[3]) || undefined,
       };
     },
   },
