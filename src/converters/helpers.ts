@@ -104,10 +104,6 @@ export const catalogMemberProps: CopyProps[] = [
     v8: "isOpenInWorkbench",
   },
   "clipToRectangle",
-  {
-    v7: "isEnabled",
-    v8: "showInWorkbenchOnLoad",
-  },
 ];
 
 export const imageryLayerProps: CopyProps[] = ["keepOnTop"];
