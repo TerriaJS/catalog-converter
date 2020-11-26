@@ -20,7 +20,7 @@ export default function generateRandomId(length?: number): string | undefined {
 }
 
 function pickRandomChar(alpahbet: string[]) {
-  const randomIdx = Math.floor(Math.random() * alpahbet.length);
+  const randomIdx = Math.floor(Math.random() * (alpahbet.length - 1));
   return alpahbet[randomIdx];
 }
 
