@@ -15,6 +15,7 @@ import {
   UnknownProp,
   UnknownType,
 } from "./Message";
+import { DEFAULT_ID_LENGTH } from "./converters/generateRandomId";
 // import "core-js/features/object";
 
 const argv = yargs
@@ -38,11 +39,26 @@ const argv = yargs
     default: false,
     description: "Disable printing every error and warning",
   })
+  .option("g", {
+    alias: "generate-random-ids",
+    type: "boolean",
+    default: false,
+    description:
+      "Generate random IDs for each item in the catalog. If the item already has an ID then it is retained.",
+  })
+  .option("l", {
+    alias: "id-length",
+    type: "number",
+    default: DEFAULT_ID_LENGTH,
+    description: "Length of the generated random IDs",
+  })
   .help().argv;
 
 const json = json5.parse(fs.readFileSync(argv._[0], { encoding: "utf-8" }));
 const res = convertCatalog(json, {
   copyUnknownProperties: argv.u,
+  generateIds: argv.g,
+  idLength: argv.l,
 });
 const errors = res.messages.filter((mes) => mes.severity === Severity.Error);
 const warnings = res.messages.filter(
