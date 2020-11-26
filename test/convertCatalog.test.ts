@@ -49,4 +49,12 @@ describe("Test convertCatalog", () => {
       res.messages.filter(({ severity }) => severity === Severity.Error)
     ).toHaveLength(0);
   });
+
+  it("converts the renewable energy csv", function () {
+    const v7 = require("./samples/v7/power-generation.json");
+    const v8 = require("./samples/v8/power-generation.json");
+    const res = convertCatalog(v7);
+    expect(res.result).toMatchObject(v8);
+    expect(res.messages).toHaveLength(0);
+  });
 });
