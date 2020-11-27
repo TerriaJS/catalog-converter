@@ -36,6 +36,7 @@ import {
   unknownType,
 } from "./Message";
 import { CatalogMember, ConversionOptions, MemberResult } from "./types";
+import generateRandomId from "./converters/generateRandomId";
 
 // Use dependency injection to break circular dependencies created by
 //  group -> convertMembersArray -> convertMember -> group  recursion
@@ -101,6 +102,7 @@ export function convertMember(
 export interface CatalogResult {
   result: {
     catalog?: CatalogMember[];
+    workbench?: string[];
   } | null;
   messages: Message[];
 }
@@ -122,13 +124,27 @@ export function convertCatalog(
   }
   const messages: Message[] = [];
   let catalog: CatalogMember[] | undefined;
+  let workbench: string[] | undefined;
   if (is.array(json.catalog)) {
-    const res = convertMembersArray(json.catalog, "catalog", options);
+    const enabledItemsAccumulator: CatalogMember[] = [];
+    const res = convertMembersArray(json.catalog, "catalog", {
+      ...options,
+      enabledItemsAccumulator,
+    });
     catalog = res.members;
     messages.push(...res.messages);
+
+    // Collect ids of enabled items, genearting a random id if required.
+    workbench = enabledItemsAccumulator
+      .map((item) => {
+        if (!item.id) item.id = generateRandomId(options?.idLength);
+        return item.id;
+      })
+      .filter((id) => id !== undefined) as string[];
   }
   const result = {
     result: {
+      workbench,
       catalog,
     },
     messages,

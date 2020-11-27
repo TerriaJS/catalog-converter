@@ -5,6 +5,8 @@ export interface ConversionOptions {
   readonly partial?: boolean;
   readonly generateIds?: boolean;
   readonly idLength?: number;
+  // An optional accumulator for collecting all is enabled items in the catalog
+  readonly enabledItemsAccumulator?: CatalogMember[];
 }
 
 export type PlainObject = Record<string, unknown>;
