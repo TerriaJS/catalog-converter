@@ -37,4 +37,16 @@ describe("Test convertCatalog", () => {
       res.messages.filter(({ severity }) => severity === Severity.Error)
     ).toHaveLength(0);
   });
+
+  it("wms-group", () => {
+    const file = "wms-group";
+    const [v7, v8] = ["v7", "v8"].map((folder) =>
+      require(`./samples/${folder}/${file}.json`)
+    );
+    const res = convertCatalog(v7, { copyUnknownProperties: true });
+    expect(res.result).toMatchObject(v8);
+    expect(
+      res.messages.filter(({ severity }) => severity === Severity.Error)
+    ).toHaveLength(0);
+  });
 });
