@@ -11,6 +11,7 @@ export enum ModelType {
   Member = "CatalogMember",
   Group = "CatalogGroup",
   WmsItem = "WebMapServiceCatalogItem",
+  WmsGroup = "WebMapServiceCatalogGroup",
   CsvItem = "CsvCatalogItem",
   SosItem = "SensorObservationServiceCatalogItem",
   EsriMapServerItem = "EsriMapServerCatalogItem",
