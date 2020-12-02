@@ -356,4 +356,99 @@ describe("Test that convertMember", () => {
     expect(res.messages).toHaveLength(0);
     expect(res.messages[0]);
   });
+
+  it("converts an EsriMapServerCatalogGroup", function () {
+    const res = convertMember({
+      id: "f642b92e",
+      name: "Queensland Drought Declarations",
+      url:
+        "https://gisservices.information.qld.gov.au/arcgis/rest/services/Farming/DroughtDeclarations/MapServer",
+      type: "esri-mapServer-group",
+    });
+    expect(res.messages).toHaveLength(0);
+    expect(res.member).toEqual({
+      type: "esri-mapServer-group",
+      name: "Queensland Drought Declarations",
+      id: "f642b92e",
+      url:
+        "https://gisservices.information.qld.gov.au/arcgis/rest/services/Farming/DroughtDeclarations/MapServer",
+    });
+  });
+
+  it("converts a MapboxVectorTileCatalogItem", function () {
+    const res = convertMember({
+      type: "mvt",
+      name: "Commonwealth Electoral Divisions (2019)",
+      description:
+        "Federal electoral boundaries which will apply at the 2019 federal election. Produced by combining boundary datasets provided by AEC for each state.",
+      url: "https://tiles.terria.io/ELB_2019/{z}/{x}/{y}.pbf",
+      layer: "ELB_2019",
+      lineColor: "hsl(180,80%,30%)",
+      maximumNativeZoom: 12,
+      minimumZoom: 0,
+      opacity: 1,
+      info: [
+        {
+          name: "Licence",
+          content:
+            "[Australian Electoral Commission Data download licence](http://www.aec.gov.au/Electorates/gis/GIS_Data_Download_Data_Licence.htm)",
+        },
+      ],
+    });
+    expect(res.messages).toHaveLength(0);
+    expect(res.member).toEqual({
+      type: "mvt",
+      name: "Commonwealth Electoral Divisions (2019)",
+      description:
+        "Federal electoral boundaries which will apply at the 2019 federal election. Produced by combining boundary datasets provided by AEC for each state.",
+      info: [
+        {
+          name: "Licence",
+          content:
+            "[Australian Electoral Commission Data download licence](http://www.aec.gov.au/Electorates/gis/GIS_Data_Download_Data_Licence.htm)",
+        },
+      ],
+      url: "https://tiles.terria.io/ELB_2019/{z}/{x}/{y}.pbf",
+      opacity: 1,
+      lineColor: "hsl(180,80%,30%)",
+      layer: "ELB_2019",
+      maximumNativeZoom: 12,
+      minimumZoom: 0,
+    });
+  });
+
+  it("converts a CartoMapCatalogItem", function () {
+    const res = convertMember({
+      id: "e9803464",
+      name: "NSW Combined Drought Indicator",
+      url: "https://edis.carto.com/api/v1/map/named/DAILY_CDI2",
+      type: "carto",
+      legendUrl: "/data/legends/NSW_Combined_Drought_Indicator.png",
+      opacity: 1,
+      description:
+        "The NSW Combined Drought Indicator (CDI) is developed by the NSW Department of Primary Industries (DPI), and it provides detailed seasonal conditions information for NSW primary producers. This data will be used to inform policy and Government responses to changing seasonal conditions, including drought. According to the NSW DPI, the CDI is not used to determine the eligibility for assistance measures offered by the NSW Government. <p> The CDI comprises of four indicators: <ul> <li>Rainfall Index (RI)</li> <li>Soil Water Index (SWI)</li> <li>Plan Growth Index (PGI)</li> <li>Drought Direction Index (DDI)</li> </ul> </p> More information on the CDI and its indicators, can be found here: https://edis.dpi.nsw.gov.au/",
+      rectangle: [140.3, -38.5, 154.5, -27.5],
+    });
+    expect(res.messages).toHaveLength(0);
+    expect(res.member).toEqual({
+      type: "carto",
+      name: "NSW Combined Drought Indicator",
+      id: "e9803464",
+      description:
+        "The NSW Combined Drought Indicator (CDI) is developed by the NSW Department of Primary Industries (DPI), and it provides detailed seasonal conditions information for NSW primary producers. This data will be used to inform policy and Government responses to changing seasonal conditions, including drought. According to the NSW DPI, the CDI is not used to determine the eligibility for assistance measures offered by the NSW Government. <p> The CDI comprises of four indicators: <ul> <li>Rainfall Index (RI)</li> <li>Soil Water Index (SWI)</li> <li>Plan Growth Index (PGI)</li> <li>Drought Direction Index (DDI)</li> </ul> </p> More information on the CDI and its indicators, can be found here: https://edis.dpi.nsw.gov.au/",
+      url: "https://edis.carto.com/api/v1/map/named/DAILY_CDI2",
+      opacity: 1,
+      rectangle: {
+        west: 140.3,
+        south: -38.5,
+        east: 154.5,
+        north: -27.5,
+      },
+      legends: [
+        {
+          url: "/data/legends/NSW_Combined_Drought_Indicator.png",
+        },
+      ],
+    });
+  });
 });

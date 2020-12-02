@@ -14,6 +14,9 @@ import {
   nullResult,
   propsToWarnings,
   catalogMemberPropsIgnore,
+  legends,
+  imageryLayerProps,
+  legendProps,
 } from "./helpers";
 
 // Dependency injection to break circular dependency
@@ -235,6 +238,46 @@ export function esriFeatureServerCatalogItem(
     member,
     messages,
   };
+}
+
+export function esriMapServerCatalogGroup(
+  item: CatalogMember,
+  options: ConversionOptions
+) {
+  if (!options.partial && !is.string(item.url)) {
+    return nullResult(
+      missingRequiredProp(
+        ModelType.EsriMapServerItem,
+        "url",
+        "string",
+        item.name
+      )
+    );
+  }
+
+  const propsToCopy = ["url"];
+  const unknownProps = getUnknownProps(item, [
+    ...catalogMemberProps,
+    ...catalogMemberPropsIgnore,
+    ...propsToCopy,
+  ]);
+
+  const member: MemberResult["member"] = {
+    type: "esri-mapServer-group",
+    name: item.name,
+  };
+  const messages = propsToWarnings(
+    ModelType.EsriFeatureServerItem,
+    unknownProps,
+    item.name
+  );
+
+  copyProps(item, member, [...catalogMemberProps, ...propsToCopy]);
+  if (options.copyUnknownProperties) {
+    copyProps(item, member, unknownProps);
+  }
+
+  return { member, messages };
 }
 
 export function ckanCatalogGroup(
@@ -553,5 +596,99 @@ export function geoJsonCatalogItem(
   } else if (is.string(item.data)) {
     member.geoJsonString = item.data;
   }
+  return { member, messages };
+}
+
+export function cartoMapCatalogItem(
+  item: CatalogMember,
+  options: ConversionOptions
+): MemberResult {
+  const member: MemberResult["member"] = {
+    type: "carto",
+    name: item.name,
+  };
+
+  const propsToCopy = [
+    "config",
+    "auth_token",
+    "minimumLevel",
+    "maximumLevel",
+    "attribution",
+  ];
+
+  const unknownProps = getUnknownProps(item, [
+    ...catalogMemberProps,
+    ...catalogMemberPropsIgnore,
+    ...imageryLayerProps,
+    ...legendProps,
+    ...propsToCopy,
+  ]);
+
+  const messages = propsToWarnings(
+    ModelType.CartoMapCatalogItem,
+    unknownProps,
+    item.name
+  );
+
+  if (options.copyUnknownProperties) {
+    copyProps(item, member, unknownProps);
+  }
+  copyProps(item, member, [
+    ...catalogMemberProps,
+    ...imageryLayerProps,
+    ...propsToCopy,
+  ]);
+  const legendResult = legends(ModelType.CartoMapCatalogItem, item.name, item);
+  member.legends = legendResult.result;
+  messages.push(...legendResult.messages);
+
+  return { member, messages };
+}
+
+export function mapboxVectorTileCatalogItem(
+  item: CatalogMember,
+  options: ConversionOptions
+): MemberResult {
+  const member: MemberResult["member"] = {
+    type: "mvt",
+    name: item.name,
+  };
+
+  const propsToCopy = [
+    "lineColor",
+    "fillColor",
+    "layer",
+    "idProperty",
+    "nameProperty",
+    "maximumNativeZoom",
+    "maximumZoom",
+    "minimumZoom",
+  ];
+  const unknownProps = getUnknownProps(item, [
+    ...catalogMemberProps,
+    ...catalogMemberPropsIgnore,
+    ...imageryLayerProps,
+    ...legendProps,
+    ...propsToCopy,
+  ]);
+
+  const messages = propsToWarnings(
+    ModelType.MapboxVectorTileCatalogItem,
+    unknownProps,
+    item.name
+  );
+
+  if (options.copyUnknownProperties) {
+    copyProps(item, member, unknownProps);
+  }
+  copyProps(item, member, [
+    ...catalogMemberProps,
+    ...imageryLayerProps,
+    ...propsToCopy,
+  ]);
+  const legendResult = legends(ModelType.CartoMapCatalogItem, item.name, item);
+  member.legends = legendResult.result;
+  messages.push(...legendResult.messages);
+
   return { member, messages };
 }

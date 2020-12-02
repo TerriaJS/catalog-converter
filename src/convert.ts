@@ -26,6 +26,9 @@ import {
   ckanCatalogItem,
   wpsCatalogItem,
   wpsResultItem,
+  esriMapServerCatalogGroup,
+  cartoMapCatalogItem,
+  mapboxVectorTileCatalogItem,
 } from "./converters/other";
 import { wmsCatalogItem } from "./converters/WmsCatalogItem";
 import {
@@ -52,12 +55,15 @@ const converters = new Map([
   ["csv", csvCatalogItem],
   ["sos", sosCatalogItem],
   ["esri-mapServer", esriMapServerCatalogItem],
+  ["esri-mapServer-group", esriMapServerCatalogGroup],
   ["esri-featureServer", esriFeatureServerCatalogItem],
   ["ckan", ckanCatalogGroup],
   ["ckan-resource", ckanCatalogItem],
   ["geojson", geoJsonCatalogItem],
   ["wps", wpsCatalogItem],
   ["wps-result", wpsResultItem],
+  ["carto", cartoMapCatalogItem],
+  ["mvt", mapboxVectorTileCatalogItem],
 ]);
 
 function defaultOptions(options: ConversionOptions | undefined) {

@@ -21,6 +21,8 @@ export enum ModelType {
   CkanGroup = "CkanCatalogGroup",
   CkanCatalogItem = "CkanCatalogItem",
   GeoJsonItem = "GeoJsonCatalogItem",
+  CartoMapCatalogItem = "CartoMapCatalogItem",
+  MapboxVectorTileCatalogItem = "MapboxVectorTileCatalogItem",
 }
 
 interface MessageBase {
