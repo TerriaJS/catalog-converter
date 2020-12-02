@@ -12,7 +12,7 @@
   "author": "Stephen Davies <steve9164@gmail.com>",
   "repository": {
     "type": "git",
-    "url": ""
+    "url": "https://github.com/TerriaJS/catalog-converter"
   },
   "license": "Apache-2.0",
   "engines": {
