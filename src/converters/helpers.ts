@@ -7,6 +7,7 @@ import {
   PlainObject,
   MembersResult,
 } from "../types";
+import generateRandomId from "./generateRandomId";
 
 export function isNotNull<T>(arg: T | null): arg is T {
   return arg !== null;
@@ -50,6 +51,7 @@ export const catalogMemberProps: CopyProps[] = [
   { v7: "isShown", v8: "show" },
   "splitDirection",
   "url",
+  "forceProxy",
   "cacheDuration",
   {
     v7: "opacity",
@@ -63,10 +65,10 @@ export const catalogMemberProps: CopyProps[] = [
     v8: "rectangle",
     translationFn: (rectangle: any[]) => {
       return {
-        west: rectangle[0],
-        south: rectangle[1],
-        east: rectangle[2],
-        north: rectangle[3],
+        west: parseFloat(rectangle[0]) || undefined,
+        south: parseFloat(rectangle[1]) || undefined,
+        east: parseFloat(rectangle[2]) || undefined,
+        north: parseFloat(rectangle[3]) || undefined,
       };
     },
   },
@@ -196,7 +198,7 @@ export function featureInfoTemplate(
     };
   } else {
     const result: PlainObject = {};
-    const propsToCopy = ["name", "template", "partials"];
+    const propsToCopy = ["name", "template", "partials", "formats"];
     const unknownProps = getUnknownProps(template, propsToCopy);
     const extraPropsMessages = propsToWarnings(
       modelType,
@@ -223,7 +225,11 @@ export function convertMembersArrayWithConvertMember(
   ): MembersResult {
     const results = members.map((m) => convertMember(m, options));
     const convertedMembers = results
-      .map(({ member }) => member)
+      .map(({ member }) =>
+        member && options.generateIds && !member.id
+          ? { ...member, id: generateRandomId(options.idLength) }
+          : member
+      )
       .filter(isNotNull);
     return {
       members: convertedMembers,
