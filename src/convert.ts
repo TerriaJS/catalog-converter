@@ -9,6 +9,7 @@
 import is from "@sindresorhus/is";
 import { merge } from "lodash";
 import { csvCatalogItem } from "./converters/CsvItem";
+import generateRandomId from "./converters/generateRandomId";
 import {
   convertMembersArrayWithConvertMember,
   copyProps,
@@ -17,16 +18,20 @@ import {
   nullResult,
 } from "./converters/helpers";
 import {
+  cartoMapCatalogItem,
   ckanCatalogGroup,
-  esriMapServerCatalogItem,
+  ckanCatalogItem,
   esriFeatureServerCatalogItem,
+  esriMapServerCatalogGroup,
+  esriMapServerCatalogItem,
   geoJsonCatalogItem,
   groupFromConvertMembersArray,
+  mapboxVectorTileCatalogItem,
   sosCatalogItem,
-  ckanCatalogItem,
   wpsCatalogItem,
   wpsResultItem,
 } from "./converters/other";
+import { wmsCatalogGroup } from "./converters/WmsCatalogGroup";
 import { wmsCatalogItem } from "./converters/WmsCatalogItem";
 import {
   inputNotPlainObject,
@@ -36,7 +41,6 @@ import {
   unknownType,
 } from "./Message";
 import { CatalogMember, ConversionOptions, MemberResult } from "./types";
-import generateRandomId from "./converters/generateRandomId";
 
 // Use dependency injection to break circular dependencies created by
 //  group -> convertMembersArray -> convertMember -> group  recursion
@@ -48,15 +52,19 @@ const group = groupFromConvertMembersArray(convertMembersArray);
 const converters = new Map([
   ["group", group],
   ["wms", wmsCatalogItem],
+  ["wms-getCapabilities", wmsCatalogGroup],
   ["csv", csvCatalogItem],
   ["sos", sosCatalogItem],
   ["esri-mapServer", esriMapServerCatalogItem],
+  ["esri-mapServer-group", esriMapServerCatalogGroup],
   ["esri-featureServer", esriFeatureServerCatalogItem],
   ["ckan", ckanCatalogGroup],
   ["ckan-resource", ckanCatalogItem],
   ["geojson", geoJsonCatalogItem],
   ["wps", wpsCatalogItem],
   ["wps-result", wpsResultItem],
+  ["carto", cartoMapCatalogItem],
+  ["mvt", mapboxVectorTileCatalogItem],
 ]);
 
 function defaultOptions(options: ConversionOptions | undefined) {

@@ -51,6 +51,7 @@ export const catalogMemberProps: CopyProps[] = [
   { v7: "isShown", v8: "show" },
   "splitDirection",
   "url",
+  "forceProxy",
   "cacheDuration",
   {
     v7: "opacity",
@@ -64,10 +65,10 @@ export const catalogMemberProps: CopyProps[] = [
     v8: "rectangle",
     translationFn: (rectangle: any[]) => {
       return {
-        west: rectangle[0],
-        south: rectangle[1],
-        east: rectangle[2],
-        north: rectangle[3],
+        west: parseFloat(rectangle[0]) || undefined,
+        south: parseFloat(rectangle[1]) || undefined,
+        east: parseFloat(rectangle[2]) || undefined,
+        north: parseFloat(rectangle[3]) || undefined,
       };
     },
   },
@@ -105,6 +106,7 @@ export const catalogMemberProps: CopyProps[] = [
     v8: "hideLegendInWorkbench",
     translationFn: (isLegendVisible: boolean) => !isLegendVisible,
   },
+  "clipToRectangle",
 ];
 
 export const imageryLayerProps: CopyProps[] = ["keepOnTop"];
@@ -202,7 +204,7 @@ export function featureInfoTemplate(
     };
   } else {
     const result: PlainObject = {};
-    const propsToCopy = ["name", "template", "partials"];
+    const propsToCopy = ["name", "template", "partials", "formats"];
     const unknownProps = getUnknownProps(template, propsToCopy);
     const extraPropsMessages = propsToWarnings(
       modelType,

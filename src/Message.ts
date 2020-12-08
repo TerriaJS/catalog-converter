@@ -11,6 +11,7 @@ export enum ModelType {
   Member = "CatalogMember",
   Group = "CatalogGroup",
   WmsItem = "WebMapServiceCatalogItem",
+  WmsGroup = "WebMapServiceCatalogGroup",
   CsvItem = "CsvCatalogItem",
   SosItem = "SensorObservationServiceCatalogItem",
   EsriMapServerItem = "EsriMapServerCatalogItem",
@@ -20,6 +21,8 @@ export enum ModelType {
   CkanGroup = "CkanCatalogGroup",
   CkanCatalogItem = "CkanCatalogItem",
   GeoJsonItem = "GeoJsonCatalogItem",
+  CartoMapCatalogItem = "CartoMapCatalogItem",
+  MapboxVectorTileCatalogItem = "MapboxVectorTileCatalogItem",
 }
 
 interface MessageBase {
