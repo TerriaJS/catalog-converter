@@ -7,6 +7,7 @@ import {
   PlainObject,
   MembersResult,
 } from "../types";
+import generateRandomId from "./generateRandomId";
 
 export function isNotNull<T>(arg: T | null): arg is T {
   return arg !== null;
@@ -230,7 +231,11 @@ export function convertMembersArrayWithConvertMember(
   ): MembersResult {
     const results = members.map((m) => convertMember(m, options));
     const convertedMembers = results
-      .map(({ member }) => member)
+      .map(({ member }) =>
+        member && options.generateIds && !member.id
+          ? { ...member, id: generateRandomId(options.idLength) }
+          : member
+      )
       .filter(isNotNull);
     return {
       members: convertedMembers,

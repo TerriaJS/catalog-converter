@@ -38,6 +38,36 @@ describe("Test convertCatalog", () => {
     ).toHaveLength(0);
   });
 
+  it("generates random ids with the specified length for items that do not have an id", function () {
+    const res = convertCatalog(
+      {
+        catalog: [
+          {
+            name: "1",
+            type: "group",
+            items: [
+              {
+                name: "2",
+                type: "group",
+                id: "some-existing-id",
+                items: [
+                  { type: "csv", name: "csv item", data: "a,b,c\n1,2,3" },
+                ],
+              },
+            ],
+          },
+        ],
+      },
+      { generateIds: true, idLength: 10 }
+    );
+    const catalog: any = res.result?.catalog;
+    expect(catalog).toHaveLength(1);
+    expect(catalog[0].id).toHaveLength(10);
+    expect(catalog[0].members[0].id).toBe("some-existing-id");
+    expect(catalog[0].members[0].members[0].id).toHaveLength(10);
+    expect(res.messages).toHaveLength(0);
+  });
+
   it("with csvs from GeoRapp WPS service", () => {
     const file = "geo-rapp-wps-csvs";
     const [v7, v8] = ["v7", "v8"].map((folder) =>

@@ -3,6 +3,8 @@ import { Message } from "./Message";
 export interface ConversionOptions {
   readonly copyUnknownProperties?: boolean;
   readonly partial?: boolean;
+  readonly generateIds?: boolean;
+  readonly idLength?: number;
 }
 
 export type PlainObject = Record<string, unknown>;
@@ -10,6 +12,7 @@ export type PlainObject = Record<string, unknown>;
 export interface CatalogMember extends PlainObject {
   type: string;
   name: string;
+  id?: string;
 }
 
 export interface MemberResult {
