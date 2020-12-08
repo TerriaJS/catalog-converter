@@ -3,6 +3,7 @@ const path = require("path");
 
 import { convertCatalog } from "../src/convert";
 import { Severity } from "../src/Message";
+import { DEFAULT_ID_LENGTH } from "../src/converters/generateRandomId";
 
 describe("Test convertCatalog", () => {
   // Test samples
@@ -65,6 +66,52 @@ describe("Test convertCatalog", () => {
     expect(catalog[0].id).toHaveLength(10);
     expect(catalog[0].members[0].id).toBe("some-existing-id");
     expect(catalog[0].members[0].members[0].id).toHaveLength(10);
+    expect(res.messages).toHaveLength(0);
+  });
+
+  it("adds IDs `isEnabled` items to `workbench` array", function () {
+    const res = convertCatalog({
+      catalog: [
+        {
+          name: "group-1",
+          type: "group",
+          items: [
+            {
+              name: "group-2",
+              type: "group",
+              id: "some-existing-id",
+              items: [
+                {
+                  id: "another-existing-id",
+                  isEnabled: true,
+                  type: "csv",
+                  name: "csv item 1",
+                  data: "a,b,c\n1,2,3",
+                },
+                {
+                  isEnabled: false,
+                  type: "csv",
+                  name: "csv item 2",
+                  data: "a,b,c\n1,2,3",
+                },
+              ],
+            },
+            {
+              isEnabled: true,
+              type: "csv",
+              name: "csv item 3",
+              data: "a,b,c\n1,2,3",
+            },
+          ],
+        },
+      ],
+    });
+    const workbench: string[] | undefined = res.result?.workbench;
+    expect(workbench).toHaveLength(2);
+    if (Array.isArray(workbench)) {
+      expect(workbench[0]).toEqual("another-existing-id");
+      expect(workbench[1]).toHaveLength(DEFAULT_ID_LENGTH);
+    }
     expect(res.messages).toHaveLength(0);
   });
 

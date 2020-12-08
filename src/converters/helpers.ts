@@ -229,7 +229,13 @@ export function convertMembersArrayWithConvertMember(
     label: string,
     options: ConversionOptions
   ): MembersResult {
-    const results = members.map((m) => convertMember(m, options));
+    const results = members.map((m) => {
+      const res = convertMember(m, options);
+      // Push the member to `enabledItemsAccumulator` if it is enabled.
+      if (options.enabledItemsAccumulator && res.member && (m as any).isEnabled)
+        options.enabledItemsAccumulator.push(res.member);
+      return res;
+    });
     const convertedMembers = results
       .map(({ member }) =>
         member && options.generateIds && !member.id
