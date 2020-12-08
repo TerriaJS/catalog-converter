@@ -26,6 +26,9 @@ import {
   ckanCatalogItem,
   wpsCatalogItem,
   wpsResultItem,
+  esriMapServerCatalogGroup,
+  cartoMapCatalogItem,
+  mapboxVectorTileCatalogItem,
 } from "./converters/other";
 import { wmsCatalogItem } from "./converters/WmsCatalogItem";
 import {
@@ -36,6 +39,7 @@ import {
   unknownType,
 } from "./Message";
 import { CatalogMember, ConversionOptions, MemberResult } from "./types";
+import { wmsCatalogGroup } from "./converters/WmsCatalogGroup";
 
 // Use dependency injection to break circular dependencies created by
 //  group -> convertMembersArray -> convertMember -> group  recursion
@@ -47,15 +51,19 @@ const group = groupFromConvertMembersArray(convertMembersArray);
 const converters = new Map([
   ["group", group],
   ["wms", wmsCatalogItem],
+  ["wms-getCapabilities", wmsCatalogGroup],
   ["csv", csvCatalogItem],
   ["sos", sosCatalogItem],
   ["esri-mapServer", esriMapServerCatalogItem],
+  ["esri-mapServer-group", esriMapServerCatalogGroup],
   ["esri-featureServer", esriFeatureServerCatalogItem],
   ["ckan", ckanCatalogGroup],
   ["ckan-resource", ckanCatalogItem],
   ["geojson", geoJsonCatalogItem],
   ["wps", wpsCatalogItem],
   ["wps-result", wpsResultItem],
+  ["carto", cartoMapCatalogItem],
+  ["mvt", mapboxVectorTileCatalogItem],
 ]);
 
 function defaultOptions(options: ConversionOptions | undefined) {

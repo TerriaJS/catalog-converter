@@ -1,6 +1,6 @@
 {
   "name": "catalog-converter",
-  "version": "0.0.2-alpha.2",
+  "version": "0.0.2-alpha.3",
   "description": "",
   "keywords": [],
   "main": "dist/catalog-converter.umd.js",
@@ -12,7 +12,7 @@
   "author": "Stephen Davies <steve9164@gmail.com>",
   "repository": {
     "type": "git",
-    "url": ""
+    "url": "https://github.com/TerriaJS/catalog-converter"
   },
   "license": "Apache-2.0",
   "engines": {
