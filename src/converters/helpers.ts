@@ -103,20 +103,14 @@ export const catalogMemberProps: CopyProps[] = [
   "dataCustodian",
   {
     v7: "isLegendVisible",
-    v8: "hideLegendInWorkbench",
-    translationFn: (isLegendVisible: boolean) => !isLegendVisible,
+    v8: "isOpenInWorkbench",
   },
   "clipToRectangle",
 ];
 
 export const imageryLayerProps: CopyProps[] = ["keepOnTop"];
 
-export const catalogMemberPropsIgnore = [
-  "name",
-  "type",
-  "isEnabled",
-  "parents",
-];
+export const catalogMemberPropsIgnore = ["name", "type", "parents"];
 
 export function getUnknownProps(o: PlainObject, knownProperties: CopyProps[]) {
   return Object.keys(o).filter(
