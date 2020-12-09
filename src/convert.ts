@@ -67,11 +67,13 @@ const converters = new Map([
   ["mvt", mapboxVectorTileCatalogItem],
 ]);
 
+// For more default options see `src\cli.ts` arguments defaults
 function defaultOptions(options: ConversionOptions | undefined) {
   return Object.assign(
     {
       copyUnknownProperties: false,
       partial: false,
+      addv7autoIdShareKeys: true,
     },
     options || {}
   );
@@ -151,7 +153,7 @@ export function convertCatalog(
       .filter((id) => id !== undefined) as string[];
   }
 
-  if (!(options.disableV7autoIdSharekeys ?? false)) {
+  if (options.addv7autoIdShareKeys) {
     // Add v7 autoIDs to shareLinks
     // v7 autoID has format Root Group/$someContainerId/$someLowerContainerId/$catalogName
     const addv7autoIdShareKey = (

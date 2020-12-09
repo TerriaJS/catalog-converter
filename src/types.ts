@@ -7,7 +7,7 @@ export interface ConversionOptions {
   readonly idLength?: number;
   // An optional accumulator for collecting all is enabled items in the catalog
   readonly enabledItemsAccumulator?: CatalogMember[];
-  readonly disableV7autoIdSharekeys?: boolean;
+  readonly addv7autoIdShareKeys?: boolean;
 }
 
 export type PlainObject = Record<string, unknown>;
