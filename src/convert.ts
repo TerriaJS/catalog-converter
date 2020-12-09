@@ -271,13 +271,13 @@ export function convertShare(json: unknown): ShareResult {
                   return "/";
                 }
 
-                // Replace v7 Root Group with slash (v8 auto-ids start with //$catalogName)
-                return parent.replace("Root Group", "/");
+                // Replace v7 autoID
+                return parent;
               })
               .filter((parent) => typeof parent !== "undefined") as string[];
           }
 
-          // Use model id if it is defined
+          // Use model id if it is defined, otherwise use key from members object
           let newId =
             typeof v7Member.id === "string" && v7Member.id !== ""
               ? v7Member.id
@@ -288,9 +288,9 @@ export function convertShare(json: unknown): ShareResult {
             newId = "__User-Added_Data__";
           }
 
-          // For some reason user added data doesn't have "__User-Added_Data__" in v8 autoIDs
-          // So we remove all mentions of //User-Added Data from v7 autoIDs
-          newId = newId.replace("//User-Added Data", "");
+          // For some reason user added data doesn't have "__User-Added_Data__" in v8 autoIDs, whereas v7 autoIDs start with `Root Group/User-Added Data`,
+          // so remove all mentions of Root Group/User-Added Data from v7 autoIDs
+          newId = newId.replace("Root Group/User-Added Data", "");
 
           // Only add to workbenchIds if NOT converting User Added Data
           if (v7Member.isEnabled && !convertUserAdded) {
