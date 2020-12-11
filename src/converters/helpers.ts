@@ -30,6 +30,7 @@ export function isCatalogMember(m: any, partial = false): m is CatalogMember {
 
 export const catalogMemberProps: CopyProps[] = [
   "id",
+  "shareKeys",
   "description",
   "info",
   "infoSectionOrder",

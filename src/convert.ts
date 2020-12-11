@@ -161,7 +161,9 @@ export function convertCatalog(
       shareKey = "Root Group"
     ) => {
       const currentShareKey = `${shareKey}/${member.name}`;
-      member.shareKeys = [currentShareKey];
+      Array.isArray(member.shareKeys)
+        ? member.shareKeys.push(currentShareKey)
+        : (member.shareKeys = [currentShareKey]);
       if ("members" in member && Array.isArray(member.members)) {
         member.members.forEach((groupMember) =>
           addv7autoIdShareKey(groupMember, currentShareKey)
