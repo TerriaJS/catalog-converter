@@ -19,12 +19,13 @@ export default function generateRandomId(length?: number): string | undefined {
     .map(() => pickRandomChar(ALPHABET))
     .join("");
 
-  return id === ""
-    ? undefined
-    : // If ID isn't unique -> generate another
-    usedIDS.has(id)
-    ? generateRandomId(length)
-    : id;
+  if (id === "") return undefined;
+
+  // If ID isn't unique -> generate another
+  if (usedIDS.has(id)) return generateRandomId(length);
+
+  usedIDS.add(id);
+  return id;
 }
 
 function pickRandomChar(alpahbet: string[]) {
