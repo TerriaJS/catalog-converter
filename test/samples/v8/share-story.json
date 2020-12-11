@@ -4,14 +4,14 @@
     {
       "stratum": "user",
       "models": {
-        "//Example Datasets": {
+        "Root Group/Example Datasets": {
           "type": "group",
           "isOpen": true,
           "knownContainerUniqueIds": [
             "/"
           ]
         },
-        "//Example Datasets/ABC Photo Stories (2009-2014)": {
+        "Root Group/Example Datasets/ABC Photo Stories (2009-2014)": {
           "type": "csv",
           "name": "ABC Photo Stories (2009-2014)",
           "show": true,
@@ -19,7 +19,7 @@
           "url": "test/localphotostories20092014.csv",
           "opacity": 0.8,
           "knownContainerUniqueIds": [
-            "//Example Datasets"
+            "Root Group/Example Datasets"
           ]
         }
       },
@@ -34,14 +34,14 @@
               {
                 "stratum": "user",
                 "models": {
-                  "//Example Datasets": {
+                  "Root Group/Example Datasets": {
                     "type": "group",
                     "isOpen": true,
                     "knownContainerUniqueIds": [
                       "/"
                     ]
                   },
-                  "//Example Datasets/ABC Photo Stories (2009-2014)": {
+                  "Root Group/Example Datasets/ABC Photo Stories (2009-2014)": {
                     "type": "csv",
                     "name": "ABC Photo Stories (2009-2014)",
                     "show": true,
@@ -49,12 +49,12 @@
                     "url": "test/localphotostories20092014.csv",
                     "opacity": 0.8,
                     "knownContainerUniqueIds": [
-                      "//Example Datasets"
+                      "Root Group/Example Datasets"
                     ]
                   }
                 },
                 "workbench": [
-                  "//Example Datasets/ABC Photo Stories (2009-2014)"
+                  "Root Group/Example Datasets/ABC Photo Stories (2009-2014)"
                 ],
                 "initialCamera": {
                   "west": 134.44203773321516,
@@ -105,14 +105,14 @@
               {
                 "stratum": "user",
                 "models": {
-                  "//Example Datasets": {
+                  "Root Group/Example Datasets": {
                     "type": "group",
                     "isOpen": true,
                     "knownContainerUniqueIds": [
                       "/"
                     ]
                   },
-                  "//Example Datasets/ABC Photo Stories (2009-2014)": {
+                  "Root Group/Example Datasets/ABC Photo Stories (2009-2014)": {
                     "type": "csv",
                     "name": "ABC Photo Stories (2009-2014)",
                     "show": true,
@@ -120,12 +120,12 @@
                     "url": "test/localphotostories20092014.csv",
                     "opacity": 0.8,
                     "knownContainerUniqueIds": [
-                      "//Example Datasets"
+                      "Root Group/Example Datasets"
                     ]
                   }
                 },
                 "workbench": [
-                  "//Example Datasets/ABC Photo Stories (2009-2014)"
+                  "Root Group/Example Datasets/ABC Photo Stories (2009-2014)"
                 ],
                 "initialCamera": {
                   "west": 108.75374785879977,
@@ -168,7 +168,7 @@
         }
       ],
       "workbench": [
-        "//Example Datasets/ABC Photo Stories (2009-2014)"
+        "Root Group/Example Datasets/ABC Photo Stories (2009-2014)"
       ],
       "initialCamera": {
         "west": 108.75374785879977,

@@ -111,7 +111,12 @@ export const catalogMemberProps: CopyProps[] = [
 
 export const imageryLayerProps: CopyProps[] = ["keepOnTop"];
 
-export const catalogMemberPropsIgnore = ["name", "type", "parents"];
+export const catalogMemberPropsIgnore = [
+  "name",
+  "type",
+  "parents",
+  "isEnabled",
+];
 
 export function getUnknownProps(o: PlainObject, knownProperties: CopyProps[]) {
   return Object.keys(o).filter(
