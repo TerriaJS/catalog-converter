@@ -253,7 +253,7 @@ export function convertShare(json: unknown): ShareResult {
 
   const v8InitSource: any = { stratum: "user" };
 
-  const workbenchIds: string[] = [];
+  const workbenchIds: { id: string; index: number | undefined }[] = [];
 
   const convertMembers = (members: any, convertUserAdded = false) =>
     Object.entries(members).reduce<any>(
@@ -296,7 +296,13 @@ export function convertShare(json: unknown): ShareResult {
 
           // Only add to workbenchIds if NOT converting User Added Data
           if (v7Member.isEnabled && !convertUserAdded) {
-            workbenchIds.push(newId);
+            workbenchIds.push({
+              id: newId,
+              index:
+                typeof v7Member.nowViewingIndex === "number"
+                  ? v7Member.nowViewingIndex
+                  : undefined,
+            });
           }
 
           // Only convert user added data if convertUserAdded
@@ -376,7 +382,11 @@ export function convertShare(json: unknown): ShareResult {
     });
   }
 
-  v8InitSource.workbench = workbenchIds.reverse();
+  v8InitSource.workbench = workbenchIds
+    .sort((a, b) =>
+      typeof a.index !== "undefined" ? a.index - (b.index ?? a.index + 1) : 1
+    )
+    .map((item) => item.id);
 
   // Copy over common properties
   [
