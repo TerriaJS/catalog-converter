@@ -13,6 +13,19 @@
           "url": "test/localphotostories20092014.csv",
           "isEnabled": true,
           "isShown": true,
+          "nowViewingIndex": 2,
+          "opacity": 0.8,
+          "type": "csv",
+          "parents": [
+            "Root Group/Example Datasets"
+          ]
+        },
+        "Root Group/Example Datasets/ABC Photo Stories (2009-2014) (2)": {
+          "name": "ABC Photo Stories (2009-2014) (2)",
+          "url": "test/localphotostories20092014.csv",
+          "isEnabled": true,
+          "nowViewingIndex": 1,
+          "isShown": true,
           "opacity": 0.8,
           "type": "csv",
           "parents": [

@@ -6,6 +6,7 @@ import {
   MemberResult,
   MembersResult,
 } from "../types";
+import generateRandomId from "./generateRandomId";
 import {
   catalogMemberProps,
   copyProps,
@@ -55,6 +56,9 @@ export function groupFromConvertMembersArray(
     );
     const result = {
       member: {
+        id: options.generateIds
+          ? generateRandomId(options.idLength)
+          : undefined,
         type: "group",
         name: group.name,
         members: convertedMembers?.members,

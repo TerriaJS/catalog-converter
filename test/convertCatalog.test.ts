@@ -146,4 +146,14 @@ describe("Test convertCatalog", () => {
     expect(res.result).toMatchObject(v8);
     expect(res.messages).toHaveLength(0);
   });
+
+  it("adds shareKeys", function () {
+    const v7 = require("./samples/v7/shareKeys.json");
+    const v8 = require("./samples/v8/shareKeys.json");
+    const res = convertCatalog(v7, { generateIds: true, idLength: 6 });
+    delete res.result?.catalog?.[0]?.id;
+    delete v8.catalog?.[0]?.id;
+    expect(res.result).toMatchObject(v8);
+    expect(res.messages).toHaveLength(0);
+  });
 });
