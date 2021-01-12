@@ -172,9 +172,28 @@ function getColorTraits(tableStyle: PlainObject): ColorStyle | undefined {
   if (is.string(tableStyle.nullLabel)) color.nullLabel = tableStyle.nullLabel;
   if (is.number(tableStyle.colorBins))
     color.numberOfBins = tableStyle.colorBins;
+
+  /*  colorMap can be three things:
+   *  - String, eg. 'red-black'
+   *  - Array of strings, eg. ['red', 'black']
+   *  - Array of objects with the properties 'color' and 'offset', eg. [{color: 'red', offset: 0}, ...].
+   *    - v8 only supports array of strings, so 'offset' is discarded
+   */
   if (is.string(tableStyle.colorMap))
     color.binColors = tableStyle.colorMap.split("-");
-  if (is.array(tableStyle.colorMap)) color.binColors = tableStyle.colorMap;
+  if (is.array(tableStyle.colorMap)) {
+    if (typeof tableStyle.colorMap[0] == "string") {
+      color.binColors = tableStyle.colorMap;
+    } else {
+      color.binColors = tableStyle.colorMap.reduce<string[]>(
+        (binColors, current) =>
+          typeof current.color === "string"
+            ? binColors.concat(current.color)
+            : binColors,
+        []
+      );
+    }
+  }
   return is.emptyObject(color) ? undefined : color;
 }
 
