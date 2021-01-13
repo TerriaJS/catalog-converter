@@ -22,7 +22,7 @@ interface TableTraits {
 
 interface TableStyle {
   columns?: Column[];
-  styles?: ColorStyle[];
+  styles?: Style[];
   defaultColumn?: Omit<Column, "name">;
   defaultStyle?: Style;
   activeStyle?: string;
@@ -83,10 +83,11 @@ function tableStyle(tableStyle: PlainObject): TableTraits {
       .filter(([name, defn]) => is.plainObject(defn))
       .map(([name, defn]) => ({
         id: name,
-        ...getColorTraits(defn as PlainObject),
+        color: getColorTraits(defn as PlainObject),
+        time: getTimeTraits(defn as PlainObject),
       }))
       // Filter out styles which have no properties other than `id`
-      .filter((style) => Object.keys(style).length > 1);
+      .filter((style) => style.color || style.time);
 
     const chartLines = getChartLines(tableStyle.columns);
     if (chartLines) {
