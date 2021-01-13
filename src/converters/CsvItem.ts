@@ -22,6 +22,7 @@ interface TableTraits {
 
 interface TableStyle {
   columns?: Column[];
+  styles?: ColorStyle[];
   defaultColumn?: Omit<Column, "name">;
   defaultStyle?: Style;
   activeStyle?: string;
@@ -61,10 +62,13 @@ interface TimeStyle {
 }
 
 interface ColorStyle {
+  id?: string;
   nullColor?: string;
   nullLabel?: string;
   numberOfBins?: number;
   binColors?: string[];
+  binMaximums?: number[];
+  colorPalette?: string;
 }
 
 function tableStyle(tableStyle: PlainObject): TableTraits {
@@ -75,6 +79,14 @@ function tableStyle(tableStyle: PlainObject): TableTraits {
       name,
       ...getColumnTraits(defn),
     }));
+    extraProps.styles = Object.entries(columns)
+      .filter(([name, defn]) => is.plainObject(defn))
+      .map(([name, defn]) => ({
+        id: name,
+        ...getColorTraits(defn as PlainObject),
+      }))
+      // Filter out styles which have no properties other than `id`
+      .filter((style) => Object.keys(style).length > 1);
 
     const chartLines = getChartLines(tableStyle.columns);
     if (chartLines) {
@@ -113,7 +125,7 @@ function tableStyle(tableStyle: PlainObject): TableTraits {
 function getColumnTraits(defn: any): Omit<Column, "name"> {
   const newDefn: Omit<Column, "name"> = {};
   if (is.plainObject(defn)) {
-    if (defn.type === "HIDDEN") {
+    if (typeof defn.type === "string" && defn.type.toLowerCase() === "hidden") {
       newDefn.type = "hidden";
     }
     if (is.string(defn.units)) {
@@ -121,6 +133,8 @@ function getColumnTraits(defn: any): Omit<Column, "name"> {
     }
     if (is.string(defn.title)) {
       newDefn.title = defn.title;
+    } else if (is.string(defn.name)) {
+      newDefn.title = defn.name;
     }
     if (is.plainObject(defn.format)) {
       newDefn.format = defn.format;
@@ -170,8 +184,15 @@ function getColorTraits(tableStyle: PlainObject): ColorStyle | undefined {
   const color: ColorStyle = {};
   if (is.string(tableStyle.nullColor)) color.nullColor = tableStyle.nullColor;
   if (is.string(tableStyle.nullLabel)) color.nullLabel = tableStyle.nullLabel;
+
+  /*  colorBins can be two things:
+   *  - Number, how many colors (color "bins") you want to divide the data into
+   *  - Array of number, eg. [3000, 3100, 3800, 3850, 3950, 4000], for boundaries
+   */
   if (is.number(tableStyle.colorBins))
     color.numberOfBins = tableStyle.colorBins;
+  else if (is.array(tableStyle.colorBins))
+    color.binMaximums = tableStyle.colorBins;
 
   /*  colorMap can be three things:
    *  - String, eg. 'red-black'
@@ -194,6 +215,11 @@ function getColorTraits(tableStyle: PlainObject): ColorStyle | undefined {
       );
     }
   }
+
+  if (is.string(tableStyle.colorPalette)) {
+    color.colorPalette = tableStyle.colorPalette;
+  }
+
   return is.emptyObject(color) ? undefined : color;
 }
 
