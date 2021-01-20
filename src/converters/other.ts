@@ -150,7 +150,7 @@ export function esriCatalogGroup(
     ...catalogMemberProps,
     ...catalogMemberPropsIgnore,
     ...propsToCopy,
-    "itemProperties",
+    // "itemProperties",
   ]);
   const member: MemberResult["member"] = {
     type: "esri-group",
@@ -167,17 +167,19 @@ export function esriCatalogGroup(
     copyProps(item, member, unknownProps);
   }
 
-  if (isPlainObject(item.itemProperties)) {
-    // Treat itemProperties as esriMapServerCatalogGroup (it can also be esriFeatureServerCatalogGroup - but this isn't implemented in catalog-converter).
+  // // itemProperties not supported in v8
 
-    const itemPropertiesResult = itemProperties(
-      item,
-      esriMapServerCatalogGroup
-    );
-    if (itemPropertiesResult.result)
-      member.itemProperties = itemPropertiesResult.result;
-    messages.push(...itemPropertiesResult.messages);
-  }
+  // if (isPlainObject(item.itemProperties)) {
+  //   // Treat itemProperties as esriMapServerCatalogGroup (it can also be esriFeatureServerCatalogGroup - but this isn't implemented in catalog-converter).
+
+  //   const itemPropertiesResult = itemProperties(
+  //     item,
+  //     esriMapServerCatalogGroup
+  //   );
+  //   if (itemPropertiesResult.result)
+  //     member.itemProperties = itemPropertiesResult.result;
+  //   messages.push(...itemPropertiesResult.messages);
+  // }
 
   const tileErrorOpts = tileErrorHandlingOptions(item);
   if (tileErrorOpts !== undefined) {
@@ -314,7 +316,7 @@ export function esriMapServerCatalogGroup(
   if (!options.partial && !is.string(item.url)) {
     return nullResult(
       missingRequiredProp(
-        ModelType.EsriMapServerItem,
+        ModelType.EsriMapServerGroup,
         "url",
         "string",
         item.name
@@ -327,6 +329,7 @@ export function esriMapServerCatalogGroup(
     ...catalogMemberProps,
     ...catalogMemberPropsIgnore,
     ...propsToCopy,
+    // "itemProperties",
   ]);
 
   const member: MemberResult["member"] = {
@@ -334,7 +337,7 @@ export function esriMapServerCatalogGroup(
     name: item.name,
   };
   const messages = propsToWarnings(
-    ModelType.EsriFeatureServerItem,
+    ModelType.EsriMapServerGroup,
     unknownProps,
     item.name
   );
@@ -343,6 +346,15 @@ export function esriMapServerCatalogGroup(
   if (options.copyUnknownProperties) {
     copyProps(item, member, unknownProps);
   }
+
+  // itemProperties not supported in v8
+
+  // if (isPlainObject(item.itemProperties)) {
+  //   const itemPropertiesResult = itemProperties(item, esriMapServerCatalogItem);
+  //   if (itemPropertiesResult.result)
+  //     member.itemProperties = itemPropertiesResult.result;
+  //   messages.push(...itemPropertiesResult.messages);
+  // }
 
   return { member, messages };
 }
