@@ -1,4 +1,5 @@
 import is from "@sindresorhus/is";
+import { isPlainObject } from "lodash";
 import { missingRequiredProp, ModelType } from "../Message";
 import {
   CatalogMember,
@@ -9,16 +10,18 @@ import {
 import generateRandomId from "./generateRandomId";
 import {
   catalogMemberProps,
+  catalogMemberPropsIgnore,
   copyProps,
   featureInfoTemplate,
   getUnknownProps,
+  imageryLayerProps,
+  itemProperties,
+  legendProps,
+  legends,
   nullResult,
   propsToWarnings,
-  catalogMemberPropsIgnore,
-  legends,
-  imageryLayerProps,
-  legendProps,
 } from "./helpers";
+import { tileErrorHandlingOptions } from "./WmsCatalogItem";
 
 // Dependency injection to break circular dependency
 export function groupFromConvertMembersArray(
@@ -147,6 +150,7 @@ export function esriCatalogGroup(
     ...catalogMemberProps,
     ...catalogMemberPropsIgnore,
     ...propsToCopy,
+    "itemProperties",
   ]);
   const member: MemberResult["member"] = {
     type: "esri-group",
@@ -161,6 +165,23 @@ export function esriCatalogGroup(
   copyProps(item, member, [...catalogMemberProps, ...propsToCopy]);
   if (options.copyUnknownProperties) {
     copyProps(item, member, unknownProps);
+  }
+
+  if (isPlainObject(item.itemProperties)) {
+    // Treat itemProperties as esriMapServerCatalogGroup (it can also be esriFeatureServerCatalogGroup - but this isn't implemented in catalog-converter).
+
+    const itemPropertiesResult = itemProperties(
+      item,
+      esriMapServerCatalogGroup
+    );
+    if (itemPropertiesResult.result)
+      member.itemProperties = itemPropertiesResult.result;
+    messages.push(...itemPropertiesResult.messages);
+  }
+
+  const tileErrorOpts = tileErrorHandlingOptions(item);
+  if (tileErrorOpts !== undefined) {
+    member.tileErrorHandlingOptions = tileErrorOpts;
   }
 
   return {
@@ -399,7 +420,7 @@ export function ckanCatalogItem(
       missingRequiredProp(ModelType.CkanCatalogItem, "url", "string", item.name)
     );
   }
-  const propsToCopy = ["url", "datasetId", "resourceId", "itemProperties"];
+  const propsToCopy = ["url", "datasetId", "resourceId"];
 
   const unknownProps = getUnknownProps(item, [
     ...catalogMemberProps,

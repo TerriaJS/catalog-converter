@@ -4,8 +4,8 @@ import {
   CatalogMember,
   ConversionOptions,
   MemberResult,
-  PlainObject,
   MembersResult,
+  PlainObject,
 } from "../types";
 import generateRandomId from "./generateRandomId";
 
@@ -251,4 +251,27 @@ export function convertMembersArrayWithConvertMember(
       })),
     };
   };
+}
+
+export function itemProperties(
+  item: CatalogMember,
+  converter: (item: CatalogMember, options: ConversionOptions) => MemberResult
+): {
+  result: any;
+  messages: Message[];
+} {
+  // Modify name property to make messages sensible
+  const itemProperties = converter(
+    { ...(item.itemProperties as any), name: `${item.name}.itemProperties` },
+    { partial: true }
+  );
+  if (itemProperties.member) {
+    delete itemProperties.member.name;
+    delete itemProperties.member.type;
+  }
+  const itemPropertiesMessages = itemProperties.messages.map((m) => {
+    return { ...m, path: [item.name, ...m.path] };
+  });
+
+  return { messages: itemPropertiesMessages, result: itemProperties.member };
 }

@@ -143,13 +143,13 @@ export function wmsCatalogItem(
   }
   const legendResult = legends(ModelType.WmsItem, item.name, item);
   member.legends = legendResult.result;
+  messages.push(...legendResult.messages);
 
   const tileErrorOpts = tileErrorHandlingOptions(item);
   if (tileErrorOpts !== undefined) {
     member.tileErrorHandlingOptions = tileErrorOpts;
   }
 
-  messages.push(...legendResult.messages);
   return { member, messages };
 }
 
@@ -160,7 +160,7 @@ interface TileErrorHandlingOptions {
   thresholdBeforeDisablingItem?: number;
 }
 
-function tileErrorHandlingOptions(
+export function tileErrorHandlingOptions(
   item: CatalogMember
 ): TileErrorHandlingOptions | undefined {
   const opts: TileErrorHandlingOptions = {};
