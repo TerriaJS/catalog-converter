@@ -14,6 +14,7 @@ export enum ModelType {
   WmsGroup = "WebMapServiceCatalogGroup",
   CsvItem = "CsvCatalogItem",
   SosItem = "SensorObservationServiceCatalogItem",
+  EsriCatalogGroup = "EsriCatalogGroup",
   EsriMapServerItem = "EsriMapServerCatalogItem",
   EsriFeatureServerItem = "EsriFeatureServerCatalogItem",
   WpsItem = "WpsItem",
@@ -23,6 +24,7 @@ export enum ModelType {
   GeoJsonItem = "GeoJsonCatalogItem",
   CartoMapCatalogItem = "CartoMapCatalogItem",
   MapboxVectorTileCatalogItem = "MapboxVectorTileCatalogItem",
+  KmlCatalogItem = "KmlCatalogItem",
 }
 
 interface MessageBase {

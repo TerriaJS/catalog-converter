@@ -127,6 +127,48 @@ export function sosCatalogItem(
   };
 }
 
+export function esriCatalogGroup(
+  item: CatalogMember,
+  options: ConversionOptions
+): MemberResult {
+  if (!options.partial && !is.string(item.url)) {
+    return nullResult(
+      missingRequiredProp(
+        ModelType.EsriCatalogGroup,
+        "url",
+        "string",
+        item.name
+      )
+    );
+  }
+
+  const propsToCopy = ["url"];
+  const unknownProps = getUnknownProps(item, [
+    ...catalogMemberProps,
+    ...catalogMemberPropsIgnore,
+    ...propsToCopy,
+  ]);
+  const member: MemberResult["member"] = {
+    type: "esri-group",
+    name: item.name,
+  };
+  const messages = propsToWarnings(
+    ModelType.EsriCatalogGroup,
+    unknownProps,
+    item.name
+  );
+
+  copyProps(item, member, [...catalogMemberProps, ...propsToCopy]);
+  if (options.copyUnknownProperties) {
+    copyProps(item, member, unknownProps);
+  }
+
+  return {
+    member,
+    messages,
+  };
+}
+
 export function esriMapServerCatalogItem(
   item: CatalogMember,
   options: ConversionOptions
@@ -172,7 +214,7 @@ export function esriMapServerCatalogItem(
     is.plainObject(item.featureInfoTemplate)
   ) {
     const result = featureInfoTemplate(
-      ModelType.EsriFeatureServerItem,
+      ModelType.EsriMapServerItem,
       item.name,
       item.featureInfoTemplate
     );
@@ -690,7 +732,48 @@ export function mapboxVectorTileCatalogItem(
     ...imageryLayerProps,
     ...propsToCopy,
   ]);
-  const legendResult = legends(ModelType.CartoMapCatalogItem, item.name, item);
+  const legendResult = legends(
+    ModelType.MapboxVectorTileCatalogItem,
+    item.name,
+    item
+  );
+  member.legends = legendResult.result;
+  messages.push(...legendResult.messages);
+
+  return { member, messages };
+}
+
+export function kmlCatalogItem(
+  item: CatalogMember,
+  options: ConversionOptions
+): MemberResult {
+  if (!options.partial && !is.string(item.url)) {
+    return nullResult(
+      missingRequiredProp(ModelType.KmlCatalogItem, "url", "string", item.name)
+    );
+  }
+  const member: MemberResult["member"] = {
+    type: "kml",
+    name: item.name,
+  };
+
+  const unknownProps = getUnknownProps(item, [
+    ...catalogMemberProps,
+    ...catalogMemberPropsIgnore,
+    ...legendProps,
+  ]);
+
+  const messages = propsToWarnings(
+    ModelType.KmlCatalogItem,
+    unknownProps,
+    item.name
+  );
+
+  if (options.copyUnknownProperties) {
+    copyProps(item, member, unknownProps);
+  }
+  copyProps(item, member, catalogMemberProps);
+  const legendResult = legends(ModelType.KmlCatalogItem, item.name, item);
   member.legends = legendResult.result;
   messages.push(...legendResult.messages);
 

@@ -30,6 +30,8 @@ import {
   sosCatalogItem,
   wpsCatalogItem,
   wpsResultItem,
+  kmlCatalogItem,
+  esriCatalogGroup,
 } from "./converters/other";
 import { wmsCatalogGroup } from "./converters/WmsCatalogGroup";
 import { wmsCatalogItem } from "./converters/WmsCatalogItem";
@@ -56,6 +58,7 @@ const converters = new Map([
   ["csv", csvCatalogItem],
   ["sos", sosCatalogItem],
   ["esri-mapServer", esriMapServerCatalogItem],
+  ["esri-group", esriCatalogGroup],
   ["esri-mapServer-group", esriMapServerCatalogGroup],
   ["esri-featureServer", esriFeatureServerCatalogItem],
   ["ckan", ckanCatalogGroup],
@@ -65,6 +68,8 @@ const converters = new Map([
   ["wps-result", wpsResultItem],
   ["carto", cartoMapCatalogItem],
   ["mvt", mapboxVectorTileCatalogItem],
+
+  ["kml", kmlCatalogItem],
 ]);
 
 // For more default options see `src\cli.ts` arguments defaults
