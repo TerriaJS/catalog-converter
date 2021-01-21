@@ -92,7 +92,16 @@ export function wmsCatalogItem(
     "hideLayerAfterMinScaleDenominator",
     "maxRefreshIntervals",
     "leafletUpdateInterval",
-    "supportsColorScaleRange",
+    {
+      v7: "supportsColorScaleRange",
+      v8: "supportsColorScaleRange",
+      translationFn: (b: unknown) =>
+        typeof b === "string"
+          ? Boolean(b)
+          : typeof b === "boolean"
+          ? b
+          : undefined,
+    },
     "colorScaleMinimum",
     "colorScaleMaximum",
     { v7: "disableUserChanges", v8: "disableDimensionSelectors" },
