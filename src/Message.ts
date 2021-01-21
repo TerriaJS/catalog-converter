@@ -51,9 +51,10 @@ export interface UnknownTypeDetails {
 
 export interface InputNotPlainObjectDetails {}
 
-const unknownPropOpaque = createOpaqueAPI<"UnknownProp", UnknownPropDetails>(
-  "UnknownProp"
-);
+export const unknownPropOpaque = createOpaqueAPI<
+  "UnknownProp",
+  UnknownPropDetails
+>("UnknownProp");
 export interface UnknownProp extends MessageBase {
   details: ReturnType<typeof unknownPropOpaque.toOpaque>;
 }

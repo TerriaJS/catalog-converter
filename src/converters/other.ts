@@ -1,6 +1,11 @@
 import is from "@sindresorhus/is";
 import { isPlainObject } from "lodash";
-import { missingRequiredProp, ModelType } from "../Message";
+import {
+  missingRequiredProp,
+  ModelType,
+  Severity,
+  unknownPropOpaque,
+} from "../Message";
 import {
   CatalogMember,
   ConversionOptions,
@@ -15,13 +20,15 @@ import {
   featureInfoTemplate,
   getUnknownProps,
   imageryLayerProps,
-  itemProperties,
   legendProps,
   legends,
   nullResult,
   propsToWarnings,
+  itemProperties,
 } from "./helpers";
-import { tileErrorHandlingOptions } from "./WmsCatalogItem";
+import { tileErrorHandlingOptions, wmsCatalogItem } from "./WmsCatalogItem";
+import { Converter } from "../convert";
+import { csvCatalogItem } from "./CsvItem";
 
 // Dependency injection to break circular dependency
 export function groupFromConvertMembersArray(
@@ -220,6 +227,7 @@ export function esriMapServerCatalogItem(
   const unknownProps = getUnknownProps(item, [
     ...catalogMemberProps,
     ...catalogMemberPropsIgnore,
+    ...imageryLayerProps,
     ...legendProps,
     ...propsToCopy,
     "featureInfoTemplate",
@@ -245,7 +253,11 @@ export function esriMapServerCatalogItem(
     member.featureInfoTemplate = result.result;
     messages.push(...result.messages);
   }
-  copyProps(item, member, [...catalogMemberProps, ...propsToCopy]);
+  copyProps(item, member, [
+    ...catalogMemberProps,
+    ...propsToCopy,
+    ...imageryLayerProps,
+  ]);
   if (options.copyUnknownProperties) {
     copyProps(item, member, unknownProps);
   }
@@ -379,6 +391,7 @@ export function ckanCatalogGroup(
     "filterQuery",
     "groupBy",
     "useCombinationNameWhereMultipleResources",
+    "ungroupedTitle",
   ];
   const unknownProps = getUnknownProps(item, [
     ...catalogMemberProps,
@@ -444,13 +457,23 @@ export function ckanCatalogItem(
     ...catalogMemberPropsIgnore,
     ...propsToCopy,
     "allowAnyResourceIfResourceIdNotFound",
+    "esriFeatureServerResourceFormat",
+    "wmsResourceFormat",
+    "wfsResourceFormat",
+    "kmlResourceFormat",
+    "csvResourceFormat",
+    "esriMapServerResourceFormat",
+    "esriFeatureServerResourceFormat",
+    "geoJsonResourceFormat",
+    "czmlResourceFormat",
+    "itemProperties",
   ]);
   const member: MemberResult["member"] = {
     type: "ckan-item",
     name: item.name,
   };
   const messages = propsToWarnings(
-    ModelType.CkanGroup,
+    ModelType.CkanCatalogItem,
     unknownProps,
     item.name
   );
@@ -458,6 +481,15 @@ export function ckanCatalogItem(
   if (options.copyUnknownProperties) {
     copyProps(item, member, unknownProps);
   }
+
+  const itemPropertiesHelper = (converter: Converter) => {
+    if (isPlainObject(item.itemProperties)) {
+      const itemPropertiesResult = itemProperties(item, converter);
+      if (itemPropertiesResult.result)
+        member.itemProperties = itemPropertiesResult.result;
+      messages.push(...itemPropertiesResult.messages);
+    }
+  };
 
   // Convert various configurations now condensed into supported resource formats
   const supportedResourceFormats = [];
@@ -469,6 +501,7 @@ export function ckanCatalogItem(
         type: "esri-featureServer",
       },
     });
+    itemPropertiesHelper(esriFeatureServerCatalogItem);
   } else if (is.string(item.wmsResourceFormat)) {
     supportedResourceFormats.push({
       id: "WMS",
@@ -477,6 +510,7 @@ export function ckanCatalogItem(
         type: "wms",
       },
     });
+    itemPropertiesHelper(wmsCatalogItem);
   } else if (is.string(item.wfsResourceFormat)) {
     supportedResourceFormats.push({
       id: "WFS",
@@ -485,6 +519,17 @@ export function ckanCatalogItem(
         type: "wfs",
       },
     });
+    if (isPlainObject(item.itemProperties)) {
+      messages.push({
+        message: `WFS itemProperties is not supported`,
+        path: [item.name, "itemProperties (WFS)"],
+        severity: Severity.Warning,
+        details: unknownPropOpaque.toOpaque({
+          modelType: ModelType.CkanCatalogItem,
+          property: "itemProperties (WFS)",
+        }),
+      });
+    }
   } else if (is.string(item.kmlResourceFormat)) {
     supportedResourceFormats.push({
       id: "Kml",
@@ -493,6 +538,7 @@ export function ckanCatalogItem(
         type: "kml",
       },
     });
+    itemPropertiesHelper(kmlCatalogItem);
   } else if (is.string(item.csvResourceFormat)) {
     supportedResourceFormats.push({
       id: "CSV",
@@ -501,6 +547,7 @@ export function ckanCatalogItem(
         type: "csv",
       },
     });
+    itemPropertiesHelper(csvCatalogItem);
   } else if (is.string(item.esriMapServerResourceFormat)) {
     supportedResourceFormats.push({
       id: "ArcGIS MapServer",
@@ -509,6 +556,7 @@ export function ckanCatalogItem(
         type: "esri-mapServer",
       },
     });
+    itemPropertiesHelper(esriMapServerCatalogItem);
   } else if (is.string(item.esriFeatureServerResourceFormat)) {
     supportedResourceFormats.push({
       id: "ArcGIS FeatureServer",
@@ -517,6 +565,7 @@ export function ckanCatalogItem(
         type: "esri-featureServer",
       },
     });
+    itemPropertiesHelper(esriFeatureServerCatalogItem);
   } else if (is.string(item.geoJsonResourceFormat)) {
     supportedResourceFormats.push({
       id: "GeoJson",
@@ -525,6 +574,7 @@ export function ckanCatalogItem(
         type: "geojson",
       },
     });
+    itemPropertiesHelper(geoJsonCatalogItem);
   } else if (is.string(item.czmlResourceFormat)) {
     supportedResourceFormats.push({
       id: "Czml",
@@ -533,6 +583,17 @@ export function ckanCatalogItem(
         type: "czml",
       },
     });
+    if (isPlainObject(item.itemProperties)) {
+      messages.push({
+        message: `Czml itemProperties is not supported`,
+        path: [item.name, "itemProperties (Czml)"],
+        severity: Severity.Warning,
+        details: unknownPropOpaque.toOpaque({
+          modelType: ModelType.CkanCatalogItem,
+          property: "itemProperties (Czml)",
+        }),
+      });
+    }
   }
 
   member.supportedResourceFormats = supportedResourceFormats;

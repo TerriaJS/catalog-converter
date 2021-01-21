@@ -8,6 +8,7 @@ import {
   PlainObject,
 } from "../types";
 import generateRandomId from "./generateRandomId";
+import { Converter } from "../convert";
 
 export function isNotNull<T>(arg: T | null): arg is T {
   return arg !== null;
@@ -255,7 +256,7 @@ export function convertMembersArrayWithConvertMember(
 
 export function itemProperties(
   item: CatalogMember,
-  converter: (item: CatalogMember, options: ConversionOptions) => MemberResult
+  converter: Converter
 ): {
   result: any;
   messages: Message[];

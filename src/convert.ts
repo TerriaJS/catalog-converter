@@ -49,9 +49,13 @@ import { CatalogMember, ConversionOptions, MemberResult } from "./types";
 const convertMembersArray = convertMembersArrayWithConvertMember(convertMember);
 const group = groupFromConvertMembersArray(convertMembersArray);
 
+export type Converter = (
+  item: CatalogMember,
+  options: ConversionOptions
+) => MemberResult;
 // All catalog member properties, except type and name which are assigned individually
 
-const converters = new Map([
+export const converters: Map<string, Converter> = new Map([
   ["group", group],
   ["wms", wmsCatalogItem],
   ["wms-getCapabilities", wmsCatalogGroup],
