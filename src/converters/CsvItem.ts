@@ -67,7 +67,10 @@ interface ColorStyle {
   binColors?: string[];
 }
 
-function tableStyle(tableStyle: PlainObject): TableTraits {
+function tableStyle(
+  item: PlainObject & { tableStyle: PlainObject }
+): TableTraits {
+  const tableStyle = item.tableStyle;
   const extraProps: TableStyle = {};
   if (is.plainObject(tableStyle.columns)) {
     const columns = tableStyle.columns;
@@ -91,11 +94,21 @@ function tableStyle(tableStyle: PlainObject): TableTraits {
     extraProps.defaultColumn = defaultColumn;
   }
 
-  const timeTraits = getTimeTraits(tableStyle);
-  if (timeTraits) {
+  const timeTraits = getTimeTraits(tableStyle) ?? {};
+
+  const extraTimeTraits = ["idColumns", "timeColumn", "isSampled"].reduce<
+    PlainObject
+  >((acc, prop) => {
+    if (item[prop]) {
+      acc[prop] = item[prop];
+    }
+    return acc;
+  }, {});
+
+  if (timeTraits !== {} || extraTimeTraits !== {}) {
     extraProps.defaultStyle = {
       ...extraProps.defaultStyle,
-      time: timeTraits,
+      time: { ...timeTraits, ...extraTimeTraits },
     };
   }
 
@@ -201,6 +214,9 @@ export function csvCatalogItem(
     "tableStyle",
     "featureInfoTemplate",
     "polling",
+    "idColumns",
+    "timeColumn",
+    "isSampled",
   ]);
   const messages = propsToWarnings(ModelType.CsvItem, unknownProps, item.name);
   const member: MemberResult["member"] = {
@@ -215,6 +231,7 @@ export function csvCatalogItem(
     "url",
     "opacity",
     { v7: "data", v8: "csvString" },
+    { v7: "showWarnings", v8: "showUnmatchedRegionsWarning" },
     {
       v7: "polling",
       v8: "polling",
@@ -222,7 +239,7 @@ export function csvCatalogItem(
     },
   ]);
   if (is.plainObject(item.tableStyle)) {
-    Object.assign(member, tableStyle(item.tableStyle));
+    Object.assign(member, tableStyle(item as any));
   }
   if (
     is.string(item.featureInfoTemplate) ||
