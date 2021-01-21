@@ -220,6 +220,7 @@ export function esriMapServerCatalogItem(
   const unknownProps = getUnknownProps(item, [
     ...catalogMemberProps,
     ...catalogMemberPropsIgnore,
+    ...legendProps,
     ...propsToCopy,
     "featureInfoTemplate",
   ]);
@@ -248,6 +249,10 @@ export function esriMapServerCatalogItem(
   if (options.copyUnknownProperties) {
     copyProps(item, member, unknownProps);
   }
+
+  const legendResult = legends(ModelType.WmsItem, item.name, item);
+  member.legends = legendResult.result;
+  messages.push(...legendResult.messages);
 
   return {
     member,
@@ -641,6 +646,7 @@ export function geoJsonCatalogItem(
     ...catalogMemberProps,
     ...catalogMemberPropsIgnore,
     ...propsToCopy,
+    ...legendProps,
     "data",
     "featureInfoTemplate",
   ]);
@@ -675,6 +681,11 @@ export function geoJsonCatalogItem(
   } else if (is.string(item.data)) {
     member.geoJsonString = item.data;
   }
+
+  const legendResult = legends(ModelType.WmsItem, item.name, item);
+  member.legends = legendResult.result;
+  messages.push(...legendResult.messages);
+
   return { member, messages };
 }
 
