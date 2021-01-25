@@ -147,6 +147,14 @@ describe("Test convertCatalog", () => {
     expect(res.messages).toHaveLength(0);
   });
 
+  it("converts the csv with styles", function () {
+    const v7 = require("./samples/v7/csv-styles.json");
+    const v8 = require("./samples/v8/csv-styles.json");
+    const res = convertCatalog(v7);
+    expect(res.result).toMatchObject(v8);
+    expect(res.messages).toHaveLength(0);
+  });
+
   it("adds shareKeys", function () {
     const v7 = require("./samples/v7/shareKeys.json");
     const v8 = require("./samples/v8/shareKeys.json");
