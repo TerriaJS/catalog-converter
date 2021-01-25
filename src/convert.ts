@@ -19,8 +19,6 @@ import {
 } from "./converters/helpers";
 import {
   cartoMapCatalogItem,
-  ckanCatalogGroup,
-  ckanCatalogItem,
   esriFeatureServerCatalogItem,
   esriMapServerCatalogGroup,
   esriMapServerCatalogItem,
@@ -43,6 +41,7 @@ import {
   unknownType,
 } from "./Message";
 import { CatalogMember, ConversionOptions, MemberResult } from "./types";
+import { ckanCatalogGroup, ckanCatalogItem } from "./converters/Ckan";
 
 // Use dependency injection to break circular dependencies created by
 //  group -> convertMembersArray -> convertMember -> group  recursion

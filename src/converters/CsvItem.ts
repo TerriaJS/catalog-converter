@@ -205,15 +205,27 @@ export function csvCatalogItem(
       )
     );
   }
+
+  const propsToCopy = [
+    "url",
+    "opacity",
+    { v7: "data", v8: "csvString" },
+    { v7: "showWarnings", v8: "showUnmatchedRegionsWarning" },
+    {
+      v7: "polling",
+      v8: "polling",
+      translationFn: translatePolling,
+    },
+  ];
+
   const unknownProps = getUnknownProps(item, [
     ...catalogMemberProps,
     ...catalogMemberPropsIgnore,
-    "url",
-    "data",
-    "opacity",
+    ...propsToCopy,
+
     "tableStyle",
     "featureInfoTemplate",
-    "polling",
+
     "idColumns",
     "timeColumn",
     "isSampled",
@@ -226,18 +238,7 @@ export function csvCatalogItem(
   if (options.copyUnknownProperties) {
     copyProps(item, member, unknownProps);
   }
-  copyProps(item, member, [
-    ...catalogMemberProps,
-    "url",
-    "opacity",
-    { v7: "data", v8: "csvString" },
-    { v7: "showWarnings", v8: "showUnmatchedRegionsWarning" },
-    {
-      v7: "polling",
-      v8: "polling",
-      translationFn: translatePolling,
-    },
-  ]);
+  copyProps(item, member, [...catalogMemberProps, ...propsToCopy]);
   if (is.plainObject(item.tableStyle)) {
     Object.assign(member, tableStyle(item as any));
   }
