@@ -102,8 +102,18 @@ export function wmsCatalogItem(
           ? b
           : undefined,
     },
-    "colorScaleMinimum",
-    "colorScaleMaximum",
+    {
+      v7: "colorScaleMinimum",
+      v8: "colorScaleMinimum",
+      translationFn: (b: unknown) =>
+        typeof b === "string" ? parseFloat(b) : b,
+    },
+    {
+      v7: "colorScaleMaximum",
+      v8: "colorScaleMaximum",
+      translationFn: (b: unknown) =>
+        typeof b === "string" ? parseFloat(b) : b,
+    },
     { v7: "disableUserChanges", v8: "disableDimensionSelectors" },
   ];
 
