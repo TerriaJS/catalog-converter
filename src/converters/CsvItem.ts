@@ -69,6 +69,7 @@ interface ColorStyle {
   binColors?: string[];
   binMaximums?: number[];
   colorPalette?: string;
+  enumColors?: { value: string; color: string }[];
 }
 
 function tableStyle(
@@ -199,14 +200,29 @@ function getColorTraits(tableStyle: PlainObject): ColorStyle | undefined {
   if (is.string(tableStyle.nullColor)) color.nullColor = tableStyle.nullColor;
   if (is.string(tableStyle.nullLabel)) color.nullLabel = tableStyle.nullLabel;
 
-  /*  colorBins can be two things:
+  /*  colorBins can be three things:
    *  - Number, how many colors (color "bins") you want to divide the data into
    *  - Array of number, eg. [3000, 3100, 3800, 3850, 3950, 4000], for boundaries
+   *  - Array of color/value pais for enum maps -
+   *    For example {
+   *                  "color": "yellow",
+   *                  "value": "Both CHAdeMO & CCS Combo 2/SAE"
+   *                }
    */
-  if (is.number(tableStyle.colorBins))
+
+  // Note: don't copy value over if 0 - this is used to disable binning in v7 (which isn't supported in v8)
+  if (is.number(tableStyle.colorBins) && tableStyle.colorBins !== 0)
     color.numberOfBins = tableStyle.colorBins;
-  else if (is.array(tableStyle.colorBins))
-    color.binMaximums = tableStyle.colorBins;
+  else if (is.array(tableStyle.colorBins) && tableStyle.colorBins.length > 0) {
+    if (is.number(tableStyle.colorBins[0])) {
+      color.binMaximums = tableStyle.colorBins;
+    } else if (
+      is.string(tableStyle.colorBins[0].color) &&
+      is.string(tableStyle.colorBins[0].value)
+    ) {
+      color.enumColors = tableStyle.colorBins;
+    }
+  }
 
   /*  colorMap can be three things:
    *  - String, eg. 'red-black'
@@ -228,6 +244,11 @@ function getColorTraits(tableStyle: PlainObject): ColorStyle | undefined {
         []
       );
     }
+  }
+
+  // If we have binColors and numberOfBins is unset, we need to set it manually
+  if (color.binColors && is.nullOrUndefined(color.numberOfBins)) {
+    color.numberOfBins = color.binColors.length;
   }
 
   if (is.string(tableStyle.colorPalette)) {
