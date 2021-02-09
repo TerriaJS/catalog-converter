@@ -14,6 +14,7 @@ import {
   propsToWarnings,
   catalogMemberPropsIgnore,
   featureInfoTemplate,
+  clearEmpties,
 } from "./helpers";
 
 interface TableTraits {
@@ -108,8 +109,6 @@ function tableStyle(
     extraProps.defaultColumn = defaultColumn;
   }
 
-  const timeTraits = getTimeTraits(tableStyle) ?? {};
-
   const extraTimeTraits = ["idColumns", "timeColumn", "isSampled"].reduce<
     PlainObject
   >((acc, prop) => {
@@ -119,12 +118,10 @@ function tableStyle(
     return acc;
   }, {});
 
-  if (timeTraits !== {} || extraTimeTraits !== {}) {
-    extraProps.defaultStyle = {
-      ...extraProps.defaultStyle,
-      time: { ...timeTraits, ...extraTimeTraits },
-    };
-  }
+  extraProps.defaultStyle = {
+    ...extraProps.defaultStyle,
+    time: { ...(getTimeTraits(tableStyle) ?? {}), ...extraTimeTraits },
+  };
 
   const colorTraits = getColorTraits(tableStyle);
   if (colorTraits) {
@@ -133,6 +130,8 @@ function tableStyle(
       color: colorTraits,
     };
   }
+
+  clearEmpties(extraProps);
 
   return extraProps;
 }
@@ -321,6 +320,7 @@ export function csvCatalogItem(
     member.featureInfoTemplate = result.result;
     messages.push(...result.messages);
   }
+
   return { member, messages };
 }
 

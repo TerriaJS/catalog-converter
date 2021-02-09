@@ -46,7 +46,7 @@ export function ckanCatalogGroup(
       v7: "ungroupedTitle",
       v8: "ungroupedTitle",
       // Get rid of null values
-      translationFn: (v) => v ?? undefined,
+      translationFn: (v) => (v === "" || v === null ? undefined : v),
     },
   ];
   const unknownProps = getUnknownProps(item, [
@@ -280,32 +280,34 @@ export function ckanCatalogItem(
     }
   }
 
-  // Copy over left over catalogMemberProps (for example "description") to itemProperties
-  const extraItemProperties = {};
+  if (isPlainObject(item.itemProperties)) {
+    // Copy over left over catalogMemberProps (for example "description") to itemProperties
+    const extraItemProperties = {};
 
-  // Copy catalogMemberProps which are NOT v7CkanPropKeys
-  const v7CkanPropKeys = v7CkanProps.map((catalogProp) =>
-    is.string(catalogProp) ? catalogProp : catalogProp.v7
-  );
-  copyProps(
-    item,
-    extraItemProperties,
-    catalogMemberProps.filter(
-      (catalogProp) =>
-        !v7CkanPropKeys.includes(
-          is.string(catalogProp) ? catalogProp : catalogProp.v7
-        )
-    )
-  );
-
-  // Assign extra props to itemProperties
-  if (extraItemProperties !== {}) {
-    member.itemProperties = Object.assign(
-      isPlainObject(member.itemProperties)
-        ? (member.itemProperties as any)
-        : {},
-      extraItemProperties
+    // Copy catalogMemberProps which are NOT v7CkanPropKeys
+    const v7CkanPropKeys = v7CkanProps.map((catalogProp) =>
+      is.string(catalogProp) ? catalogProp : catalogProp.v7
     );
+    copyProps(
+      item.itemProperties as any,
+      extraItemProperties,
+      catalogMemberProps.filter(
+        (catalogProp) =>
+          !v7CkanPropKeys.includes(
+            is.string(catalogProp) ? catalogProp : catalogProp.v7
+          )
+      )
+    );
+
+    // Assign extra props to itemProperties
+    if (extraItemProperties !== {}) {
+      member.itemProperties = Object.assign(
+        isPlainObject(member.itemProperties)
+          ? (member.itemProperties as any)
+          : {},
+        extraItemProperties
+      );
+    }
   }
 
   member.supportedResourceFormats = supportedResourceFormats;

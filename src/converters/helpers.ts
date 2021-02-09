@@ -276,3 +276,19 @@ export function itemProperties(
 
   return { messages: itemPropertiesMessages, result: itemProperties.member };
 }
+
+// Stolen from https://stackoverflow.com/a/42736367
+
+export function clearEmpties(o: any) {
+  for (let k in o) {
+    if (!o[k] || typeof o[k] !== "object") {
+      continue; // If null or not an object, skip to the next iteration
+    }
+
+    // The property is an object
+    clearEmpties(o[k]); // <-- Make a recursive call on the nested object
+    if (Object.keys(o[k]).length === 0) {
+      delete o[k]; // The object had no properties, so delete that property
+    }
+  }
+}
