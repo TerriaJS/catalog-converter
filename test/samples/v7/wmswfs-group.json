@@ -13,6 +13,11 @@
       "url": "http://wms1.ntlis.nt.gov.au/ilismap",
       "type": "wms-getCapabilities",
       "isOpen": true
+    },
+    {
+      "name": "Geoscience Australia Marine Data (WFS)",
+      "type": "wfs-getCapabilities",
+      "url": "http://marine.ga.gov.au/geoserver/marine/wfs"
     }
   ]
 }

@@ -73,6 +73,37 @@ export function groupFromConvertMembersArray(
   };
 }
 
+export function webFeatureServerCatalogGroup(
+  item: CatalogMember,
+  options: ConversionOptions
+) {
+  if (!options.partial && !is.string(item.url)) {
+    return nullResult(
+      missingRequiredProp(ModelType.WfsGroup, "url", "string", item.name)
+    );
+  }
+
+  const propsToCopy = ["url"];
+  const unknownProps = getUnknownProps(item, [
+    ...catalogMemberProps,
+    ...catalogMemberPropsIgnore,
+    ...propsToCopy,
+  ]);
+
+  const member: MemberResult["member"] = {
+    type: "wfs-group",
+    name: item.name,
+  };
+  const messages = propsToWarnings(ModelType.WfsGroup, unknownProps, item.name);
+
+  copyProps(item, member, [...catalogMemberProps, ...propsToCopy]);
+  if (options.copyUnknownProperties) {
+    copyProps(item, member, unknownProps);
+  }
+
+  return { member, messages };
+}
+
 export function sosCatalogItem(
   item: CatalogMember,
   options: ConversionOptions

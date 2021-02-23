@@ -127,8 +127,8 @@ describe("Test convertCatalog", () => {
     ).toHaveLength(0);
   });
 
-  it("wms-group", () => {
-    const file = "wms-group";
+  it("wmswfs-group", () => {
+    const file = "wmswfs-group";
     const [v7, v8] = ["v7", "v8"].map((folder) =>
       require(`./samples/${folder}/${file}.json`)
     );

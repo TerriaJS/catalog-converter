@@ -28,6 +28,7 @@ import {
   groupFromConvertMembersArray,
   mapboxVectorTileCatalogItem,
   sosCatalogItem,
+  webFeatureServerCatalogGroup,
   wpsCatalogItem,
   wpsResultItem,
 } from "./converters/other";
@@ -53,6 +54,7 @@ const converters = new Map([
   ["group", group],
   ["wms", wmsCatalogItem],
   ["wms-getCapabilities", wmsCatalogGroup],
+  ["wfs-getCapabilities", webFeatureServerCatalogGroup],
   ["csv", csvCatalogItem],
   ["sos", sosCatalogItem],
   ["esri-mapServer", esriMapServerCatalogItem],
