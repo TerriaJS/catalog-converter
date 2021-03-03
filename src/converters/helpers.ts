@@ -4,10 +4,11 @@ import {
   CatalogMember,
   ConversionOptions,
   MemberResult,
-  PlainObject,
   MembersResult,
+  PlainObject,
 } from "../types";
 import generateRandomId from "./generateRandomId";
+import { Converter } from "../convert";
 
 export function isNotNull<T>(arg: T | null): arg is T {
   return arg !== null;
@@ -251,4 +252,43 @@ export function convertMembersArrayWithConvertMember(
       })),
     };
   };
+}
+
+export function itemProperties(
+  item: CatalogMember,
+  converter: Converter
+): {
+  result: any;
+  messages: Message[];
+} {
+  // Modify name property to make messages sensible
+  const itemProperties = converter(
+    { ...(item.itemProperties as any), name: `${item.name}.itemProperties` },
+    { partial: true }
+  );
+  if (itemProperties.member) {
+    delete itemProperties.member.name;
+    delete itemProperties.member.type;
+  }
+  const itemPropertiesMessages = itemProperties.messages.map((m) => {
+    return { ...m, path: [item.name, ...m.path] };
+  });
+
+  return { messages: itemPropertiesMessages, result: itemProperties.member };
+}
+
+// Stolen from https://stackoverflow.com/a/42736367
+
+export function clearEmpties(o: any) {
+  for (let k in o) {
+    if (!o[k] || typeof o[k] !== "object") {
+      continue; // If null or not an object, skip to the next iteration
+    }
+
+    // The property is an object
+    clearEmpties(o[k]); // <-- Make a recursive call on the nested object
+    if (Object.keys(o[k]).length === 0) {
+      delete o[k]; // The object had no properties, so delete that property
+    }
+  }
 }

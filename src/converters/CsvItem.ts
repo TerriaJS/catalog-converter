@@ -14,6 +14,7 @@ import {
   propsToWarnings,
   catalogMemberPropsIgnore,
   featureInfoTemplate,
+  clearEmpties,
 } from "./helpers";
 
 interface TableTraits {
@@ -22,6 +23,7 @@ interface TableTraits {
 
 interface TableStyle {
   columns?: Column[];
+  styles?: Style[];
   defaultColumn?: Omit<Column, "name">;
   defaultStyle?: Style;
   activeStyle?: string;
@@ -61,13 +63,20 @@ interface TimeStyle {
 }
 
 interface ColorStyle {
+  id?: string;
   nullColor?: string;
   nullLabel?: string;
   numberOfBins?: number;
   binColors?: string[];
+  binMaximums?: number[];
+  colorPalette?: string;
+  enumColors?: { value: string; color: string }[];
 }
 
-function tableStyle(tableStyle: PlainObject): TableTraits {
+function tableStyle(
+  item: PlainObject & { tableStyle: PlainObject }
+): TableTraits {
+  const tableStyle = item.tableStyle;
   const extraProps: TableStyle = {};
   if (is.plainObject(tableStyle.columns)) {
     const columns = tableStyle.columns;
@@ -75,6 +84,15 @@ function tableStyle(tableStyle: PlainObject): TableTraits {
       name,
       ...getColumnTraits(defn),
     }));
+    extraProps.styles = Object.entries(columns)
+      .filter(([name, defn]) => is.plainObject(defn))
+      .map(([name, defn]) => ({
+        id: name,
+        color: getColorTraits(defn as PlainObject),
+        time: getTimeTraits(defn as PlainObject),
+      }))
+      // Filter out styles which have no properties other than `id`
+      .filter((style) => style.color || style.time);
 
     const chartLines = getChartLines(tableStyle.columns);
     if (chartLines) {
@@ -91,13 +109,19 @@ function tableStyle(tableStyle: PlainObject): TableTraits {
     extraProps.defaultColumn = defaultColumn;
   }
 
-  const timeTraits = getTimeTraits(tableStyle);
-  if (timeTraits) {
-    extraProps.defaultStyle = {
-      ...extraProps.defaultStyle,
-      time: timeTraits,
-    };
-  }
+  const extraTimeTraits = ["idColumns", "timeColumn", "isSampled"].reduce<
+    PlainObject
+  >((acc, prop) => {
+    if (item[prop]) {
+      acc[prop] = item[prop];
+    }
+    return acc;
+  }, {});
+
+  extraProps.defaultStyle = {
+    ...extraProps.defaultStyle,
+    time: { ...(getTimeTraits(tableStyle) ?? {}), ...extraTimeTraits },
+  };
 
   const colorTraits = getColorTraits(tableStyle);
   if (colorTraits) {
@@ -107,13 +131,15 @@ function tableStyle(tableStyle: PlainObject): TableTraits {
     };
   }
 
+  clearEmpties(extraProps);
+
   return extraProps;
 }
 
 function getColumnTraits(defn: any): Omit<Column, "name"> {
   const newDefn: Omit<Column, "name"> = {};
   if (is.plainObject(defn)) {
-    if (defn.type === "HIDDEN") {
+    if (typeof defn.type === "string" && defn.type.toLowerCase() === "hidden") {
       newDefn.type = "hidden";
     }
     if (is.string(defn.units)) {
@@ -121,6 +147,8 @@ function getColumnTraits(defn: any): Omit<Column, "name"> {
     }
     if (is.string(defn.title)) {
       newDefn.title = defn.title;
+    } else if (is.string(defn.name)) {
+      newDefn.title = defn.name;
     }
     if (is.plainObject(defn.format)) {
       newDefn.format = defn.format;
@@ -170,11 +198,62 @@ function getColorTraits(tableStyle: PlainObject): ColorStyle | undefined {
   const color: ColorStyle = {};
   if (is.string(tableStyle.nullColor)) color.nullColor = tableStyle.nullColor;
   if (is.string(tableStyle.nullLabel)) color.nullLabel = tableStyle.nullLabel;
-  if (is.number(tableStyle.colorBins))
+
+  /*  colorBins can be three things:
+   *  - Number, how many colors (color "bins") you want to divide the data into
+   *  - Array of number, eg. [3000, 3100, 3800, 3850, 3950, 4000], for boundaries
+   *  - Array of color/value pais for enum maps -
+   *    For example {
+   *                  "color": "yellow",
+   *                  "value": "Both CHAdeMO & CCS Combo 2/SAE"
+   *                }
+   */
+
+  // Note: don't copy value over if 0 - this is used to disable binning in v7 (which isn't supported in v8)
+  if (is.number(tableStyle.colorBins) && tableStyle.colorBins !== 0)
     color.numberOfBins = tableStyle.colorBins;
+  else if (is.array(tableStyle.colorBins) && tableStyle.colorBins.length > 0) {
+    if (is.number(tableStyle.colorBins[0])) {
+      color.binMaximums = tableStyle.colorBins;
+    } else if (
+      is.string(tableStyle.colorBins[0].color) &&
+      is.string(tableStyle.colorBins[0].value)
+    ) {
+      color.enumColors = tableStyle.colorBins;
+    }
+  }
+
+  /*  colorMap can be three things:
+   *  - String, eg. 'red-black'
+   *  - Array of strings, eg. ['red', 'black']
+   *  - Array of objects with the properties 'color' and 'offset', eg. [{color: 'red', offset: 0}, ...].
+   *    - v8 only supports array of strings, so 'offset' is discarded
+   */
   if (is.string(tableStyle.colorMap))
     color.binColors = tableStyle.colorMap.split("-");
-  if (is.array(tableStyle.colorMap)) color.binColors = tableStyle.colorMap;
+  if (is.array(tableStyle.colorMap)) {
+    if (typeof tableStyle.colorMap[0] == "string") {
+      color.binColors = tableStyle.colorMap;
+    } else {
+      color.binColors = tableStyle.colorMap.reduce<string[]>(
+        (binColors, current) =>
+          typeof current.color === "string"
+            ? binColors.concat(current.color)
+            : binColors,
+        []
+      );
+    }
+  }
+
+  // If we have binColors and numberOfBins is unset, we need to set it manually
+  if (color.binColors && is.nullOrUndefined(color.numberOfBins)) {
+    color.numberOfBins = color.binColors.length;
+  }
+
+  if (is.string(tableStyle.colorPalette)) {
+    color.colorPalette = tableStyle.colorPalette;
+  }
+
   return is.emptyObject(color) ? undefined : color;
 }
 
@@ -192,15 +271,30 @@ export function csvCatalogItem(
       )
     );
   }
+
+  const propsToCopy = [
+    "url",
+    "opacity",
+    { v7: "data", v8: "csvString" },
+    { v7: "showWarnings", v8: "showUnmatchedRegionsWarning" },
+    {
+      v7: "polling",
+      v8: "polling",
+      translationFn: translatePolling,
+    },
+  ];
+
   const unknownProps = getUnknownProps(item, [
     ...catalogMemberProps,
     ...catalogMemberPropsIgnore,
-    "url",
-    "data",
-    "opacity",
+    ...propsToCopy,
+
     "tableStyle",
     "featureInfoTemplate",
-    "polling",
+
+    "idColumns",
+    "timeColumn",
+    "isSampled",
   ]);
   const messages = propsToWarnings(ModelType.CsvItem, unknownProps, item.name);
   const member: MemberResult["member"] = {
@@ -210,19 +304,9 @@ export function csvCatalogItem(
   if (options.copyUnknownProperties) {
     copyProps(item, member, unknownProps);
   }
-  copyProps(item, member, [
-    ...catalogMemberProps,
-    "url",
-    "opacity",
-    { v7: "data", v8: "csvString" },
-    {
-      v7: "polling",
-      v8: "polling",
-      translationFn: translatePolling,
-    },
-  ]);
+  copyProps(item, member, [...catalogMemberProps, ...propsToCopy]);
   if (is.plainObject(item.tableStyle)) {
-    Object.assign(member, tableStyle(item.tableStyle));
+    Object.assign(member, tableStyle(item as any));
   }
   if (
     is.string(item.featureInfoTemplate) ||
@@ -236,6 +320,7 @@ export function csvCatalogItem(
     member.featureInfoTemplate = result.result;
     messages.push(...result.messages);
   }
+
   return { member, messages };
 }
 

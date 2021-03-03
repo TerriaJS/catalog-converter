@@ -8,7 +8,10 @@ import {
   CopyProps,
   getUnknownProps,
   propsToWarnings,
+  itemProperties,
 } from "./helpers";
+import { wmsCatalogItem } from "./WmsCatalogItem";
+import { isPlainObject } from "lodash";
 
 export function wmsCatalogGroup(
   item: CatalogMember,
@@ -32,6 +35,7 @@ export function wmsCatalogGroup(
     ...catalogMemberProps,
     ...catalogMemberPropsIgnore,
     ...propsToCopy,
+    "itemProperties",
   ]);
   const member: MemberResult["member"] = {
     type: "wms-group",
@@ -43,6 +47,13 @@ export function wmsCatalogGroup(
     copyProps(item, member, unknownProps);
   }
   copyProps(item, member, [...catalogMemberProps, ...propsToCopy]);
+
+  if (isPlainObject(item.itemProperties)) {
+    const itemPropertiesResult = itemProperties(item, wmsCatalogItem);
+    if (itemPropertiesResult.result)
+      member.itemProperties = itemPropertiesResult.result;
+    messages.push(...itemPropertiesResult.messages);
+  }
 
   return { member, messages };
 }

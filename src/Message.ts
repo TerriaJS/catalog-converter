@@ -15,6 +15,8 @@ export enum ModelType {
   WfsGroup = "WebFeatureServiceCatalogGroup",
   CsvItem = "CsvCatalogItem",
   SosItem = "SensorObservationServiceCatalogItem",
+  EsriCatalogGroup = "EsriCatalogGroup",
+  EsriMapServerGroup = "EsriMapServerGroup",
   EsriMapServerItem = "EsriMapServerCatalogItem",
   EsriFeatureServerItem = "EsriFeatureServerCatalogItem",
   WpsItem = "WpsItem",
@@ -24,6 +26,7 @@ export enum ModelType {
   GeoJsonItem = "GeoJsonCatalogItem",
   CartoMapCatalogItem = "CartoMapCatalogItem",
   MapboxVectorTileCatalogItem = "MapboxVectorTileCatalogItem",
+  KmlCatalogItem = "KmlCatalogItem",
 }
 
 interface MessageBase {
@@ -49,9 +52,10 @@ export interface UnknownTypeDetails {
 
 export interface InputNotPlainObjectDetails {}
 
-const unknownPropOpaque = createOpaqueAPI<"UnknownProp", UnknownPropDetails>(
-  "UnknownProp"
-);
+export const unknownPropOpaque = createOpaqueAPI<
+  "UnknownProp",
+  UnknownPropDetails
+>("UnknownProp");
 export interface UnknownProp extends MessageBase {
   details: ReturnType<typeof unknownPropOpaque.toOpaque>;
 }

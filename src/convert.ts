@@ -19,8 +19,6 @@ import {
 } from "./converters/helpers";
 import {
   cartoMapCatalogItem,
-  ckanCatalogGroup,
-  ckanCatalogItem,
   esriFeatureServerCatalogItem,
   esriMapServerCatalogGroup,
   esriMapServerCatalogItem,
@@ -31,6 +29,8 @@ import {
   webFeatureServerCatalogGroup,
   wpsCatalogItem,
   wpsResultItem,
+  kmlCatalogItem,
+  esriCatalogGroup,
 } from "./converters/other";
 import { wmsCatalogGroup } from "./converters/WmsCatalogGroup";
 import { wmsCatalogItem } from "./converters/WmsCatalogItem";
@@ -42,15 +42,20 @@ import {
   unknownType,
 } from "./Message";
 import { CatalogMember, ConversionOptions, MemberResult } from "./types";
+import { ckanCatalogGroup, ckanCatalogItem } from "./converters/Ckan";
 
 // Use dependency injection to break circular dependencies created by
 //  group -> convertMembersArray -> convertMember -> group  recursion
 const convertMembersArray = convertMembersArrayWithConvertMember(convertMember);
 const group = groupFromConvertMembersArray(convertMembersArray);
 
+export type Converter = (
+  item: CatalogMember,
+  options: ConversionOptions
+) => MemberResult;
 // All catalog member properties, except type and name which are assigned individually
 
-const converters = new Map([
+export const converters: Map<string, Converter> = new Map([
   ["group", group],
   ["wms", wmsCatalogItem],
   ["wms-getCapabilities", wmsCatalogGroup],
@@ -58,6 +63,7 @@ const converters = new Map([
   ["csv", csvCatalogItem],
   ["sos", sosCatalogItem],
   ["esri-mapServer", esriMapServerCatalogItem],
+  ["esri-group", esriCatalogGroup],
   ["esri-mapServer-group", esriMapServerCatalogGroup],
   ["esri-featureServer", esriFeatureServerCatalogItem],
   ["ckan", ckanCatalogGroup],
@@ -67,6 +73,8 @@ const converters = new Map([
   ["wps-result", wpsResultItem],
   ["carto", cartoMapCatalogItem],
   ["mvt", mapboxVectorTileCatalogItem],
+
+  ["kml", kmlCatalogItem],
 ]);
 
 // For more default options see `src\cli.ts` arguments defaults
