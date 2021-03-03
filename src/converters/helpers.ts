@@ -8,6 +8,7 @@ import {
   PlainObject,
 } from "../types";
 import generateRandomId from "./generateRandomId";
+import mergeRecursive from "./mergeRecursive";
 import { Converter } from "../convert";
 
 export function isNotNull<T>(arg: T | null): arg is T {
@@ -230,7 +231,8 @@ export function convertMembersArrayWithConvertMember(
     label: string,
     options: ConversionOptions
   ): MembersResult {
-    const results = members.map((m) => {
+    const v7Merged: unknown[] = mergeRecursive(members);
+    const results = v7Merged.map((m) => {
       const res = convertMember(m, options);
       // Push the member to `enabledItemsAccumulator` if it is enabled.
       if (options.enabledItemsAccumulator && res.member && (m as any).isEnabled)

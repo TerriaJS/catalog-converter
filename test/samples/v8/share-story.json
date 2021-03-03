@@ -7,9 +7,7 @@
         "Root Group/Example Datasets": {
           "type": "group",
           "isOpen": true,
-          "knownContainerUniqueIds": [
-            "/"
-          ]
+          "knownContainerUniqueIds": ["/"]
         },
         "Root Group/Example Datasets/ABC Photo Stories (2009-2014)": {
           "type": "csv",
@@ -18,9 +16,7 @@
           "splitDirection": 0,
           "url": "test/localphotostories20092014.csv",
           "opacity": 0.8,
-          "knownContainerUniqueIds": [
-            "Root Group/Example Datasets"
-          ]
+          "knownContainerUniqueIds": ["Root Group/Example Datasets"]
         }
       },
       "stories": [
@@ -37,9 +33,7 @@
                   "Root Group/Example Datasets": {
                     "type": "group",
                     "isOpen": true,
-                    "knownContainerUniqueIds": [
-                      "/"
-                    ]
+                    "knownContainerUniqueIds": ["/"]
                   },
                   "Root Group/Example Datasets/ABC Photo Stories (2009-2014)": {
                     "type": "csv",
@@ -48,9 +42,7 @@
                     "splitDirection": 0,
                     "url": "test/localphotostories20092014.csv",
                     "opacity": 0.8,
-                    "knownContainerUniqueIds": [
-                      "Root Group/Example Datasets"
-                    ]
+                    "knownContainerUniqueIds": ["Root Group/Example Datasets"]
                   }
                 },
                 "workbench": [
@@ -108,9 +100,7 @@
                   "Root Group/Example Datasets": {
                     "type": "group",
                     "isOpen": true,
-                    "knownContainerUniqueIds": [
-                      "/"
-                    ]
+                    "knownContainerUniqueIds": ["/"]
                   },
                   "Root Group/Example Datasets/ABC Photo Stories (2009-2014)": {
                     "type": "csv",
@@ -119,9 +109,7 @@
                     "splitDirection": 0,
                     "url": "test/localphotostories20092014.csv",
                     "opacity": 0.8,
-                    "knownContainerUniqueIds": [
-                      "Root Group/Example Datasets"
-                    ]
+                    "knownContainerUniqueIds": ["Root Group/Example Datasets"]
                   }
                 },
                 "workbench": [

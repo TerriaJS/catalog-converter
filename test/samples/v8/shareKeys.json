@@ -14,10 +14,7 @@
       "url": "http://wms1.ntlis.nt.gov.au/ilismap",
       "type": "wms-group",
       "isOpen": true,
-      "shareKeys": [
-        "a-beautiful-sharekey",
-        "Root Group/Northern Territory"
-      ]
+      "shareKeys": ["a-beautiful-sharekey", "Root Group/Northern Territory"]
     }
   ]
 }

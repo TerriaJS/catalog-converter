@@ -74,7 +74,6 @@
       ],
       "activeStyle": "Current % of Max Cap",
       "defaultColumn": {
-        "replaceWithZeroValues": [],
         "replaceWithNullValues": ["-"]
       },
       "defaultStyle": {

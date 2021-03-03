@@ -13,9 +13,7 @@
       "url": "http://wms1.ntlis.nt.gov.au/ilismap",
       "type": "wms-getCapabilities",
       "isOpen": true,
-      "shareKeys": [
-        "a-beautiful-sharekey"
-      ]
+      "shareKeys": ["a-beautiful-sharekey"]
     }
   ]
 }
