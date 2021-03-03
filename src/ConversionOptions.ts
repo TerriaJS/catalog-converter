@@ -20,7 +20,6 @@ export const defaultConversionOptions: ConversionOptions = {
   idLength: DEFAULT_ID_LENGTH,
 };
 
-// For more default options see `src\cli.ts` arguments defaults
 export function defaultOptions(
   options: Partial<ConversionOptions> | undefined
 ) {
