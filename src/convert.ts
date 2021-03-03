@@ -19,8 +19,6 @@ import {
 } from "./converters/helpers";
 import {
   cartoMapCatalogItem,
-  ckanCatalogGroup,
-  ckanCatalogItem,
   esriFeatureServerCatalogItem,
   esriMapServerCatalogGroup,
   esriMapServerCatalogItem,
@@ -28,8 +26,11 @@ import {
   groupFromConvertMembersArray,
   mapboxVectorTileCatalogItem,
   sosCatalogItem,
+  webFeatureServerCatalogGroup,
   wpsCatalogItem,
   wpsResultItem,
+  kmlCatalogItem,
+  esriCatalogGroup,
 } from "./converters/other";
 import { wmsCatalogGroup } from "./converters/WmsCatalogGroup";
 import { wmsCatalogItem } from "./converters/WmsCatalogItem";
@@ -41,21 +42,28 @@ import {
   unknownType,
 } from "./Message";
 import { CatalogMember, ConversionOptions, MemberResult } from "./types";
+import { ckanCatalogGroup, ckanCatalogItem } from "./converters/Ckan";
 
 // Use dependency injection to break circular dependencies created by
 //  group -> convertMembersArray -> convertMember -> group  recursion
 const convertMembersArray = convertMembersArrayWithConvertMember(convertMember);
 const group = groupFromConvertMembersArray(convertMembersArray);
 
+export type Converter = (
+  item: CatalogMember,
+  options: ConversionOptions
+) => MemberResult;
 // All catalog member properties, except type and name which are assigned individually
 
-const converters = new Map([
+export const converters: Map<string, Converter> = new Map([
   ["group", group],
   ["wms", wmsCatalogItem],
   ["wms-getCapabilities", wmsCatalogGroup],
+  ["wfs-getCapabilities", webFeatureServerCatalogGroup],
   ["csv", csvCatalogItem],
   ["sos", sosCatalogItem],
   ["esri-mapServer", esriMapServerCatalogItem],
+  ["esri-group", esriCatalogGroup],
   ["esri-mapServer-group", esriMapServerCatalogGroup],
   ["esri-featureServer", esriFeatureServerCatalogItem],
   ["ckan", ckanCatalogGroup],
@@ -65,13 +73,17 @@ const converters = new Map([
   ["wps-result", wpsResultItem],
   ["carto", cartoMapCatalogItem],
   ["mvt", mapboxVectorTileCatalogItem],
+
+  ["kml", kmlCatalogItem],
 ]);
 
+// For more default options see `src\cli.ts` arguments defaults
 function defaultOptions(options: ConversionOptions | undefined) {
   return Object.assign(
     {
       copyUnknownProperties: false,
       partial: false,
+      addv7autoIdShareKeys: true,
     },
     options || {}
   );
@@ -150,6 +162,28 @@ export function convertCatalog(
       })
       .filter((id) => id !== undefined) as string[];
   }
+
+  if (options.addv7autoIdShareKeys) {
+    // Add v7 autoIDs to shareLinks
+    // v7 autoID has format Root Group/$someContainerId/$someLowerContainerId/$catalogName
+    const addv7autoIdShareKey = (
+      member: CatalogMember,
+      shareKey = "Root Group"
+    ) => {
+      const currentShareKey = `${shareKey}/${member.name}`;
+      Array.isArray(member.shareKeys)
+        ? member.shareKeys.push(currentShareKey)
+        : (member.shareKeys = [currentShareKey]);
+      if ("members" in member && Array.isArray(member.members)) {
+        member.members.forEach((groupMember) =>
+          addv7autoIdShareKey(groupMember, currentShareKey)
+        );
+      }
+    };
+
+    catalog?.forEach((member) => addv7autoIdShareKey(member));
+  }
+
   const result = {
     result: {
       workbench,
@@ -166,6 +200,7 @@ export function convertCatalog(
     ]);
     copyProps(json, result.result, unknownProps);
   }
+
   return result;
 }
 
@@ -228,70 +263,76 @@ export function convertShare(json: unknown): ShareResult {
 
   const v8InitSource: any = { stratum: "user" };
 
-  const workbenchIds: string[] = [];
+  const workbenchIds: { id: string; index: number | undefined }[] = [];
 
   const convertMembers = (members: any, convertUserAdded = false) =>
-    Object.entries(members).reduce<any>((convertedMembers, [id, v7Member]) => {
-      if (is.plainObject(v7Member)) {
-        // Get `knownContainerUniqueIds` from v7 `parents` property
-        let knownContainerUniqueIds = ["/"];
-        if (Array.isArray(v7Member.parents) && v7Member.parents.length > 0) {
-          knownContainerUniqueIds = v7Member.parents
-            .map((parent: string) => {
-              // Convert v7 user added data group id
-              if (parent === "Root Group/User-Added Data") {
-                return "__User-Added_Data__";
-              }
-              // Convert v7 root group id
-              if (parent === "Root Group") {
-                return "/";
-              }
+    Object.entries(members).reduce<any>(
+      (convertedMembers, [v7id, v7Member]) => {
+        if (is.plainObject(v7Member)) {
+          // Get `knownContainerUniqueIds` from v7 `parents` property
+          let knownContainerUniqueIds = ["/"];
+          if (Array.isArray(v7Member.parents) && v7Member.parents.length > 0) {
+            knownContainerUniqueIds = v7Member.parents
+              .map((parent: string) => {
+                // Convert v7 user added data group id
+                if (parent === "Root Group/User-Added Data") {
+                  return "__User-Added_Data__";
+                }
+                // Convert v7 root group id
+                if (parent === "Root Group") {
+                  return "/";
+                }
 
-              // Replace v7 Root Group with slash (v8 auto-ids start with //$catalogName)
-              return parent.replace("Root Group", "/");
-            })
-            .filter((parent) => typeof parent !== "undefined") as string[];
+                // Replace v7 autoID
+                return parent;
+              })
+              .filter((parent) => typeof parent !== "undefined") as string[];
+          }
+
+          // Use model id if it is defined, otherwise use key from members object
+          let newId =
+            typeof v7Member.id === "string" && v7Member.id !== ""
+              ? v7Member.id
+              : v7id;
+
+          // Replace User Added Data group id
+          if (v7id === "Root Group/User-Added Data") {
+            newId = "__User-Added_Data__";
+          }
+
+          // For some reason user added data doesn't have "__User-Added_Data__" in v8 autoIDs, whereas v7 autoIDs start with `Root Group/User-Added Data`,
+          // so remove all mentions of Root Group/User-Added Data from v7 autoIDs
+          newId = newId.replace("Root Group/User-Added Data", "");
+
+          // Only add to workbenchIds if NOT converting User Added Data
+          if (v7Member.isEnabled && !convertUserAdded) {
+            workbenchIds.push({
+              id: newId,
+              index:
+                typeof v7Member.nowViewingIndex === "number"
+                  ? v7Member.nowViewingIndex
+                  : undefined,
+            });
+          }
+
+          // Only convert user added data if convertUserAdded
+          if (
+            convertUserAdded ||
+            (v7id !== "Root Group/User-Added Data" &&
+              !knownContainerUniqueIds.includes("__User-Added_Data__"))
+          ) {
+            const result = convertMember(v7Member, { partial: true });
+            messages.push(...result.messages);
+            convertedMembers[newId] = {
+              ...result.member,
+              knownContainerUniqueIds,
+            };
+          }
+          return convertedMembers;
         }
-
-        // Firstly, if model has explicit `id`
-        // Otherwise, try to guess id based on this:
-        // v7 Id has format /Root Group/$someContainerId/$someLowerContainerId/$catalogName
-        // v8 Id has format //$someContainerId/$someLowerContainerId/$catalogName
-        // So replace "Root Group" with "/"
-        let newId =
-          typeof v7Member.id === "string" && v7Member.id !== ""
-            ? v7Member.id
-            : id.replace("Root Group", "/");
-
-        // Replace User Added Data group id
-        if (id === "Root Group/User-Added Data") {
-          newId = "__User-Added_Data__";
-        }
-
-        // For some reason user added data doesn't have the __User-Added_Data__ group in ids (in v8)
-        newId = newId.replace("//User-Added Data", "");
-
-        // Only add to workbenchIds if NOT converting User Added Data
-        if (v7Member.isEnabled && !convertUserAdded) {
-          workbenchIds.push(newId);
-        }
-
-        // Only convert user added data if convertUserAdded
-        if (
-          convertUserAdded ||
-          (id !== "Root Group/User-Added Data" &&
-            !knownContainerUniqueIds.includes("__User-Added_Data__"))
-        ) {
-          const result = convertMember(v7Member, { partial: true });
-          messages.push(...result.messages);
-          convertedMembers[newId] = {
-            ...result.member,
-            knownContainerUniqueIds,
-          };
-        }
-        return convertedMembers;
-      }
-    }, {});
+      },
+      {}
+    );
 
   // Shared catalog members
   if ("sharedCatalogMembers" in v7InitSource) {
@@ -351,7 +392,11 @@ export function convertShare(json: unknown): ShareResult {
     });
   }
 
-  v8InitSource.workbench = workbenchIds.reverse();
+  v8InitSource.workbench = workbenchIds
+    .sort((a, b) =>
+      typeof a.index !== "undefined" ? a.index - (b.index ?? a.index + 1) : 1
+    )
+    .map((item) => item.id);
 
   // Copy over common properties
   [

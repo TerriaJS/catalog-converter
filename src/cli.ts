@@ -3,6 +3,7 @@ import json5 from "json5";
 import _ from "lodash";
 import yargs from "yargs";
 import { convertCatalog } from "./convert";
+import { DEFAULT_ID_LENGTH } from "./converters/generateRandomId";
 import {
   foldMessage,
   getUnknownPropDetails,
@@ -10,12 +11,10 @@ import {
   InputNotPlainObject,
   Message,
   MissingRequiredProp,
-  ModelType,
   Severity,
   UnknownProp,
   UnknownType,
 } from "./Message";
-import { DEFAULT_ID_LENGTH } from "./converters/generateRandomId";
 // import "core-js/features/object";
 
 const argv = yargs
@@ -42,7 +41,7 @@ const argv = yargs
   .option("g", {
     alias: "generate-random-ids",
     type: "boolean",
-    default: false,
+    default: true,
     description:
       "Generate random IDs for each item in the catalog. If the item already has an ID then it is retained.",
   })

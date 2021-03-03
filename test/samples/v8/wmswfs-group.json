@@ -11,8 +11,13 @@
       "description": "[Licence](http://www.ga.gov.au/copyright)",
       "dataCustodian": "[Geoscience Australia](http://www.ga.gov.au/)",
       "url": "http://wms1.ntlis.nt.gov.au/ilismap",
-      "type": "wms-getCapabilities",
+      "type": "wms-group",
       "isOpen": true
+    },
+    {
+      "type": "wfs-group",
+      "name": "Geoscience Australia Marine Data (WFS)",
+      "url": "http://marine.ga.gov.au/geoserver/marine/wfs"
     }
   ]
 }

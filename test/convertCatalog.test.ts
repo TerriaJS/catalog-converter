@@ -127,8 +127,8 @@ describe("Test convertCatalog", () => {
     ).toHaveLength(0);
   });
 
-  it("wms-group", () => {
-    const file = "wms-group";
+  it("wmswfs-group", () => {
+    const file = "wmswfs-group";
     const [v7, v8] = ["v7", "v8"].map((folder) =>
       require(`./samples/${folder}/${file}.json`)
     );
@@ -143,6 +143,24 @@ describe("Test convertCatalog", () => {
     const v7 = require("./samples/v7/power-generation.json");
     const v8 = require("./samples/v8/power-generation.json");
     const res = convertCatalog(v7);
+    expect(res.result).toMatchObject(v8);
+    expect(res.messages).toHaveLength(0);
+  });
+
+  it("converts the csv with styles", function () {
+    const v7 = require("./samples/v7/csv-styles.json");
+    const v8 = require("./samples/v8/csv-styles.json");
+    const res = convertCatalog(v7);
+    expect(res.result).toMatchObject(v8);
+    expect(res.messages).toHaveLength(0);
+  });
+
+  it("adds shareKeys", function () {
+    const v7 = require("./samples/v7/shareKeys.json");
+    const v8 = require("./samples/v8/shareKeys.json");
+    const res = convertCatalog(v7, { generateIds: true, idLength: 6 });
+    delete res.result?.catalog?.[0]?.id;
+    delete v8.catalog?.[0]?.id;
     expect(res.result).toMatchObject(v8);
     expect(res.messages).toHaveLength(0);
   });

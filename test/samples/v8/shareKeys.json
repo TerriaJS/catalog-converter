@@ -7,12 +7,14 @@
   },
   "catalog": [
     {
+      "id": "some-new-id",
       "name": "Northern Territory",
       "description": "[Licence](http://www.ga.gov.au/copyright)",
       "dataCustodian": "[Geoscience Australia](http://www.ga.gov.au/)",
       "url": "http://wms1.ntlis.nt.gov.au/ilismap",
       "type": "wms-group",
-      "isOpen": true
+      "isOpen": true,
+      "shareKeys": ["a-beautiful-sharekey", "Root Group/Northern Territory"]
     }
   ]
 }

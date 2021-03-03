@@ -92,9 +92,28 @@ export function wmsCatalogItem(
     "hideLayerAfterMinScaleDenominator",
     "maxRefreshIntervals",
     "leafletUpdateInterval",
-    "supportsColorScaleRange",
-    "colorScaleMinimum",
-    "colorScaleMaximum",
+    {
+      v7: "supportsColorScaleRange",
+      v8: "supportsColorScaleRange",
+      translationFn: (b: unknown) =>
+        typeof b === "string"
+          ? Boolean(b)
+          : typeof b === "boolean"
+          ? b
+          : undefined,
+    },
+    {
+      v7: "colorScaleMinimum",
+      v8: "colorScaleMinimum",
+      translationFn: (b: unknown) =>
+        typeof b === "string" ? parseFloat(b) : b,
+    },
+    {
+      v7: "colorScaleMaximum",
+      v8: "colorScaleMaximum",
+      translationFn: (b: unknown) =>
+        typeof b === "string" ? parseFloat(b) : b,
+    },
     { v7: "disableUserChanges", v8: "disableDimensionSelectors" },
   ];
 
@@ -143,13 +162,13 @@ export function wmsCatalogItem(
   }
   const legendResult = legends(ModelType.WmsItem, item.name, item);
   member.legends = legendResult.result;
+  messages.push(...legendResult.messages);
 
   const tileErrorOpts = tileErrorHandlingOptions(item);
   if (tileErrorOpts !== undefined) {
     member.tileErrorHandlingOptions = tileErrorOpts;
   }
 
-  messages.push(...legendResult.messages);
   return { member, messages };
 }
 
@@ -160,7 +179,7 @@ interface TileErrorHandlingOptions {
   thresholdBeforeDisablingItem?: number;
 }
 
-function tileErrorHandlingOptions(
+export function tileErrorHandlingOptions(
   item: CatalogMember
 ): TileErrorHandlingOptions | undefined {
   const opts: TileErrorHandlingOptions = {};

@@ -6,6 +6,8 @@ const ALPHABET = [
   ...chars("0", "9"),
 ].filter((c) => ["0", "O", "o"].includes(c) === false); // remove similar looking characters
 
+const usedIDS = new Set<string>();
+
 /**
  * Generate random ID of the given length.
  * @param length
@@ -16,7 +18,14 @@ export default function generateRandomId(length?: number): string | undefined {
     .fill(1)
     .map(() => pickRandomChar(ALPHABET))
     .join("");
-  return id === "" ? undefined : id;
+
+  if (id === "") return undefined;
+
+  // If ID isn't unique -> generate another
+  if (usedIDS.has(id)) return generateRandomId(length);
+
+  usedIDS.add(id);
+  return id;
 }
 
 function pickRandomChar(alpahbet: string[]) {
