@@ -1,0 +1,67 @@
+{
+  "workbench": [],
+  "catalog": [
+    {
+      "type": "group",
+      "name": "GroupA",
+      "members": [
+        {
+          "type": "wms",
+          "name": "A",
+          "url": "A-2",
+          "layers": "A-2",
+          "shareKeys": ["Root Group/GroupA/A"]
+        },
+        {
+          "type": "wms",
+          "name": "B",
+          "url": "B",
+          "layers": "B",
+          "shareKeys": ["Root Group/GroupA/B"]
+        },
+        {
+          "type": "group",
+          "name": "GroupB",
+          "members": [
+            {
+              "type": "wms",
+              "name": "B",
+              "url": "B-3",
+              "layers": "B-3",
+              "shareKeys": ["Root Group/GroupA/GroupB/B"]
+            }
+          ],
+          "shareKeys": ["Root Group/GroupA/GroupB"]
+        },
+        {
+          "type": "wms",
+          "name": "C",
+          "url": "C",
+          "layers": "C",
+          "shareKeys": ["Root Group/GroupA/C"]
+        }
+      ],
+      "shareKeys": ["Root Group/GroupA"]
+    },
+    {
+      "type": "group",
+      "name": "GroupB",
+      "members": [
+        {
+          "type": "wms",
+          "name": "B",
+          "url": "B-4",
+          "layers": "B-4",
+          "shareKeys": ["Root Group/GroupB/B"]
+        }
+      ],
+      "shareKeys": ["Root Group/GroupB"]
+    }
+  ],
+  "homeCamera": {
+    "west": 112,
+    "south": -48,
+    "east": 155,
+    "north": -5
+  }
+}

@@ -1,0 +1,82 @@
+{
+  "homeCamera": {
+    "west": 112,
+    "south": -48,
+    "east": 155,
+    "north": -5
+  },
+  "catalog": [
+    {
+      "name": "GroupA",
+      "type": "group",
+      "items": [
+        {
+          "name": "A",
+          "url": "A",
+          "layers": "A",
+          "type": "wms"
+        },
+        {
+          "name": "A",
+          "url": "A-2",
+          "layers": "A-2",
+          "type": "wms"
+        },
+        {
+          "name": "B",
+          "url": "B",
+          "layers": "B",
+          "type": "wms"
+        },
+        {
+          "name": "GroupB",
+          "type": "group",
+          "items": [
+            {
+              "name": "B",
+              "url": "B-2",
+              "layers": "B-2",
+              "type": "wms"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "GroupA",
+      "type": "group",
+      "items": [
+        {
+          "name": "C",
+          "url": "C",
+          "layers": "C",
+          "type": "wms"
+        },
+        {
+          "name": "GroupB",
+          "type": "group",
+          "items": [
+            {
+              "name": "B",
+              "url": "B-3",
+              "layers": "B-3",
+              "type": "wms"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "GroupB",
+      "type": "group",
+      "items": [
+        {
+          "name": "B",
+          "url": "B-4",
+          "layers": "B-4",
+          "type": "wms"
+        }
+      ]
+    }
+  ]
+}
