@@ -1,6 +1,6 @@
 {
   "name": "catalog-converter",
-  "version": "0.0.2-alpha.4",
+  "version": "0.0.3",
   "description": "",
   "keywords": [],
   "main": "dist/catalog-converter.umd.js",
