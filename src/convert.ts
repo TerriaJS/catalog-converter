@@ -37,6 +37,11 @@ import {
 import { wmsCatalogGroup } from "./converters/WmsCatalogGroup";
 import { wmsCatalogItem } from "./converters/WmsCatalogItem";
 import {
+  foldMessage,
+  getInputNotPlainObjectDetails,
+  getMissingRequiredPropDetails,
+  getUnknownPropDetails,
+  getUnknownTypeDetails,
   inputNotPlainObject,
   Message,
   missingRequiredProp,
@@ -413,3 +418,11 @@ export function convertShare(json: unknown): ShareResult {
 
   return { result: v8json, messages, converted: true };
 }
+
+export {
+  foldMessage,
+  getInputNotPlainObjectDetails,
+  getMissingRequiredPropDetails,
+  getUnknownPropDetails,
+  getUnknownTypeDetails,
+};
