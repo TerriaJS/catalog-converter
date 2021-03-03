@@ -1,17 +1,18 @@
 import is from "@sindresorhus/is/dist";
+import { isPlainObject } from "lodash";
+import { ConversionOptions } from "../ConversionOptions";
 import { missingRequiredProp, ModelType } from "../Message";
-import { CatalogMember, ConversionOptions, MemberResult } from "../types";
+import { CatalogMember, MemberResult } from "../types";
 import {
   catalogMemberProps,
   catalogMemberPropsIgnore,
   copyProps,
   CopyProps,
   getUnknownProps,
-  propsToWarnings,
   itemProperties,
+  propsToWarnings,
 } from "./helpers";
 import { wmsCatalogItem } from "./WmsCatalogItem";
-import { isPlainObject } from "lodash";
 
 export function wmsCatalogGroup(
   item: CatalogMember,
@@ -49,7 +50,7 @@ export function wmsCatalogGroup(
   copyProps(item, member, [...catalogMemberProps, ...propsToCopy]);
 
   if (isPlainObject(item.itemProperties)) {
-    const itemPropertiesResult = itemProperties(item, wmsCatalogItem);
+    const itemPropertiesResult = itemProperties(item, wmsCatalogItem, options);
     if (itemPropertiesResult.result)
       member.itemProperties = itemPropertiesResult.result;
     messages.push(...itemPropertiesResult.messages);

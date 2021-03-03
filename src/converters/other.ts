@@ -6,12 +6,8 @@ import {
   Severity,
   unknownPropOpaque,
 } from "../Message";
-import {
-  CatalogMember,
-  ConversionOptions,
-  MemberResult,
-  MembersResult,
-} from "../types";
+import { CatalogMember, MemberResult, MembersResult } from "../types";
+import { ConversionOptions } from "../ConversionOptions";
 import generateRandomId from "./generateRandomId";
 import {
   catalogMemberProps,

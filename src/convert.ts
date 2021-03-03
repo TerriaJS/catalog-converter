@@ -8,6 +8,8 @@
 // See https://github.com/sindresorhus/is/issues/108
 import is from "@sindresorhus/is";
 import { merge } from "lodash";
+import { ConversionOptions, defaultOptions } from "./ConversionOptions";
+import { ckanCatalogGroup, ckanCatalogItem } from "./converters/Ckan";
 import { csvCatalogItem } from "./converters/CsvItem";
 import generateRandomId from "./converters/generateRandomId";
 import {
@@ -19,18 +21,18 @@ import {
 } from "./converters/helpers";
 import {
   cartoMapCatalogItem,
+  esriCatalogGroup,
   esriFeatureServerCatalogItem,
   esriMapServerCatalogGroup,
   esriMapServerCatalogItem,
   geoJsonCatalogItem,
   groupFromConvertMembersArray,
+  kmlCatalogItem,
   mapboxVectorTileCatalogItem,
   sosCatalogItem,
   webFeatureServerCatalogGroup,
   wpsCatalogItem,
   wpsResultItem,
-  kmlCatalogItem,
-  esriCatalogGroup,
 } from "./converters/other";
 import { wmsCatalogGroup } from "./converters/WmsCatalogGroup";
 import { wmsCatalogItem } from "./converters/WmsCatalogItem";
@@ -41,8 +43,7 @@ import {
   ModelType,
   unknownType,
 } from "./Message";
-import { CatalogMember, ConversionOptions, MemberResult } from "./types";
-import { ckanCatalogGroup, ckanCatalogItem } from "./converters/Ckan";
+import { CatalogMember, MemberResult } from "./types";
 
 // Use dependency injection to break circular dependencies created by
 //  group -> convertMembersArray -> convertMember -> group  recursion
@@ -73,28 +74,15 @@ export const converters: Map<string, Converter> = new Map([
   ["wps-result", wpsResultItem],
   ["carto", cartoMapCatalogItem],
   ["mvt", mapboxVectorTileCatalogItem],
-
   ["kml", kmlCatalogItem],
 ]);
 
-// For more default options see `src\cli.ts` arguments defaults
-function defaultOptions(options: ConversionOptions | undefined) {
-  return Object.assign(
-    {
-      copyUnknownProperties: false,
-      partial: false,
-      addv7autoIdShareKeys: true,
-    },
-    options || {}
-  );
-}
-
 export function convertMember(
   member: unknown,
-  options?: ConversionOptions
+  options?: Partial<ConversionOptions>
 ): MemberResult {
-  options = defaultOptions(options);
-  if (isCatalogMember(member, options.partial)) {
+  const completeOptions = defaultOptions(options);
+  if (isCatalogMember(member, completeOptions.partial)) {
     const converterForType = converters.get(member.type);
     if (!converterForType) {
       return {
@@ -102,7 +90,7 @@ export function convertMember(
         messages: [unknownType(member.type, member.name)],
       };
     }
-    return converterForType(member, options);
+    return converterForType(member, completeOptions);
   } else {
     let property, label;
     const m = member as any;
@@ -133,9 +121,9 @@ export interface CatalogResult {
 
 export function convertCatalog(
   json: unknown,
-  options?: ConversionOptions
+  options?: Partial<ConversionOptions>
 ): CatalogResult {
-  options = defaultOptions(options);
+  const completeOptions = defaultOptions(options);
   if (!is.plainObject(json)) {
     return {
       result: null,
@@ -148,7 +136,7 @@ export function convertCatalog(
   if (is.array(json.catalog)) {
     const enabledItemsAccumulator: CatalogMember[] = [];
     const res = convertMembersArray(json.catalog, "catalog", {
-      ...options,
+      ...completeOptions,
       enabledItemsAccumulator,
     });
     catalog = res.members;
@@ -157,13 +145,13 @@ export function convertCatalog(
     // Collect ids of enabled items, genearting a random id if required.
     workbench = enabledItemsAccumulator
       .map((item) => {
-        if (!item.id) item.id = generateRandomId(options?.idLength);
+        if (!item.id) item.id = generateRandomId(completeOptions.idLength);
         return item.id;
       })
       .filter((id) => id !== undefined) as string[];
   }
 
-  if (options.addv7autoIdShareKeys) {
+  if (completeOptions.addv7autoIdShareKeys) {
     // Add v7 autoIDs to shareLinks
     // v7 autoID has format Root Group/$someContainerId/$someLowerContainerId/$catalogName
     const addv7autoIdShareKey = (
@@ -192,7 +180,7 @@ export function convertCatalog(
     messages,
   };
   copyProps(json, result.result, ["corsDomains", "homeCamera"]);
-  if (options.copyUnknownProperties) {
+  if (completeOptions.copyUnknownProperties) {
     const unknownProps = getUnknownProps(json, [
       "catalog",
       "corsDomains",
@@ -321,7 +309,10 @@ export function convertShare(json: unknown): ShareResult {
             (v7id !== "Root Group/User-Added Data" &&
               !knownContainerUniqueIds.includes("__User-Added_Data__"))
           ) {
-            const result = convertMember(v7Member, { partial: true });
+            const result = convertMember(v7Member, {
+              partial: true,
+              generateIds: false,
+            });
             messages.push(...result.messages);
             convertedMembers[newId] = {
               ...result.member,

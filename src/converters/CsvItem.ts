@@ -1,20 +1,16 @@
 import is from "@sindresorhus/is";
+import { ConversionOptions } from "../ConversionOptions";
 import { missingRequiredProp, ModelType } from "../Message";
-import {
-  CatalogMember,
-  ConversionOptions,
-  MemberResult,
-  PlainObject,
-} from "../types";
+import { CatalogMember, MemberResult, PlainObject } from "../types";
 import {
   catalogMemberProps,
+  catalogMemberPropsIgnore,
+  clearEmpties,
   copyProps,
+  featureInfoTemplate,
   getUnknownProps,
   nullResult,
   propsToWarnings,
-  catalogMemberPropsIgnore,
-  featureInfoTemplate,
-  clearEmpties,
 } from "./helpers";
 
 interface TableTraits {

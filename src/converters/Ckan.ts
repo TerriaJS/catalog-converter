@@ -1,5 +1,6 @@
 import is from "@sindresorhus/is/dist";
 import { isPlainObject } from "lodash";
+import { ConversionOptions } from "../ConversionOptions";
 import { Converter } from "../convert";
 import {
   missingRequiredProp,
@@ -7,7 +8,7 @@ import {
   Severity,
   unknownPropOpaque,
 } from "../Message";
-import { CatalogMember, ConversionOptions, MemberResult } from "../types";
+import { CatalogMember, MemberResult } from "../types";
 import { csvCatalogItem } from "./CsvItem";
 import {
   catalogMemberProps,
@@ -168,7 +169,7 @@ export function ckanCatalogItem(
 
   const itemPropertiesHelper = (converter: Converter) => {
     if (isPlainObject(item.itemProperties)) {
-      const itemPropertiesResult = itemProperties(item, converter);
+      const itemPropertiesResult = itemProperties(item, converter, options);
       if (itemPropertiesResult.result)
         member.itemProperties = itemPropertiesResult.result;
       messages.push(...itemPropertiesResult.messages);

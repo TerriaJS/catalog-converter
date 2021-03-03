@@ -1,6 +1,7 @@
 import is from "@sindresorhus/is/dist";
+import { ConversionOptions } from "../ConversionOptions";
 import { missingRequiredProp, ModelType } from "../Message";
-import { CatalogMember, ConversionOptions, MemberResult } from "../types";
+import { CatalogMember, MemberResult } from "../types";
 import {
   catalogMemberProps,
   catalogMemberPropsIgnore,
@@ -8,10 +9,10 @@ import {
   CopyProps,
   featureInfoTemplate,
   getUnknownProps,
-  propsToWarnings,
   imageryLayerProps,
   legendProps,
   legends,
+  propsToWarnings,
 } from "./helpers";
 
 export function wmsCatalogItem(

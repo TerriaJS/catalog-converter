@@ -2,8 +2,8 @@ import fs from "fs";
 import json5 from "json5";
 import _ from "lodash";
 import yargs from "yargs";
+import { defaultConversionOptions } from "./ConversionOptions";
 import { convertCatalog } from "./convert";
-import { DEFAULT_ID_LENGTH } from "./converters/generateRandomId";
 import {
   foldMessage,
   getUnknownPropDetails,
@@ -23,7 +23,7 @@ const argv = yargs
   .option("u", {
     alias: "copyUnknownProperties",
     type: "boolean",
-    default: false,
+    default: defaultConversionOptions.copyUnknownProperties,
     description: "Copy unknown properties",
   })
   .option("a", {
@@ -41,14 +41,14 @@ const argv = yargs
   .option("g", {
     alias: "generate-random-ids",
     type: "boolean",
-    default: true,
+    default: defaultConversionOptions.generateIds,
     description:
       "Generate random IDs for each item in the catalog. If the item already has an ID then it is retained.",
   })
   .option("l", {
     alias: "id-length",
     type: "number",
-    default: DEFAULT_ID_LENGTH,
+    default: defaultConversionOptions.idLength,
     description: "Length of the generated random IDs",
   })
   .help().argv;

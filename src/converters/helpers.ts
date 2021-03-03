@@ -1,15 +1,15 @@
 import is from "@sindresorhus/is";
+import { ConversionOptions } from "../ConversionOptions";
+import { Converter } from "../convert";
 import { Message, ModelType, unknownProp } from "../Message";
 import {
   CatalogMember,
-  ConversionOptions,
   MemberResult,
   MembersResult,
   PlainObject,
 } from "../types";
 import generateRandomId from "./generateRandomId";
 import mergeRecursive from "./mergeRecursive";
-import { Converter } from "../convert";
 
 export function isNotNull<T>(arg: T | null): arg is T {
   return arg !== null;
@@ -258,25 +258,31 @@ export function convertMembersArrayWithConvertMember(
 
 export function itemProperties(
   item: CatalogMember,
-  converter: Converter
+  converter: Converter,
+  options: ConversionOptions
 ): {
   result: any;
   messages: Message[];
 } {
   // Modify name property to make messages sensible
-  const itemProperties = converter(
+  const itemPropertiesResult = converter(
     { ...(item.itemProperties as any), name: `${item.name}.itemProperties` },
-    { partial: true }
+    Object.assign({}, options, {
+      partial: true,
+      generateIds: false,
+    })
   );
-  if (itemProperties.member) {
-    delete itemProperties.member.name;
-    delete itemProperties.member.type;
+  const itemProperties: Partial<CatalogMember> | null =
+    itemPropertiesResult.member;
+  if (itemProperties) {
+    delete itemProperties.name;
+    delete itemProperties.type;
   }
-  const itemPropertiesMessages = itemProperties.messages.map((m) => {
+  const itemPropertiesMessages = itemPropertiesResult.messages.map((m) => {
     return { ...m, path: [item.name, ...m.path] };
   });
 
-  return { messages: itemPropertiesMessages, result: itemProperties.member };
+  return { messages: itemPropertiesMessages, result: itemProperties };
 }
 
 // Stolen from https://stackoverflow.com/a/42736367
