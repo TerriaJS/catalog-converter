@@ -178,7 +178,7 @@ export function legends(
   if (Array.isArray(source.legendUrls))
     source.legendUrls
       .filter((legendUrl) => typeof legendUrl === "string")
-      .forEach(legendUrls.add);
+      .forEach((legendUrl) => legendUrls.add(legendUrl));
 
   let result = Array.from(legendUrls).map((url) => {
     return { url };
