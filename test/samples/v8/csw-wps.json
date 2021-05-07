@@ -11,7 +11,7 @@
         "queryPropertyName": "subject"
       },
       "shareKeys": [
-        "Root Group/Renewable Energy/Marine/Australian Marine Energy Atlas/Marine Energy Context Layers"
+        "Root Group/Marine Energy Context Layers"
       ]
     },
     {
@@ -24,7 +24,7 @@
         "cacheDuration": "0s"
       },
       "shareKeys": [
-        "Root Group/Renewable Energy/Marine/Australian Marine Energy Atlas/Analysis Tools"
+        "Root Group/Analysis Tools"
       ]
     }
   ]
