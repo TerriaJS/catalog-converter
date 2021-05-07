@@ -139,6 +139,18 @@ describe("Test convertCatalog", () => {
     ).toHaveLength(0);
   });
 
+  it("csw-wps", () => {
+    const file = "csw-wps";
+    const [v7, v8] = ["v7", "v8"].map((folder) =>
+      require(`./samples/${folder}/${file}.json`)
+    );
+    const res = convertCatalog(v7, { copyUnknownProperties: true });
+    expect(res.result).toMatchObject(v8);
+    expect(
+      res.messages.filter(({ severity }) => severity === Severity.Error)
+    ).toHaveLength(0);
+  });
+
   it("converts the renewable energy csv", function () {
     const v7 = require("./samples/v7/power-generation.json");
     const v8 = require("./samples/v8/power-generation.json");

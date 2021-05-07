@@ -1,0 +1,48 @@
+{
+  "catalog": [
+    {
+      "name": "Marine Energy Context Layers",
+      "description": "This group contains marine energy layers and other layers that can be used for decisions relating to marine energy devices.",
+      "url": "http://oa-gis.csiro.au/geonetwork/srv/eng/csw",
+      "type": "csw",
+      "domainSpecification": {
+        "domainPropertyName": "awavea",
+        "hierarchySeparator": " | ",
+        "queryPropertyName": "subject"
+      },
+      "itemProperties": {
+        "getFeatureInfoFormats": [
+          {
+            "type": "html"
+          }
+        ],
+        "getFeatureInfoAsGeoJson": false
+      }
+    },
+    {
+      "name": "Analysis Tools",
+      "description": "This group contains the analysis tools that operate on marine energy data.",
+      "url": "http://oa-gis.csiro.au/wps",
+      "type": "wps-getCapabilities",
+      "cacheDuration": "0s",
+      "itemProperties": {
+        "cacheDuration": "0s",
+        "contextItem": {
+          "name": "Analysis Study Area",
+          "description": "Show where it is possible to use the analytical functions of the Australian Marine Energy Atlas - the analytics will only function inside the highlighted area.",
+          "layers": "awavea-interim:outline_ww3.aus_4m",
+          "url": "http://oa-gis.csiro.au/geoserver/ows",
+          "type": "wms",
+          "legendUrls": [],
+          "rectangle": [
+            109,
+            -48,
+            158,
+            -5
+          ],
+          "ignoreUnknownTileErrors": true
+        }
+      }
+    }
+  ]
+}

@@ -11,6 +11,7 @@ import { merge } from "lodash";
 import { ConversionOptions, defaultOptions } from "./ConversionOptions";
 import { ckanCatalogGroup, ckanCatalogItem } from "./converters/Ckan";
 import { csvCatalogItem } from "./converters/CsvItem";
+import { cswCatalogGroup } from "./converters/Csw";
 import generateRandomId from "./converters/generateRandomId";
 import {
   convertMembersArrayWithConvertMember,
@@ -31,11 +32,14 @@ import {
   mapboxVectorTileCatalogItem,
   sosCatalogItem,
   webFeatureServerCatalogGroup,
-  wpsCatalogItem,
-  wpsResultItem,
 } from "./converters/other";
 import { wmsCatalogGroup } from "./converters/WmsCatalogGroup";
 import { wmsCatalogItem } from "./converters/WmsCatalogItem";
+import {
+  wpsCatalogGroup,
+  wpsCatalogItem,
+  wpsResultItem,
+} from "./converters/Wps";
 import {
   foldMessage,
   getInputNotPlainObjectDetails,
@@ -66,8 +70,13 @@ export const converters: Map<string, Converter> = new Map([
   ["wms", wmsCatalogItem],
   ["wms-getCapabilities", wmsCatalogGroup],
   ["wfs-getCapabilities", webFeatureServerCatalogGroup],
+  ["wps", wpsCatalogItem],
+  ["wps-result", wpsResultItem],
+  ["wps-getCapabilities", wpsCatalogGroup],
+  ["csw", cswCatalogGroup],
   ["csv", csvCatalogItem],
   ["sos", sosCatalogItem],
+
   ["esri-mapServer", esriMapServerCatalogItem],
   ["esri-group", esriCatalogGroup],
   ["esri-mapServer-group", esriMapServerCatalogGroup],
@@ -75,8 +84,6 @@ export const converters: Map<string, Converter> = new Map([
   ["ckan", ckanCatalogGroup],
   ["ckan-resource", ckanCatalogItem],
   ["geojson", geoJsonCatalogItem],
-  ["wps", wpsCatalogItem],
-  ["wps-result", wpsResultItem],
   ["carto", cartoMapCatalogItem],
   ["mvt", mapboxVectorTileCatalogItem],
   ["kml", kmlCatalogItem],
