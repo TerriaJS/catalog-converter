@@ -36,6 +36,7 @@ export const catalogMemberProps: CopyProps[] = [
   "description",
   "info",
   "infoSectionOrder",
+  "initialMessage",
   "shortReport",
   {
     v7: "shortReportSections",
