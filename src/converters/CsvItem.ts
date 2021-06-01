@@ -246,8 +246,16 @@ function getColorTraits(tableStyle: PlainObject): ColorStyle | undefined {
     color.numberOfBins = color.binColors.length;
   }
 
+  // Remove "n-class" string before palette (eg "9-class RdYlGn")
   if (is.string(tableStyle.colorPalette)) {
-    color.colorPalette = tableStyle.colorPalette;
+    const match = tableStyle.colorPalette.match(/([0-9]+)-class /);
+    const numberOfBins = parseInt(match?.[1] ?? "", 10);
+    if (numberOfBins) {
+      color.numberOfBins = numberOfBins;
+      color.colorPalette = tableStyle.colorPalette.replace(match![0], "");
+    } else {
+      color.colorPalette = tableStyle.colorPalette;
+    }
   }
 
   return is.emptyObject(color) ? undefined : color;
