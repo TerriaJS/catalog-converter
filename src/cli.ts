@@ -15,6 +15,7 @@ import {
   UnknownProp,
   UnknownType,
 } from "./Message";
+import { transferIds } from "./transferids";
 // import "core-js/features/object";
 
 const argv = yargs
@@ -45,6 +46,11 @@ const argv = yargs
     description:
       "Generate random IDs for each item in the catalog. If the item already has an ID then it is retained.",
   })
+  .option("t", {
+    alias: "transfer-ids",
+    type: "string",
+    description: "Transfer IDS from another catalog file.",
+  })
   .option("l", {
     alias: "id-length",
     type: "number",
@@ -70,6 +76,12 @@ console.log(
   } warnings`
 );
 if (success) {
+  // Transfer IDs
+  if (argv.t && res.result?.catalog) {
+    const ids = json5.parse(fs.readFileSync(argv.t, { encoding: "utf-8" }));
+    transferIds(res.result?.catalog, ids.catalog);
+  }
+
   const output = JSON.stringify(res.result, null, 2);
   if (argv._[1]) {
     fs.writeFileSync(argv._[1], output);
