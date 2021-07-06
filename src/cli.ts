@@ -15,7 +15,7 @@ import {
   UnknownProp,
   UnknownType,
 } from "./Message";
-import { transferIds } from "./transferids";
+import { transferIds } from "./transferIds";
 // import "core-js/features/object";
 
 const argv = yargs
