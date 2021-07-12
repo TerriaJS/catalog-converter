@@ -176,4 +176,12 @@ describe("Test convertCatalog", () => {
     expect(res.result).toMatchObject(v8);
     expect(res.messages).toHaveLength(0);
   });
+
+  it("converts socrata", function () {
+    const v7 = require("./samples/v7/socrata.json");
+    const v8 = require("./samples/v8/socrata.json");
+    const res = convertCatalog(v7);
+    expect(res.result).toMatchObject(v8);
+    expect(res.messages).toHaveLength(0);
+  });
 });
