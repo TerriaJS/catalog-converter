@@ -1,0 +1,18 @@
+{
+  "homeCamera": {
+    "north": -8,
+    "east": 158,
+    "south": -45,
+    "west": 109
+  },
+  "catalog": [
+    {
+      "name": "socrata test",
+      "url": "https://www.data.act.gov.au",
+      "type": "socrata",
+      "filterQuery": [
+        "limitTo=MAPS"
+      ]
+    }
+  ]
+}

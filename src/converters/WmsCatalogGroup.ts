@@ -11,6 +11,8 @@ import {
   getUnknownProps,
   itemProperties,
   propsToWarnings,
+  catalogGroupPropsIgnore,
+  catalogGroupProps,
 } from "./helpers";
 import { wmsCatalogItem } from "./WmsCatalogItem";
 
@@ -30,12 +32,9 @@ export function wmsCatalogGroup(
     };
   }
 
-  const propsToCopy: CopyProps[] = ["isOpen"];
-
   const unknownProps = getUnknownProps(item, [
-    ...catalogMemberProps,
-    ...catalogMemberPropsIgnore,
-    ...propsToCopy,
+    ...catalogGroupProps,
+    ...catalogGroupPropsIgnore,
     "itemProperties",
   ]);
   const member: MemberResult["member"] = {
@@ -47,7 +46,7 @@ export function wmsCatalogGroup(
   if (options.copyUnknownProperties) {
     copyProps(item, member, unknownProps);
   }
-  copyProps(item, member, [...catalogMemberProps, ...propsToCopy]);
+  copyProps(item, member, catalogGroupProps);
 
   if (isPlainObject(item.itemProperties)) {
     const itemPropertiesResult = itemProperties(item, wmsCatalogItem, options);

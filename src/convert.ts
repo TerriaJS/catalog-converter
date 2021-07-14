@@ -32,6 +32,7 @@ import {
   mapboxVectorTileCatalogItem,
   sosCatalogItem,
   webFeatureServerCatalogGroup,
+  socrataCatalogGroup,
 } from "./converters/other";
 import { wmsCatalogGroup } from "./converters/WmsCatalogGroup";
 import { wmsCatalogItem } from "./converters/WmsCatalogItem";
@@ -87,6 +88,7 @@ export const converters: Map<string, Converter> = new Map([
   ["carto", cartoMapCatalogItem],
   ["mvt", mapboxVectorTileCatalogItem],
   ["kml", kmlCatalogItem],
+  ["socrata", socrataCatalogGroup],
 ]);
 
 export function convertMember(

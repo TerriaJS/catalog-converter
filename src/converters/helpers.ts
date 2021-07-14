@@ -112,6 +112,8 @@ export const catalogMemberProps: CopyProps[] = [
   "clipToRectangle",
 ];
 
+export const catalogGroupProps = [...catalogMemberProps, "isOpen"];
+
 export const imageryLayerProps: CopyProps[] = ["keepOnTop"];
 
 export const catalogMemberPropsIgnore = [
@@ -119,6 +121,12 @@ export const catalogMemberPropsIgnore = [
   "type",
   "parents",
   "isEnabled",
+];
+
+export const catalogGroupPropsIgnore = [
+  ...catalogMemberPropsIgnore,
+  "items",
+  "preserveOrder",
 ];
 
 export function getUnknownProps(o: PlainObject, knownProperties: CopyProps[]) {
