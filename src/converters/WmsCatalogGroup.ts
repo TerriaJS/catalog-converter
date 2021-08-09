@@ -4,15 +4,12 @@ import { ConversionOptions } from "../ConversionOptions";
 import { missingRequiredProp, ModelType } from "../Message";
 import { CatalogMember, MemberResult } from "../types";
 import {
-  catalogMemberProps,
-  catalogMemberPropsIgnore,
+  catalogGroupProps,
+  catalogGroupPropsIgnore,
   copyProps,
-  CopyProps,
   getUnknownProps,
   itemProperties,
   propsToWarnings,
-  catalogGroupPropsIgnore,
-  catalogGroupProps,
 } from "./helpers";
 import { wmsCatalogItem } from "./WmsCatalogItem";
 

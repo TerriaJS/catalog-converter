@@ -29,7 +29,7 @@ export enum ModelType {
   CartoMapCatalogItem = "CartoMapCatalogItem",
   MapboxVectorTileCatalogItem = "MapboxVectorTileCatalogItem",
   KmlCatalogItem = "KmlCatalogItem",
-  SocrataCatalogGroup = "Socrata",
+  SocrataCatalogGroup = "SocrataCatalogGroup",
 }
 
 interface MessageBase {

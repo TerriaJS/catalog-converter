@@ -200,7 +200,7 @@ export function esriCatalogGroup(
     copyProps(item, member, unknownProps);
   }
 
-  // // itemProperties not supported in v8
+  // //    not supported in v8
 
   // if (isPlainObject(item.itemProperties)) {
   //   // Treat itemProperties as esriMapServerCatalogGroup (it can also be esriFeatureServerCatalogGroup - but this isn't implemented in catalog-converter).
@@ -653,7 +653,7 @@ export function socrataCatalogGroup(
   ]);
 
   const messages = propsToWarnings(
-    ModelType.KmlCatalogItem,
+    ModelType.SocrataCatalogGroup,
     unknownProps,
     item.name
   );

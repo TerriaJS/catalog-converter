@@ -9,7 +9,7 @@
     {
       "name": "socrata test",
       "url": "https://www.data.act.gov.au",
-      "type": "socrata",
+      "type": "socrata-group",
       "filterQuery": {
         "limitTo": "MAPS"
       }
