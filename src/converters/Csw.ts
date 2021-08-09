@@ -3,12 +3,12 @@ import { ConversionOptions } from "../ConversionOptions";
 import { missingRequiredProp, ModelType } from "../Message";
 import { CatalogMember, MemberResult } from "../types";
 import {
-  catalogMemberProps,
-  catalogMemberPropsIgnore,
   copyProps,
   getUnknownProps,
   nullResult,
   propsToWarnings,
+  catalogGroupProps,
+  catalogGroupPropsIgnore,
 } from "./helpers";
 
 export function cswCatalogGroup(
@@ -23,8 +23,8 @@ export function cswCatalogGroup(
 
   const propsToCopy = ["url", "domainSpecification"];
   const unknownProps = getUnknownProps(item, [
-    ...catalogMemberProps,
-    ...catalogMemberPropsIgnore,
+    ...catalogGroupProps,
+    ...catalogGroupPropsIgnore,
     ...propsToCopy,
   ]);
   const member: MemberResult["member"] = {
@@ -37,7 +37,7 @@ export function cswCatalogGroup(
     item.name
   );
 
-  copyProps(item, member, [...catalogMemberProps, ...propsToCopy]);
+  copyProps(item, member, [...catalogGroupProps, ...propsToCopy]);
   if (options.copyUnknownProperties) {
     copyProps(item, member, unknownProps);
   }

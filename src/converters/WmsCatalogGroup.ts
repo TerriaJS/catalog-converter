@@ -4,10 +4,9 @@ import { ConversionOptions } from "../ConversionOptions";
 import { missingRequiredProp, ModelType } from "../Message";
 import { CatalogMember, MemberResult } from "../types";
 import {
-  catalogMemberProps,
-  catalogMemberPropsIgnore,
+  catalogGroupProps,
+  catalogGroupPropsIgnore,
   copyProps,
-  CopyProps,
   getUnknownProps,
   itemProperties,
   propsToWarnings,
@@ -30,12 +29,9 @@ export function wmsCatalogGroup(
     };
   }
 
-  const propsToCopy: CopyProps[] = ["isOpen"];
-
   const unknownProps = getUnknownProps(item, [
-    ...catalogMemberProps,
-    ...catalogMemberPropsIgnore,
-    ...propsToCopy,
+    ...catalogGroupProps,
+    ...catalogGroupPropsIgnore,
     "itemProperties",
   ]);
   const member: MemberResult["member"] = {
@@ -47,7 +43,7 @@ export function wmsCatalogGroup(
   if (options.copyUnknownProperties) {
     copyProps(item, member, unknownProps);
   }
-  copyProps(item, member, [...catalogMemberProps, ...propsToCopy]);
+  copyProps(item, member, catalogGroupProps);
 
   if (isPlainObject(item.itemProperties)) {
     const itemPropertiesResult = itemProperties(item, wmsCatalogItem, options);

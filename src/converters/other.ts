@@ -22,6 +22,8 @@ import {
   propsToWarnings,
   itemProperties,
   CopyProps,
+  catalogGroupProps,
+  catalogGroupPropsIgnore,
 } from "./helpers";
 import { tileErrorHandlingOptions, wmsCatalogItem } from "./WmsCatalogItem";
 import { Converter } from "../convert";
@@ -48,13 +50,9 @@ export function groupFromConvertMembersArray(
       ? convertMembersArray(group.items, group.name, options)
       : undefined;
 
-    const propsToCopy = ["isOpen"];
-
     const unknownProps = getUnknownProps(group, [
-      ...propsToCopy,
-      ...catalogMemberProps,
-      ...catalogMemberPropsIgnore,
-      "items",
+      ...catalogGroupProps,
+      ...catalogGroupPropsIgnore,
     ]);
     const extraPropsMessages = propsToWarnings(
       ModelType.Group,
@@ -72,7 +70,7 @@ export function groupFromConvertMembersArray(
       },
       messages: [...(convertedMembers?.messages || []), ...extraPropsMessages],
     };
-    copyProps(group, result.member, [...catalogMemberProps, ...propsToCopy]);
+    copyProps(group, result.member, catalogGroupProps);
     if (options.copyUnknownProperties) {
       copyProps(group, result.member, unknownProps);
     }
@@ -202,7 +200,7 @@ export function esriCatalogGroup(
     copyProps(item, member, unknownProps);
   }
 
-  // // itemProperties not supported in v8
+  // //    not supported in v8
 
   // if (isPlainObject(item.itemProperties)) {
   //   // Treat itemProperties as esriMapServerCatalogGroup (it can also be esriFeatureServerCatalogGroup - but this isn't implemented in catalog-converter).
@@ -607,6 +605,63 @@ export function kmlCatalogItem(
   const legendResult = legends(ModelType.KmlCatalogItem, item.name, item);
   member.legends = legendResult.result;
   messages.push(...legendResult.messages);
+
+  return { member, messages };
+}
+
+export function socrataCatalogGroup(
+  item: CatalogMember,
+  options: ConversionOptions
+): MemberResult {
+  if (!options.partial && !is.string(item.url)) {
+    return nullResult(
+      missingRequiredProp(
+        ModelType.SocrataCatalogGroup,
+        "url",
+        "string",
+        item.name
+      )
+    );
+  }
+  const member: MemberResult["member"] = {
+    type: "socrata-group",
+    name: item.name,
+  };
+
+  const propsToCopy: CopyProps[] = [
+    {
+      v7: "filterQuery",
+      v8: "filterQuery",
+      // Transform string[] to JsonObject
+      // eg ["prop=Value"] to {prop:"Value"}
+      translationFn: (f: string[]) =>
+        f.reduce<{ [key: string]: string }>((obj, curr) => {
+          const split = curr.split("=");
+          obj[split[0]] = split[1];
+          return obj;
+        }, {}),
+    },
+  ];
+
+  const propsIgnore = ["groupBy"];
+
+  const unknownProps = getUnknownProps(item, [
+    ...propsToCopy,
+    ...propsIgnore,
+    ...catalogGroupProps,
+    ...catalogGroupPropsIgnore,
+  ]);
+
+  const messages = propsToWarnings(
+    ModelType.SocrataCatalogGroup,
+    unknownProps,
+    item.name
+  );
+
+  if (options.copyUnknownProperties) {
+    copyProps(item, member, unknownProps);
+  }
+  copyProps(item, member, [...catalogGroupProps, ...propsToCopy]);
 
   return { member, messages };
 }
