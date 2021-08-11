@@ -306,8 +306,8 @@ export function convertShare(json: unknown): ShareResult {
           // so remove all mentions of Root Group/User-Added Data from v7 autoIDs
           newId = newId.replace("Root Group/User-Added Data", "");
 
-          // Only add to workbenchIds if NOT converting User Added Data
-          if (v7Member.isEnabled && !convertUserAdded) {
+          // Add member to workbench if isEnabled
+          if (v7Member.isEnabled && !workbenchIds.find((w) => w.id === newId)) {
             workbenchIds.push({
               id: newId,
               index:
@@ -317,16 +317,30 @@ export function convertShare(json: unknown): ShareResult {
             });
           }
 
-          // Only convert user added data if convertUserAdded
+          // Only convert user added data if convertUserAdded is true
           if (
             convertUserAdded ||
             (v7id !== "Root Group/User-Added Data" &&
               !knownContainerUniqueIds.includes("__User-Added_Data__"))
           ) {
+            const enabledItemsAccumulator: CatalogMember[] = [];
+
             const result = convertMember(v7Member, {
               partial: true,
               generateIds: false,
+              enabledItemsAccumulator,
             });
+
+            // Add any missed members to workbench (eg in nested groups)
+            // This is useful for shareData which only has `catalog` property and not a `sharedCatalogMembers` property (eg CKAN preview plugin)
+            enabledItemsAccumulator.forEach((member) => {
+              // If no id - just guess using name
+              const id = member.id ?? `/${member.name}`;
+              if (!workbenchIds.find((w) => w.id === id)) {
+                workbenchIds.push({ id, index: undefined });
+              }
+            });
+
             messages.push(...result.messages);
             convertedMembers[newId] = {
               ...result.member,
@@ -350,7 +364,9 @@ export function convertShare(json: unknown): ShareResult {
   if ("catalog" in v7InitSource && Array.isArray(v7InitSource.catalog)) {
     // Only add "Root Group/User-Added Data" Catalog Group
     const userAddedData = v7InitSource.catalog.find(
-      (item: any) => item.id === "Root Group/User-Added Data"
+      (item: any) =>
+        item.id === "Root Group/User-Added Data" ||
+        item.name === "User-Added Data"
     );
 
     if (
