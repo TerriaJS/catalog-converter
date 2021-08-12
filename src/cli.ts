@@ -70,11 +70,16 @@ const warnings = res.messages.filter(
   (mes) => mes.severity === Severity.Warning
 );
 const success = res.result !== null;
-console.log(
-  `${success ? "Succeeded" : "Failed"} with ${errors.length} errors and ${
-    warnings.length
-  } warnings`
-);
+let outputMessage = `
+${success ? "Succeeded" : "Failed"} with ${errors.length} errors and ${
+  warnings.length
+} warnings.
+`;
+if (errors.length || warnings.length) {
+  outputMessage +=
+    "\nIf you have trouble using the converter, reach out to us at https://github.com/TerriaJS/terriajs/discussions for additional support.\n";
+}
+console.log(outputMessage);
 if (success) {
   // Transfer IDs
   if (argv.t && res.result?.catalog) {
