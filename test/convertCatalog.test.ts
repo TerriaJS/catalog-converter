@@ -156,7 +156,14 @@ describe("Test convertCatalog", () => {
     const v8 = require("./samples/v8/power-generation.json");
     const res = convertCatalog(v7);
     expect(res.result).toMatchObject(v8);
-    expect(res.messages).toHaveLength(0);
+    const unknownProps: string[] = res.messages.map(
+      (msg) => (msg.details.value as any).property
+    );
+    // expect these props from the v7 catalog to be unknown
+    expect(unknownProps).toEqual([
+      "tableStyle.scaleByValue",
+      "tableStyle.scale",
+    ]);
   });
 
   it("converts the csv with styles", function () {

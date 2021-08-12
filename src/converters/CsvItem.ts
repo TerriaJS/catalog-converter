@@ -13,10 +13,6 @@ import {
   propsToWarnings,
 } from "./helpers";
 
-interface TableTraits {
-  columns?: Column[];
-}
-
 interface TableStyle {
   columns?: Column[];
   styles?: Style[];
@@ -69,19 +65,54 @@ interface ColorStyle {
   enumColors?: { value: string; color: string }[];
 }
 
+const knownTableStyleProps: string[] = ["dataVariable", "columns"];
+const knownColumnProps: string[] = [
+  "type",
+  "units",
+  "name",
+  "title",
+  "format",
+  "replaceWithNullValues",
+  "replaceWithZeroValues",
+];
+const knownColorProps: string[] = [
+  "nullColor",
+  "nullLabel",
+  "colorBins",
+  "colorMap",
+  "numberOfBins",
+  "colorPalette",
+];
+const knownTimeProps: string[] = ["timeColumn"];
+
 function tableStyle(
   item: PlainObject & { tableStyle: PlainObject }
-): TableTraits {
+): { tableStyle: TableStyle; unknownProps: string[] } {
   const tableStyle = item.tableStyle;
+  const knownProps: string[] = [
+    ...knownTableStyleProps,
+    ...knownColumnProps,
+    ...knownColorProps,
+    ...knownTimeProps,
+  ];
+  const unknownProps = getUnknownProps(tableStyle, knownProps);
   const extraProps: TableStyle = {};
   if (is.plainObject(tableStyle.columns)) {
     const columns = tableStyle.columns;
+    Object.entries(columns).map(([_name, defn], i) => {
+      const unknownColumnProps = getUnknownProps(defn as any, [
+        ...knownColumnProps,
+        ...knownColorProps,
+        ...knownTimeProps,
+      ]).map((prop) => `columns[${i}].${prop}`);
+      unknownProps.push(...unknownColumnProps);
+    });
     extraProps.columns = Object.entries(columns).map(([name, defn]) => ({
       name,
       ...getColumnTraits(defn),
     }));
     extraProps.styles = Object.entries(columns)
-      .filter(([name, defn]) => is.plainObject(defn))
+      .filter(([_name, defn]) => is.plainObject(defn))
       .map(([name, defn]) => ({
         id: name,
         color: getColorTraits(defn as PlainObject),
@@ -129,7 +160,10 @@ function tableStyle(
 
   clearEmpties(extraProps);
 
-  return extraProps;
+  return {
+    tableStyle: extraProps,
+    unknownProps: unknownProps.map((prop) => `tableStyle.${prop}`),
+  };
 }
 
 function getColumnTraits(defn: any): Omit<Column, "name"> {
@@ -310,7 +344,11 @@ export function csvCatalogItem(
   }
   copyProps(item, member, [...catalogMemberProps, ...propsToCopy]);
   if (is.plainObject(item.tableStyle)) {
-    Object.assign(member, tableStyle(item as any));
+    const result = tableStyle(item as any);
+    Object.assign(member, result.tableStyle);
+    messages.push(
+      ...propsToWarnings(ModelType.CsvItem, result.unknownProps, item.name)
+    );
   }
   if (
     is.string(item.featureInfoTemplate) ||
