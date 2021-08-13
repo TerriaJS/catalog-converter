@@ -4,6 +4,14 @@ A library with utility functions and a CLI for converting a TerriaJS v7 catalog 
 
 A hosted version of this is available at https://catalog-converter.terria.io/ with the source code via https://github.com/TerriaJS/catalog-converter-ui
 
+Or you can install the CLI locally which gives you more control over converting your catalog with additional options:
+
+```sh
+npm install -g catalog-converter
+catalog-converter input-v7-catalog.json output-v8-catalog.json
+catalog-converter --help # To see all options
+```
+
 Bootstrapped with https://github.com/alexjoverm/typescript-library-starter.git
 
 ## Convert
