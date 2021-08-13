@@ -118,12 +118,13 @@
     "typescript": "^3.8.3"
   },
   "dependencies": {
-    "@iadvize-oss/foldable-helpers": "1.0.4",
+    "@iadvize-oss/foldable-helpers": "^2.2.0",
     "@iadvize-oss/opaque-type": "^1.0.2-beta.5",
     "@sindresorhus/is": "^2.1.1",
     "core-js": "^3.6.5",
     "json5": "^2.1.3",
     "lodash": "^4.17.15",
+    "tslib": "^2.3.1",
     "yargs": "^15.3.1"
   }
 }

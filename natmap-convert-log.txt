@@ -1,0 +1,81 @@
+$ curl http://static.nationalmap.nicta.com.au/init/2020-09-03.json -o natmap-2020-09-03.json --compressed
+$ ./bin/cli.js --noprint-all --generate-random-ids --id-length 8 --aggregate-stats natmap-2020-09-03.json natmap-2020-09-03-v8.json
+Succeeded with 364 errors and 1162 warnings
+Error stats:
+{
+  "unknownProps": 0,
+  "missingRequiredProps": 0,
+  "unknownTypes": 364,
+  "inputNotPlainObjects": 0
+}
+Warning stats:
+{
+  "unknownProps": 1162,
+  "missingRequiredProps": 0,
+  "unknownTypes": 0,
+  "inputNotPlainObjects": 0
+}
+Unknown types: {
+  "sdmx-json": 346,
+  "wfs-getCapabilities": 1,
+  "esri-group": 16,
+  "socrata": 1
+}
+Unknown properties: {
+  "EsriMapServerCatalogItem": {
+    "dataUrl": 10,
+    "dataUrlType": 11,
+    "legendUrl": 3,
+    "keepOnTop": 1,
+    "getFeatureInfoFormats": 1
+  },
+  "CsvCatalogItem": {
+    "charSet": 2,
+    "dataUrlType": 1,
+    "dataUrl": 1
+  },
+  "WebMapServiceCatalogItem": {
+    "dataUrl": 32,
+    "dataUrlType": 32,
+    "useOwnClock": 46,
+    "shareKeys": 9
+  },
+  "WebMapServiceCatalogGroup": {
+    "dataUrl": 1,
+    "dataUrlType": 1,
+    "itemProperties": 1,
+    "blacklist": 16
+  },
+  "MapboxVectorTileCatalogItem": {
+    "dataUrl": 3,
+    "dataUrlType": 1
+  },
+  "CkanCatalogGroup": {
+    "csvResourceFormat": 2,
+    "debugFormat": 165,
+    "blacklist": 2,
+    "minimumMaxScaleDenominator": 77,
+    "filterByWmsGetCapabilities": 77,
+    "includeCsv": 83,
+    "includeGeoJson": 82,
+    "includeKml": 83,
+    "includeWms": 81,
+    "includeWfs": 80,
+    "includeEsriMapServer": 80,
+    "includeEsriFeatureServer": 80,
+    "allowEntireWmsServers": 1,
+    "ungroupedTitle": 79,
+    "useResourceName": 1
+  },
+  "CatalogGroup": {
+    "preserveOrder": 12,
+    "custodian": 1,
+    "initialMessage": 1
+  },
+  "SensorObservationServiceCatalogItem": {
+    "tryToLoadObservationData": 2
+  },
+  "EsriFeatureServerCatalogItem": {
+    "itemProperties": 1
+  }
+}
