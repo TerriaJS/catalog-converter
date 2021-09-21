@@ -10,5 +10,6 @@
 
 ### New
 
+- Add `blacklist` support for groups
 - Add `dataUrl` and `metadataUrl` support
 - Add SOS, mostly cover TerriaCube catalog ([f15c5fb](https://github.com/TerriaJS/catalog-converter/commit/f15c5fb7f2954051d8065799ab50995360d43411))
