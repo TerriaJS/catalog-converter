@@ -19,6 +19,8 @@ import {
   itemProperties,
   nullResult,
   propsToWarnings,
+  catalogGroupProps,
+  catalogGroupPropsIgnore,
 } from "./helpers";
 import {
   esriFeatureServerCatalogItem,
@@ -51,8 +53,8 @@ export function ckanCatalogGroup(
     },
   ];
   const unknownProps = getUnknownProps(item, [
-    ...catalogMemberProps,
-    ...catalogMemberPropsIgnore,
+    ...catalogGroupProps,
+    ...catalogGroupPropsIgnore,
     ...propsToCopy,
     "esriMapServerResourceFormat",
     "wmsParameters",
@@ -66,7 +68,7 @@ export function ckanCatalogGroup(
     unknownProps,
     item.name
   );
-  copyProps(item, member, [...catalogMemberProps, ...propsToCopy]);
+  copyProps(item, member, [...catalogGroupProps, ...propsToCopy]);
   if (options.copyUnknownProperties) {
     copyProps(item, member, unknownProps);
   }

@@ -155,6 +155,7 @@ export const catalogMemberPropsIgnore = [
   "type",
   "parents",
   "isEnabled",
+  "dataUrlType", // This is handled by "dataUrl" transformFn
 ];
 
 export const catalogGroupPropsIgnore = [
