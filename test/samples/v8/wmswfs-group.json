@@ -12,7 +12,18 @@
       "dataCustodian": "[Geoscience Australia](http://www.ga.gov.au/)",
       "url": "http://wms1.ntlis.nt.gov.au/ilismap",
       "type": "wms-group",
-      "isOpen": true
+      "isOpen": true,
+      "metadataUrls": [
+        {
+          "url": "some-metadata"
+        }
+      ],
+      "dataUrls": [
+        {
+          "url": "some-data",
+          "type": "some-dataurl-type"
+        }
+      ]
     },
     {
       "type": "wfs-group",
