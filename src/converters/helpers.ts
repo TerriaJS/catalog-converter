@@ -110,6 +110,19 @@ export const catalogMemberProps: CopyProps[] = [
     v8: "isOpenInWorkbench",
   },
   "clipToRectangle",
+  /** v7 metadataUrl/dataUrl:
+    * {
+      "metadataUrl": "some-metadataurl",
+      "dataUrl": "some-dataurl",
+      "dataUrlType": "dataurl-type"
+    }
+
+   * v8:
+   * {
+      "metadataUrls": [{"url": "some-metadataurl"}],
+      "dataUrls": [{"url": "some-dataurl", "type": "dataurl-type"}],
+    }
+   */
   {
     v7: "metadataUrl",
     v8: "metadataUrls",
@@ -131,7 +144,7 @@ export const catalogGroupProps = [
     v7: "blacklist",
     v8: "blacklist",
     /** v7 blacklist:
-   * {
+    * {
       "CACHE": true,
       "Commuting2016": true,
       "SEIFA2016": true,
@@ -139,7 +152,7 @@ export const catalogGroupProps = [
     }
 
    * v8 blacklist:
-  * ["CACHE, Commuting2016"...]
+   * ["CACHE, Commuting2016"...]
    */
     translationFn: (blacklist: any) =>
       Object.entries(blacklist)
