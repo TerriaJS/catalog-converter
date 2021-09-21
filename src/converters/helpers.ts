@@ -110,6 +110,18 @@ export const catalogMemberProps: CopyProps[] = [
     v8: "isOpenInWorkbench",
   },
   "clipToRectangle",
+  {
+    v7: "metadataUrl",
+    v8: "metadataUrls",
+    translationFn: (metadataUrl: string) =>
+      metadataUrl ? [{ url: metadataUrl }] : undefined,
+  },
+  {
+    v7: "dataUrl",
+    v8: "dataUrls",
+    translationFn: (dataUrl: string, v7Member) =>
+      dataUrl ? [{ url: dataUrl, type: v7Member.dataUrlType }] : undefined,
+  },
 ];
 
 export const catalogGroupProps = [
@@ -172,7 +184,14 @@ export function propsToWarnings(
 
 export type CopyProps =
   | string
-  | { v7: string; v8: string; translationFn?: (x: any) => any };
+  | {
+      v7: string;
+      v8: string;
+      /** Take v7 prop value, apply some transformation, and return a value.
+       * This will be saved to the v8Member using `v8` key
+       */
+      translationFn?: (v7PropValue: any, v7Member: any, v8Member: any) => any;
+    };
 
 export function copyProps(
   source: PlainObject,
@@ -186,7 +205,7 @@ export function copyProps(
     if (Object.prototype.hasOwnProperty.call(source, propV7)) {
       const value =
         !is.string(prop) && typeof prop.translationFn === "function"
-          ? prop.translationFn(source[propV7])
+          ? prop.translationFn(source[propV7], source, destination)
           : source[propV7];
       if (typeof value !== "undefined") destination[propV8] = value;
     }

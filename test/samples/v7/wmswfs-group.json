@@ -12,7 +12,10 @@
       "dataCustodian": "[Geoscience Australia](http://www.ga.gov.au/)",
       "url": "http://wms1.ntlis.nt.gov.au/ilismap",
       "type": "wms-getCapabilities",
-      "isOpen": true
+      "isOpen": true,
+      "metadataUrl": "some-metadata",
+      "dataUrl": "some-data",
+      "dataUrlType": "some-dataurl-type"
     },
     {
       "name": "Geoscience Australia Marine Data (WFS)",
