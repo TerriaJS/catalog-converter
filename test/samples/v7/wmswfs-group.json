@@ -17,7 +17,13 @@
     {
       "name": "Geoscience Australia Marine Data (WFS)",
       "type": "wfs-getCapabilities",
-      "url": "http://marine.ga.gov.au/geoserver/marine/wfs"
+      "url": "http://marine.ga.gov.au/geoserver/marine/wfs",
+      "blacklist": {
+        "CACHE": true,
+        "Commuting2016": true,
+        "SEIFA2016": true,
+        "Utilities": false
+      }
     }
   ]
 }

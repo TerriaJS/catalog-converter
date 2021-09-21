@@ -112,7 +112,29 @@ export const catalogMemberProps: CopyProps[] = [
   "clipToRectangle",
 ];
 
-export const catalogGroupProps = [...catalogMemberProps, "isOpen"];
+export const catalogGroupProps = [
+  ...catalogMemberProps,
+  "isOpen",
+  {
+    v7: "blacklist",
+    v8: "blacklist",
+    /** v7 blacklist:
+   * {
+      "CACHE": true,
+      "Commuting2016": true,
+      "SEIFA2016": true,
+      "Utilities": true
+    }
+
+   * v8 blacklist:
+  * ["CACHE, Commuting2016"...]
+   */
+    translationFn: (blacklist: any) =>
+      Object.entries(blacklist)
+        .map(([name, include]) => (include ? name : undefined))
+        .filter((name) => typeof name === "string"),
+  },
+];
 
 export const imageryLayerProps: CopyProps[] = ["keepOnTop"];
 

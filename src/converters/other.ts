@@ -1,18 +1,15 @@
 import is from "@sindresorhus/is";
-import { isPlainObject } from "lodash";
-import {
-  missingRequiredProp,
-  ModelType,
-  Severity,
-  unknownPropOpaque,
-} from "../Message";
-import { CatalogMember, MemberResult, MembersResult } from "../types";
 import { ConversionOptions } from "../ConversionOptions";
+import { missingRequiredProp, ModelType } from "../Message";
+import { CatalogMember, MemberResult, MembersResult } from "../types";
 import generateRandomId from "./generateRandomId";
 import {
+  catalogGroupProps,
+  catalogGroupPropsIgnore,
   catalogMemberProps,
   catalogMemberPropsIgnore,
   copyProps,
+  CopyProps,
   featureInfoTemplate,
   getUnknownProps,
   imageryLayerProps,
@@ -20,14 +17,8 @@ import {
   legends,
   nullResult,
   propsToWarnings,
-  itemProperties,
-  CopyProps,
-  catalogGroupProps,
-  catalogGroupPropsIgnore,
 } from "./helpers";
-import { tileErrorHandlingOptions, wmsCatalogItem } from "./WmsCatalogItem";
-import { Converter } from "../convert";
-import { csvCatalogItem } from "./CsvItem";
+import { tileErrorHandlingOptions } from "./WmsCatalogItem";
 
 // Dependency injection to break circular dependency
 export function groupFromConvertMembersArray(
@@ -90,8 +81,8 @@ export function webFeatureServerCatalogGroup(
 
   const propsToCopy = ["url"];
   const unknownProps = getUnknownProps(item, [
-    ...catalogMemberProps,
-    ...catalogMemberPropsIgnore,
+    ...catalogGroupProps,
+    ...catalogGroupPropsIgnore,
     ...propsToCopy,
   ]);
 
@@ -101,7 +92,7 @@ export function webFeatureServerCatalogGroup(
   };
   const messages = propsToWarnings(ModelType.WfsGroup, unknownProps, item.name);
 
-  copyProps(item, member, [...catalogMemberProps, ...propsToCopy]);
+  copyProps(item, member, [...catalogGroupProps, ...propsToCopy]);
   if (options.copyUnknownProperties) {
     copyProps(item, member, unknownProps);
   }
@@ -180,8 +171,8 @@ export function esriCatalogGroup(
 
   const propsToCopy = ["url"];
   const unknownProps = getUnknownProps(item, [
-    ...catalogMemberProps,
-    ...catalogMemberPropsIgnore,
+    ...catalogGroupProps,
+    ...catalogGroupPropsIgnore,
     ...propsToCopy,
     // "itemProperties",
   ]);
@@ -195,7 +186,7 @@ export function esriCatalogGroup(
     item.name
   );
 
-  copyProps(item, member, [...catalogMemberProps, ...propsToCopy]);
+  copyProps(item, member, [...catalogGroupProps, ...propsToCopy]);
   if (options.copyUnknownProperties) {
     copyProps(item, member, unknownProps);
   }
@@ -369,8 +360,8 @@ export function esriMapServerCatalogGroup(
 
   const propsToCopy = ["url"];
   const unknownProps = getUnknownProps(item, [
-    ...catalogMemberProps,
-    ...catalogMemberPropsIgnore,
+    ...catalogGroupProps,
+    ...catalogGroupPropsIgnore,
     ...propsToCopy,
     // "itemProperties",
   ]);
@@ -385,7 +376,7 @@ export function esriMapServerCatalogGroup(
     item.name
   );
 
-  copyProps(item, member, [...catalogMemberProps, ...propsToCopy]);
+  copyProps(item, member, [...catalogGroupProps, ...propsToCopy]);
   if (options.copyUnknownProperties) {
     copyProps(item, member, unknownProps);
   }
