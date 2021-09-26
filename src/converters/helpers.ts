@@ -142,7 +142,7 @@ export const catalogGroupProps = [
   "isOpen",
   {
     v7: "blacklist",
-    v8: "blacklist",
+    v8: "excludeMembers",
     /** v7 blacklist:
     * {
       "CACHE": true,
@@ -151,7 +151,7 @@ export const catalogGroupProps = [
       "Utilities": true
     }
 
-   * v8 blacklist:
+   * v8 excludeMembers:
    * ["CACHE, Commuting2016"...]
    */
     translationFn: (blacklist: any) =>

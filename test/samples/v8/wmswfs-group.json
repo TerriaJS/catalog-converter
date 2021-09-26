@@ -29,7 +29,7 @@
       "type": "wfs-group",
       "name": "Geoscience Australia Marine Data (WFS)",
       "url": "http://marine.ga.gov.au/geoserver/marine/wfs",
-      "blacklist": ["CACHE", "Commuting2016", "SEIFA2016"]
+      "excludeMembers": ["CACHE", "Commuting2016", "SEIFA2016"]
     }
   ]
 }
