@@ -12,12 +12,21 @@
       "dataCustodian": "[Geoscience Australia](http://www.ga.gov.au/)",
       "url": "http://wms1.ntlis.nt.gov.au/ilismap",
       "type": "wms-getCapabilities",
-      "isOpen": true
+      "isOpen": true,
+      "metadataUrl": "some-metadata",
+      "dataUrl": "some-data",
+      "dataUrlType": "some-dataurl-type"
     },
     {
       "name": "Geoscience Australia Marine Data (WFS)",
       "type": "wfs-getCapabilities",
-      "url": "http://marine.ga.gov.au/geoserver/marine/wfs"
+      "url": "http://marine.ga.gov.au/geoserver/marine/wfs",
+      "blacklist": {
+        "CACHE": true,
+        "Commuting2016": true,
+        "SEIFA2016": true,
+        "Utilities": false
+      }
     }
   ]
 }

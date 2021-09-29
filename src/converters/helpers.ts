@@ -110,9 +110,56 @@ export const catalogMemberProps: CopyProps[] = [
     v8: "isOpenInWorkbench",
   },
   "clipToRectangle",
+  /** v7 metadataUrl/dataUrl:
+    * {
+      "metadataUrl": "some-metadataurl",
+      "dataUrl": "some-dataurl",
+      "dataUrlType": "dataurl-type"
+    }
+
+   * v8:
+   * {
+      "metadataUrls": [{"url": "some-metadataurl"}],
+      "dataUrls": [{"url": "some-dataurl", "type": "dataurl-type"}],
+    }
+   */
+  {
+    v7: "metadataUrl",
+    v8: "metadataUrls",
+    translationFn: (metadataUrl: string) =>
+      metadataUrl ? [{ url: metadataUrl }] : undefined,
+  },
+  {
+    v7: "dataUrl",
+    v8: "dataUrls",
+    translationFn: (dataUrl: string, v7Member) =>
+      dataUrl ? [{ url: dataUrl, type: v7Member.dataUrlType }] : undefined,
+  },
 ];
 
-export const catalogGroupProps = [...catalogMemberProps, "isOpen"];
+export const catalogGroupProps = [
+  ...catalogMemberProps,
+  "isOpen",
+  {
+    v7: "blacklist",
+    v8: "excludeMembers",
+    /** v7 blacklist:
+    * {
+      "CACHE": true,
+      "Commuting2016": true,
+      "SEIFA2016": true,
+      "Utilities": true
+    }
+
+   * v8 excludeMembers:
+   * ["CACHE, Commuting2016"...]
+   */
+    translationFn: (blacklist: any) =>
+      Object.entries(blacklist)
+        .map(([name, include]) => (include ? name : undefined))
+        .filter((name) => typeof name === "string"),
+  },
+];
 
 export const imageryLayerProps: CopyProps[] = ["keepOnTop"];
 
@@ -121,6 +168,7 @@ export const catalogMemberPropsIgnore = [
   "type",
   "parents",
   "isEnabled",
+  "dataUrlType", // This is handled by "dataUrl" transformFn
 ];
 
 export const catalogGroupPropsIgnore = [
@@ -150,7 +198,14 @@ export function propsToWarnings(
 
 export type CopyProps =
   | string
-  | { v7: string; v8: string; translationFn?: (x: any) => any };
+  | {
+      v7: string;
+      v8: string;
+      /** Take v7 prop value, apply some transformation, and return a value.
+       * This will be saved to the v8Member using `v8` key
+       */
+      translationFn?: (v7PropValue: any, v7Member: any, v8Member: any) => any;
+    };
 
 export function copyProps(
   source: PlainObject,
@@ -164,7 +219,7 @@ export function copyProps(
     if (Object.prototype.hasOwnProperty.call(source, propV7)) {
       const value =
         !is.string(prop) && typeof prop.translationFn === "function"
-          ? prop.translationFn(source[propV7])
+          ? prop.translationFn(source[propV7], source, destination)
           : source[propV7];
       if (typeof value !== "undefined") destination[propV8] = value;
     }
